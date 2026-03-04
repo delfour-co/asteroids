@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# commit-msg hook — Enforces Conventional Commits format
+# https://www.conventionalcommits.org/
+#
+# Format: type(scope)?: description
+# Types: feat, fix, docs, chore, refactor, test, ci, style, perf, build, revert
+
+commit_msg_file="$1"
+commit_msg=$(head -1 "$commit_msg_file")
+
+pattern="^(feat|fix|docs|chore|refactor|test|ci|style|perf|build|revert)(\(.+\))?(!)?: .{1,}"
+
+if ! echo "$commit_msg" | grep -Eq "$pattern"; then
+  echo "ERROR: Commit message does not follow Conventional Commits format."
+  echo ""
+  echo "  Expected: type(scope)?: description"
+  echo "  Types:    feat, fix, docs, chore, refactor, test, ci, style, perf, build, revert"
+  echo ""
+  echo "  Examples:"
+  echo "    feat: add multi-shot power-up"
+  echo "    fix(ship): correct dash cooldown timer"
+  echo "    docs: update README with build instructions"
+  echo "    chore!: drop support for Android SDK 21"
+  echo ""
+  echo "  Your message: $commit_msg"
+  exit 1
+fi

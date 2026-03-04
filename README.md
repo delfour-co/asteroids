@@ -27,7 +27,9 @@ A neon-themed arcade shooter built with Flutter and the Flame game engine. Pilot
 
 ```bash
 git clone https://github.com/delfour-co/asteroids.git
-cd asteroids/asteroids_neon
+cd asteroids
+git config core.hooksPath .githooks
+cd asteroids_neon
 flutter pub get
 flutter run
 ```
