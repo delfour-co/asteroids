@@ -1,0 +1,226 @@
+import 'dart:math';
+import 'dart:ui';
+
+import 'package:flame/components.dart';
+import 'package:flame/events.dart';
+import 'package:flutter/painting.dart' show TextStyle, FontWeight;
+
+import '../app.dart';
+import '../core/event_bus.dart';
+import '../core/game_config.dart';
+import 'changelog_overlay.dart';
+import 'credits_overlay.dart';
+import 'leaderboard_overlay.dart';
+
+/// Event emitted when the player starts the game from the title screen.
+class StartGameEvent {}
+
+/// Neon title screen shown before gameplay.
+class TitleScreen extends PositionComponent
+    with HasGameReference<AsteroidsNeonGame>, DragCallbacks {
+  late final TextComponent _title;
+  late final TextComponent _subtitle;
+  late final TextComponent _controls;
+  late final TextComponent _leaderboardBtn;
+  late final TextComponent _creditsBtn;
+  late final TextComponent _changelogBtn;
+  double _pulseTime = 0;
+
+  // Tap zones
+  late Rect _leaderboardRect;
+  late Rect _creditsRect;
+  late Rect _changelogRect;
+  late Rect _startRect;
+
+  @override
+  Future<void> onLoad() async {
+    final gameSize = game.size;
+    size = gameSize;
+
+    _title = TextComponent(
+      text: 'ASTEROIDS',
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: GameConfig.shipColor,
+          fontSize: 56,
+          fontFamily: 'monospace',
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      anchor: Anchor.center,
+      position: Vector2(gameSize.x / 2, gameSize.y * 0.3),
+    );
+    await add(_title);
+
+    await add(TextComponent(
+      text: 'N E O N',
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: Color(0xFFFF00FF),
+          fontSize: 32,
+          fontFamily: 'monospace',
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      anchor: Anchor.center,
+      position: Vector2(gameSize.x / 2, gameSize.y * 0.3 + 50),
+    ));
+
+    _subtitle = TextComponent(
+      text: 'INSERT COIN',
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: Color(0xFFFFFFFF),
+          fontSize: 22,
+          fontFamily: 'monospace',
+        ),
+      ),
+      anchor: Anchor.center,
+      position: Vector2(gameSize.x / 2, gameSize.y * 0.55),
+    );
+    await add(_subtitle);
+
+    // Start zone (center area around INSERT COIN)
+    _startRect = Rect.fromCenter(
+      center: Offset(gameSize.x / 2, gameSize.y * 0.55),
+      width: gameSize.x * 0.8,
+      height: 80,
+    );
+
+    // LEADERBOARD button
+    _leaderboardBtn = TextComponent(
+      text: 'LEADERBOARD',
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: GameConfig.arcadeYellow,
+          fontSize: 20,
+          fontFamily: 'monospace',
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      anchor: Anchor.center,
+      position: Vector2(gameSize.x / 2, gameSize.y * 0.72),
+    );
+    await add(_leaderboardBtn);
+    _leaderboardRect = Rect.fromCenter(
+      center: Offset(gameSize.x / 2, gameSize.y * 0.72),
+      width: 250,
+      height: 50,
+    );
+
+    // CREDITS and CHANGELOG buttons (same line)
+    final btnY = gameSize.y * 0.80;
+    final btnGap = 40.0;
+
+    _creditsBtn = TextComponent(
+      text: 'CREDITS',
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: Color(0xAA00FFFF),
+          fontSize: 16,
+          fontFamily: 'monospace',
+        ),
+      ),
+      anchor: Anchor.centerRight,
+      position: Vector2(gameSize.x / 2 - btnGap / 2, btnY),
+    );
+    await add(_creditsBtn);
+    _creditsRect = Rect.fromCenter(
+      center: Offset(gameSize.x / 2 - btnGap / 2 - 50, btnY),
+      width: 150,
+      height: 50,
+    );
+
+    _changelogBtn = TextComponent(
+      text: 'CHANGELOG',
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: Color(0xAA00FFFF),
+          fontSize: 16,
+          fontFamily: 'monospace',
+        ),
+      ),
+      anchor: Anchor.centerLeft,
+      position: Vector2(gameSize.x / 2 + btnGap / 2, btnY),
+    );
+    await add(_changelogBtn);
+    _changelogRect = Rect.fromCenter(
+      center: Offset(gameSize.x / 2 + btnGap / 2 + 60, btnY),
+      width: 170,
+      height: 50,
+    );
+
+    _controls = TextComponent(
+      text: 'JOYSTICK: Steer  |  THRUST: Accelerate  |  FIRE: Shoot  |  DASH: Phase through',
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: Color(0x88FFFFFF),
+          fontSize: 14,
+          fontFamily: 'monospace',
+        ),
+      ),
+      anchor: Anchor.center,
+      position: Vector2(gameSize.x / 2, gameSize.y * 0.90),
+    );
+    await add(_controls);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    _pulseTime += dt;
+
+    // Pulse "INSERT COIN" opacity
+    final opacity = 0.5 + sin(_pulseTime * 3) * 0.5;
+    _subtitle.textRenderer = TextPaint(
+      style: TextStyle(
+        color: Color.fromARGB((opacity * 255).toInt(), 255, 255, 255),
+        fontSize: 22,
+        fontFamily: 'monospace',
+      ),
+    );
+  }
+
+  @override
+  void onDragStart(DragStartEvent event) {
+    super.onDragStart(event);
+    final pos = event.localPosition;
+    final offset = Offset(pos.x, pos.y);
+
+    if (_leaderboardRect.contains(offset)) {
+      _showLeaderboard();
+      return;
+    }
+    if (_creditsRect.contains(offset)) {
+      _showCredits();
+      return;
+    }
+    if (_changelogRect.contains(offset)) {
+      _showChangelog();
+      return;
+    }
+
+    // Any other tap starts the game
+    eventBus.emit(StartGameEvent());
+    removeFromParent();
+  }
+
+  void _showLeaderboard() {
+    game.add(LeaderboardOverlay(
+      leaderboard: game.leaderboardManager,
+      onDismiss: () {},
+    ));
+  }
+
+  void _showCredits() {
+    game.add(CreditsOverlay(
+      onDismiss: () {},
+    ));
+  }
+
+  void _showChangelog() {
+    game.add(ChangelogOverlay(
+      onDismiss: () {},
+    ));
+  }
+}
