@@ -8,7 +8,6 @@ import 'package:asteroids_neon/core/combo_manager.dart';
 import 'package:asteroids_neon/core/event_bus.dart';
 import 'package:asteroids_neon/core/game_config.dart';
 import 'package:asteroids_neon/enemies/ufo_events.dart';
-import 'package:flame/components.dart';
 
 void main() {
   setUp(() {

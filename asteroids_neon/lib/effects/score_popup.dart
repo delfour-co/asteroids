@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart' show TextStyle, FontWeight;
 

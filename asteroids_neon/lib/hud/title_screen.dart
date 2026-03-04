@@ -30,7 +30,7 @@ class TitleScreen extends PositionComponent
   late Rect _leaderboardRect;
   late Rect _creditsRect;
   late Rect _changelogRect;
-  late Rect _startRect;
+
 
   @override
   Future<void> onLoad() async {
@@ -79,13 +79,6 @@ class TitleScreen extends PositionComponent
       position: Vector2(gameSize.x / 2, gameSize.y * 0.55),
     );
     await add(_subtitle);
-
-    // Start zone (center area around INSERT COIN)
-    _startRect = Rect.fromCenter(
-      center: Offset(gameSize.x / 2, gameSize.y * 0.55),
-      width: gameSize.x * 0.8,
-      height: 80,
-    );
 
     // LEADERBOARD button
     _leaderboardBtn = TextComponent(

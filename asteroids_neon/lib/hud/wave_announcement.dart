@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart' show TextStyle, FontWeight;
 
@@ -10,9 +8,6 @@ class WaveAnnouncement extends TextComponent with HasGameReference {
   final int wave;
   double _elapsed = 0;
 
-  static const double _fadeIn = 0.3;
-  static const double _hold = 1.0;
-  static const double _fadeOut = 0.5;
   static double get _totalDuration =>
       GameConfig.waveAnnounceFadeIn +
       GameConfig.waveAnnounceHold +

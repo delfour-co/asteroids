@@ -6,7 +6,6 @@ import 'package:asteroids_neon/core/event_bus.dart';
 import 'package:asteroids_neon/core/game_state.dart';
 import 'package:asteroids_neon/enemies/ufo_boss.dart';
 import 'package:asteroids_neon/enemies/ufo_events.dart';
-import 'package:asteroids_neon/enemies/ufo_hunter.dart';
 import 'package:asteroids_neon/enemies/ufo_manager.dart';
 import 'package:asteroids_neon/enemies/ufo_scout.dart';
 

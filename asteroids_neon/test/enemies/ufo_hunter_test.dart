@@ -42,8 +42,7 @@ void main() {
           ..position = Vector2(200, 200);
         await game.ensureAdd(hunter);
 
-        UfoDestroyedEvent? event;
-        eventBus.on<UfoDestroyedEvent>((e) => event = e);
+        eventBus.on<UfoDestroyedEvent>((_) {});
 
         // Simulate collision with projectile via event
         // We can't easily trigger collision in unit test,
