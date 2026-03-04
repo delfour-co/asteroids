@@ -1,12 +1,12 @@
-name: Release to Google Play
+name: Release
 
 on:
   release:
     types: [published]
 
 jobs:
-  deploy:
-    name: Build & Deploy to Google Play
+  build:
+    name: Build & Test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -50,22 +50,9 @@ jobs:
       - name: Build App Bundle
         run: flutter build appbundle --release
 
-      - name: Upload to Google Play
-        uses: r0adkll/upload-google-play@v1
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
         with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: co.delfour.asteroids
-          releaseFiles: game/build/app/outputs/bundle/release/app-release.aab
-          track: internal
-          whatsNewDirectory: game/android/whatsnew
-
-      - name: Write service account JSON
-        run: echo '${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}' > /tmp/service-account.json
-
-      - name: Update store listing
-        working-directory: .
-        env:
-          PACKAGE_NAME: co.delfour.asteroids
-          SERVICE_ACCOUNT_JSON: /tmp/service-account.json
-          METADATA_DIR: game/metadata
-        run: bash .github/scripts/update-play-listing.sh
+          name: app-release-${{ github.event.release.tag_name }}
+          path: game/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 90
