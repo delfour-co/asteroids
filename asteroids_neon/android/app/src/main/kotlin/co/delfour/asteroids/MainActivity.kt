@@ -1,4 +1,4 @@
-package com.delfour.asteroids_neon
+package co.delfour.asteroids
 
 import io.flutter.embedding.android.FlutterActivity
 
