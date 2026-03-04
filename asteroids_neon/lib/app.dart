@@ -1,12 +1,14 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/foundation.dart';
 
 import 'asteroids/asteroid_manager.dart';
 import 'background/background_layer.dart';
 import 'core/combo_manager.dart';
 import 'debris/space_debris_manager.dart';
 import 'effects/effects_manager.dart';
+import 'audio/audio_manager.dart';
 import 'effects/flash_effect.dart';
 import 'effects/screen_shake_manager.dart';
 import 'enemies/ufo_manager.dart';
@@ -56,7 +58,9 @@ class GameLayer extends Component with HasGameReference<AsteroidsNeonGame> {
     eventBus.on<PauseEvent>(_pauseListener);
     eventBus.on<ResumeEvent>(_resumeListener);
 
+    debugPrint('[Game] GameLayer.onLoad() start');
     await _spawnGameplay();
+    debugPrint('[Game] GameLayer.onLoad() done');
   }
 
   @override
@@ -180,9 +184,12 @@ class RestartOverlay extends PositionComponent
 class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
   late final GameState gameState;
   late final LeaderboardManager leaderboardManager;
+  bool _isPaused = false;
 
-  late final void Function(StartGameEvent) _startListener;
+  late void Function(StartGameEvent) _startListener;
   late final void Function(ReturnToMenuEvent) _menuListener;
+  late final void Function(PauseEvent) _gamePauseListener;
+  late final void Function(ResumeEvent) _gameResumeListener;
 
   // Refs to gameplay components for cleanup on return-to-menu
   RestartOverlay? _restartOverlay;
@@ -207,9 +214,14 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     await add(BackgroundLayer());
     await add(ScreenShakeManager());
     await add(FlashEffect());
+    await add(AudioManager());
 
     _menuListener = (_) => _returnToMenu();
+    _gamePauseListener = (_) => _isPaused = true;
+    _gameResumeListener = (_) => _isPaused = false;
     eventBus.on<ReturnToMenuEvent>(_menuListener);
+    eventBus.on<PauseEvent>(_gamePauseListener);
+    eventBus.on<ResumeEvent>(_gameResumeListener);
 
     // Show title screen
     await add(TitleScreen());
@@ -220,6 +232,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
   }
 
   void _startGame() {
+    debugPrint('[Game] _startGame() called, children: ${children.length}');
     eventBus.off<StartGameEvent>(_startListener);
 
     // Add gameplay components
@@ -248,6 +261,8 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
   }
 
   void _returnToMenu() {
+    _isPaused = false;
+    debugPrint('[Game] _returnToMenu() called, children: ${children.length}');
     // Remove all gameplay components
     _restartOverlay?.removeFromParent();
     _gameLayer?.removeFromParent();
@@ -284,13 +299,23 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     add(TitleScreen());
 
     // Re-register start listener
+    debugPrint('[Game] _returnToMenu() re-registering StartGameEvent listener');
     _startListener = (_) => _startGame();
     eventBus.on<StartGameEvent>(_startListener);
+    debugPrint('[Game] _returnToMenu() done');
+  }
+
+  @override
+  void update(double dt) {
+    if (_isPaused) return;
+    super.update(dt);
   }
 
   @override
   void onRemove() {
     eventBus.off<ReturnToMenuEvent>(_menuListener);
+    eventBus.off<PauseEvent>(_gamePauseListener);
+    eventBus.off<ResumeEvent>(_gameResumeListener);
     gameState.dispose();
     super.onRemove();
   }

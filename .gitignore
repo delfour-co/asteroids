@@ -43,6 +43,9 @@ app.*.map.json
 **/android/key.properties
 **/*.jks
 
+# === Secrets ===
+**/service-account.json
+
 # === Local tooling ===
 .claude/
 _bmad/

@@ -1,0 +1,71 @@
+name: Release to Google Play
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    name: Build & Deploy to Google Play
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: asteroids_neon
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.41.2
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Decode keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/asteroids.jks
+
+      - name: Create key.properties
+        run: |
+          cat > android/key.properties << EOF
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=asteroids.jks
+          EOF
+
+      - name: Build App Bundle
+        run: flutter build appbundle --release
+
+      - name: Upload to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: co.delfour.asteroids
+          releaseFiles: asteroids_neon/build/app/outputs/bundle/release/app-release.aab
+          track: internal
+          whatsNewDirectory: asteroids_neon/android/whatsnew
+
+      - name: Write service account JSON
+        run: echo '${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}' > /tmp/service-account.json
+
+      - name: Update store listing
+        working-directory: .
+        env:
+          PACKAGE_NAME: co.delfour.asteroids
+          SERVICE_ACCOUNT_JSON: /tmp/service-account.json
+          METADATA_DIR: asteroids_neon/metadata
+        run: bash .github/scripts/update-play-listing.sh

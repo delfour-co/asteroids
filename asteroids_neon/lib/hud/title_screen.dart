@@ -3,9 +3,11 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' show TextStyle, FontWeight;
 
 import '../app.dart';
+import '../audio/audio_events.dart';
 import '../core/event_bus.dart';
 import '../core/game_config.dart';
 import 'changelog_overlay.dart';
@@ -181,19 +183,23 @@ class TitleScreen extends PositionComponent
     final offset = Offset(pos.x, pos.y);
 
     if (_leaderboardRect.contains(offset)) {
+      eventBus.emit(UiNavigationEvent());
       _showLeaderboard();
       return;
     }
     if (_creditsRect.contains(offset)) {
+      eventBus.emit(UiNavigationEvent());
       _showCredits();
       return;
     }
     if (_changelogRect.contains(offset)) {
+      eventBus.emit(UiNavigationEvent());
       _showChangelog();
       return;
     }
 
     // Any other tap starts the game
+    debugPrint('[Game] TitleScreen emitting StartGameEvent');
     eventBus.emit(StartGameEvent());
     removeFromParent();
   }

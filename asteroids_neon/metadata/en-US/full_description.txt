@@ -1,0 +1,19 @@
+Asteroids Neon is a neon-styled arcade shooter inspired by the classic Asteroids.
+
+Pilot your spaceship through asteroid fields, face waves of UFO enemies, and collect power-ups to survive as long as possible.
+
+Features:
+• Smooth touch controls with joystick and action buttons
+• Progressive wave system with asteroids and space debris
+• UFO enemies: Scouts (wave 3+) and Hunters (wave 6+)
+• Power-ups: shield, multi-shot, slow motion
+• Dash to dodge dangers
+• Combo system to maximize your score
+• Local Top 10 leaderboard
+• Animated galactic background with Antennae nebula
+• Realistic space debris: Starlink, ISS/MIR, Tesla Roadster + Starman
+• Ambient synth music with reactive volume
+• 14 sound effects for full arcade immersion
+• Sound ON/OFF toggle in pause menu
+
+Face the void. Beat your high score. Insert coin!

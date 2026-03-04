@@ -26,6 +26,7 @@ class InitialEntryOverlay extends PositionComponent
   final List<int> _letters = [0, 0, 0]; // 0=A, 25=Z
   int _selectedSlot = 0;
   bool _done = false;
+  double _cumulativeDragY = 0;
 
   // Layout
   late double _slotStartX;
@@ -43,9 +44,9 @@ class InitialEntryOverlay extends PositionComponent
 
     _slotWidth = 60.0;
     _slotStartX = size.x / 2 - (_slotWidth * 3) / 2;
-    _slotY = size.y / 2 - 20;
+    _slotY = size.y / 2 + 30;
     _doneRect = ui.Rect.fromCenter(
-      center: ui.Offset(size.x / 2, size.y / 2 + 100),
+      center: ui.Offset(size.x / 2, size.y / 2 + 150),
       width: 160,
       height: 50,
     );
@@ -68,8 +69,26 @@ class InitialEntryOverlay extends PositionComponent
       return;
     }
 
-    // Check slot selection
+    // Check arrow taps and slot selection
+    _cumulativeDragY = 0;
     for (int i = 0; i < 3; i++) {
+      final slotCenterX = _slotStartX + i * _slotWidth + _slotWidth / 2;
+      final arrowUpY = _slotY - 40;
+      final arrowDownY = _slotY + 50;
+
+      if ((pos.x - slotCenterX).abs() < 20) {
+        if ((pos.y - arrowUpY).abs() < 20) {
+          _selectedSlot = i;
+          _letters[i] = (_letters[i] + 1) % 26;
+          return;
+        }
+        if ((pos.y - arrowDownY).abs() < 20) {
+          _selectedSlot = i;
+          _letters[i] = (_letters[i] - 1 + 26) % 26;
+          return;
+        }
+      }
+
       final slotX = _slotStartX + i * _slotWidth;
       if (pos.x >= slotX && pos.x < slotX + _slotWidth) {
         _selectedSlot = i;
@@ -83,11 +102,14 @@ class InitialEntryOverlay extends PositionComponent
     super.onDragUpdate(event);
     if (_done) return;
 
-    // Vertical drag to cycle letters
-    if (event.localDelta.y < -8) {
+    // Vertical drag to cycle letters (cumulative tracking)
+    _cumulativeDragY += event.localDelta.y;
+    if (_cumulativeDragY < -20) {
       _letters[_selectedSlot] = (_letters[_selectedSlot] + 1) % 26;
-    } else if (event.localDelta.y > 8) {
+      _cumulativeDragY += 20;
+    } else if (_cumulativeDragY > 20) {
       _letters[_selectedSlot] = (_letters[_selectedSlot] - 1 + 26) % 26;
+      _cumulativeDragY -= 20;
     }
   }
 
@@ -136,7 +158,7 @@ class InitialEntryOverlay extends PositionComponent
     }
 
     // DONE button
-    _drawText(canvas, 'DONE', size.x / 2, size.y / 2 + 100, 24,
+    _drawText(canvas, 'DONE', size.x / 2, size.y / 2 + 150, 24,
         GameConfig.arcadeGreen, FontWeight.bold);
   }
 

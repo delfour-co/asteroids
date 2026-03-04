@@ -1,0 +1,1 @@
+Shooter arcade néon inspiré du classique Asteroids. Détruisez astéroïdes et UFOs !

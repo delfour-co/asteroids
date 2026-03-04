@@ -7,6 +7,8 @@ import 'package:asteroids_neon/background/background_layer.dart';
 import 'package:asteroids_neon/hud/title_screen.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   setUp(() {
     SharedPreferences.setMockInitialValues({});
   });

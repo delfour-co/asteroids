@@ -1,0 +1,6 @@
+v1.3.0 — Audio
+• Musique ambient synthétique avec volume réactif (s'intensifie aux vagues élevées)
+• 14 effets sonores : tir, explosions, dash, power-ups, UFOs, combos et plus
+• Bouton SOUND ON/OFF dans le menu pause (persiste entre les sessions)
+• Fix : la pause gèle maintenant complètement le jeu (collisions incluses)
+• Fix : retour au menu après pause ne cause plus d'écran noir

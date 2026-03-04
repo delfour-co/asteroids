@@ -1,0 +1,19 @@
+Asteroids Neon est un shooter arcade au style néon, inspiré du classique Asteroids.
+
+Pilotez votre vaisseau spatial à travers des champs d'astéroïdes, affrontez des vagues d'ennemis UFO et collectez des power-ups pour survivre le plus longtemps possible.
+
+Fonctionnalités :
+• Contrôles tactiles fluides avec joystick et boutons d'action
+• Système de vagues progressives avec astéroïdes et débris spatiaux
+• Ennemis UFO : Scouts (vague 3+) et Hunters (vague 6+)
+• Power-ups : bouclier, tir multiple, ralenti temporel
+• Dash pour esquiver les dangers
+• Système de combos pour maximiser votre score
+• Leaderboard local Top 10
+• Fond galactique animé avec nébuleuse des Antennes
+• Débris spatiaux réalistes : Starlink, ISS/MIR, Tesla Roadster + Starman
+• Musique ambient synthétique avec volume réactif
+• 14 effets sonores pour une immersion arcade totale
+• Bouton SOUND ON/OFF dans le menu pause
+
+Affrontez l'espace. Battez votre meilleur score. Insérez une pièce !

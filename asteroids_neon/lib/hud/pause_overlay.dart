@@ -6,6 +6,7 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/painting.dart' show TextPainter, TextDirection, TextStyle, TextSpan, FontWeight;
 
+import '../audio/audio_events.dart';
 import '../core/arcade_events.dart';
 import '../core/event_bus.dart';
 import '../core/game_config.dart';
@@ -18,12 +19,16 @@ class PauseOverlay extends PositionComponent
     with HasGameReference<FlameGame>, DragCallbacks {
   bool _active = false;
 
+  bool _soundOn = true;
+
   late final void Function(PauseEvent) _pauseListener;
   late final void Function(ResumeEvent) _resumeListener;
+  late final void Function(MuteChangedEvent) _muteChangedListener;
 
   // Layout rects for tap detection
   late ui.Rect _resumeRect;
   late ui.Rect _menuRect;
+  late ui.Rect _soundRect;
 
   @override
   Future<void> onLoad() async {
@@ -43,17 +48,25 @@ class PauseOverlay extends PositionComponent
       width: 200,
       height: 50,
     );
+    _soundRect = ui.Rect.fromCenter(
+      center: ui.Offset(cx, cy + 190),
+      width: 250,
+      height: 50,
+    );
 
     _pauseListener = (_) => _pause();
     _resumeListener = (_) => _resume();
+    _muteChangedListener = (e) => _soundOn = !e.isMuted;
     eventBus.on<PauseEvent>(_pauseListener);
     eventBus.on<ResumeEvent>(_resumeListener);
+    eventBus.on<MuteChangedEvent>(_muteChangedListener);
   }
 
   @override
   void onRemove() {
     eventBus.off<PauseEvent>(_pauseListener);
     eventBus.off<ResumeEvent>(_resumeListener);
+    eventBus.off<MuteChangedEvent>(_muteChangedListener);
     super.onRemove();
   }
 
@@ -80,6 +93,8 @@ class PauseOverlay extends PositionComponent
       _active = false;
       eventBus.emit(ResumeEvent());
       eventBus.emit(ReturnToMenuEvent());
+    } else if (_soundRect.contains(ui.Offset(pos.x, pos.y))) {
+      eventBus.emit(MuteToggleEvent());
     }
   }
 
@@ -112,6 +127,12 @@ class PauseOverlay extends PositionComponent
     // "MENU" button
     _drawText(canvas, 'MENU', cx, cy + 120, 22,
         GameConfig.arcadeYellow, FontWeight.bold);
+
+    // "SOUND: ON/OFF" button
+    final soundLabel = _soundOn ? 'SOUND: ON' : 'SOUND: OFF';
+    final soundColor = _soundOn ? GameConfig.arcadeGreen : GameConfig.arcadeRed;
+    _drawText(canvas, soundLabel, cx, cy + 190, 20,
+        soundColor, FontWeight.bold);
   }
 
   void _drawText(ui.Canvas canvas, String text, double x, double y,
