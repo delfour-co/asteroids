@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: asteroids_neon
+        working-directory: game
 
     steps:
       - name: Checkout
@@ -55,9 +55,9 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: co.delfour.asteroids
-          releaseFiles: asteroids_neon/build/app/outputs/bundle/release/app-release.aab
+          releaseFiles: game/build/app/outputs/bundle/release/app-release.aab
           track: internal
-          whatsNewDirectory: asteroids_neon/android/whatsnew
+          whatsNewDirectory: game/android/whatsnew
 
       - name: Write service account JSON
         run: echo '${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}' > /tmp/service-account.json
@@ -67,5 +67,5 @@ jobs:
         env:
           PACKAGE_NAME: co.delfour.asteroids
           SERVICE_ACCOUNT_JSON: /tmp/service-account.json
-          METADATA_DIR: asteroids_neon/metadata
+          METADATA_DIR: game/metadata
         run: bash .github/scripts/update-play-listing.sh
