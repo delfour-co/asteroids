@@ -1,15 +1,18 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'asteroids/asteroid_manager.dart';
 import 'background/background_layer.dart';
 import 'core/combo_manager.dart';
+import 'core/game_config.dart';
 import 'debris/space_debris_manager.dart';
 import 'effects/effects_manager.dart';
 import 'audio/audio_manager.dart';
 import 'effects/flash_effect.dart';
 import 'effects/screen_shake_manager.dart';
+import 'effects/wave_ring_effect.dart';
 import 'enemies/ufo_manager.dart';
 import 'core/event_bus.dart';
 import 'core/game_state.dart';
@@ -25,6 +28,7 @@ import 'hud/menu_button.dart';
 import 'hud/pause_button.dart';
 import 'hud/pause_overlay.dart';
 import 'hud/title_screen.dart';
+import 'hud/tutorial_overlay.dart';
 import 'input/action_buttons.dart';
 import 'input/dash_button.dart';
 import 'input/fire_button.dart';
@@ -212,6 +216,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     await add(ScreenShakeManager());
     await add(FlashEffect());
     await add(AudioManager());
+    await add(WaveRingEffect());
 
     _menuListener = (_) => _returnToMenu();
     _gamePauseListener = (_) => _isPaused = true;
@@ -228,7 +233,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     eventBus.on<StartGameEvent>(_startListener);
   }
 
-  void _startGame() {
+  Future<void> _startGame() async {
     eventBus.off<StartGameEvent>(_startListener);
 
     // Add gameplay components
@@ -253,7 +258,23 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     add(_pauseButton!);
     add(_pauseOverlay!);
     add(_menuButton!);
-    add(CountdownOverlay());
+
+    // Show tutorial on first launch, then countdown
+    final prefs = await SharedPreferences.getInstance();
+    final tutorialSeen = prefs.getBool(GameConfig.tutorialSeenKey) ?? false;
+
+    if (!tutorialSeen) {
+      add(TutorialOverlay(
+        onDismiss: () async {
+          await prefs.setBool(GameConfig.tutorialSeenKey, true);
+          if (isMounted) {
+            add(CountdownOverlay());
+          }
+        },
+      ));
+    } else {
+      add(CountdownOverlay());
+    }
   }
 
   void _returnToMenu() {
@@ -275,6 +296,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     children.whereType<InitialEntryOverlay>().toList().forEach((c) => c.removeFromParent());
     children.whereType<LeaderboardOverlay>().toList().forEach((c) => c.removeFromParent());
     children.whereType<CreditsOverlay>().toList().forEach((c) => c.removeFromParent());
+    children.whereType<TutorialOverlay>().toList().forEach((c) => c.removeFromParent());
 
     _restartOverlay = null;
     _gameLayer = null;

@@ -9,6 +9,7 @@ import '../core/game_config.dart';
 import '../debris/debris_events.dart';
 import '../enemies/ufo_events.dart';
 import '../ship/ship.dart';
+import 'ember_effect.dart';
 import 'explosion.dart';
 import 'score_popup.dart';
 
@@ -74,6 +75,23 @@ class EffectsManager extends Component {
       maxSpeed: speed,
     )..position = event.position);
 
+    // Embers for medium and large asteroids
+    final int emberCount;
+    switch (event.asteroidSize) {
+      case AsteroidSize.large:
+        emberCount = GameConfig.emberCountLarge;
+      case AsteroidSize.medium:
+        emberCount = GameConfig.emberCountMedium;
+      case AsteroidSize.small:
+        emberCount = GameConfig.emberCountSmall;
+    }
+    if (emberCount > 0) {
+      add(EmberEffect(
+        color: const Color(0xFFFF00FF),
+        particleCount: emberCount,
+      )..position = event.position.clone());
+    }
+
     eventBus.emit(ScreenShakeEvent(shakeIntensity));
   }
 
@@ -83,6 +101,11 @@ class EffectsManager extends Component {
       particleCount: 16,
       maxSpeed: 130.0,
     )..position = event.position);
+
+    add(EmberEffect(
+      color: const Color(0xFF00FF44),
+      particleCount: GameConfig.emberCountUfo,
+    )..position = event.position.clone());
 
     eventBus.emit(ScreenShakeEvent(GameConfig.shakeIntensityMedium));
   }
@@ -103,6 +126,11 @@ class EffectsManager extends Component {
       duration: 0.8,
     )..position = event.position);
 
+    add(EmberEffect(
+      color: const Color(0xFFFF0044),
+      particleCount: GameConfig.emberCountBoss,
+    )..position = event.position.clone());
+
     eventBus.emit(ScreenShakeEvent(GameConfig.shakeIntensityBoss));
     eventBus.emit(BossFlashEvent());
   }
@@ -115,6 +143,11 @@ class EffectsManager extends Component {
       maxSpeed: 180.0,
       duration: 0.8,
     )..position = event.position);
+
+    add(EmberEffect(
+      color: GameConfig.shipColor,
+      particleCount: GameConfig.emberCountShip,
+    )..position = event.position.clone());
 
     eventBus.emit(ScreenShakeEvent(GameConfig.shakeIntensityLarge));
   }

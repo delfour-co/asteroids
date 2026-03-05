@@ -109,4 +109,26 @@ abstract class GameConfig {
   static const int teslaPoints = 250;
   static const double debrisMinSpeed = 15.0;
   static const double debrisMaxSpeed = 35.0;
+
+  // Tutorial
+  static const String tutorialSeenKey = 'tutorial_seen';
+
+  // Wave ring transition
+  static const double waveRingDuration = 0.8;
+  static const double waveRingShakeIntensity = 2.0;
+  static const Color waveRingColor = Color(0xFF00FFFF);
+
+  // Embers
+  static const double emberMinLifetime = 1.5;
+  static const double emberMaxLifetime = 2.5;
+  static const double emberMinSpeed = 5.0;
+  static const double emberMaxSpeed = 30.0;
+  static const double emberMinSize = 0.5;
+  static const double emberMaxSize = 1.5;
+  static const int emberCountSmall = 0; // skip small asteroids
+  static const int emberCountMedium = 5;
+  static const int emberCountLarge = 7;
+  static const int emberCountUfo = 7;
+  static const int emberCountBoss = 12;
+  static const int emberCountShip = 6;
 }
