@@ -70,7 +70,7 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
 
     // Version — top right
     await add(TextComponent(
-      text: 'v1.3.0',
+      text: 'v1.3.1',
       textRenderer: TextPaint(
         style: const TextStyle(
           color: Color(0xAAFFFFFF),

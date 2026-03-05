@@ -161,12 +161,21 @@ class AudioManager extends Component {
     try {
       FlameAudio.play(file, volume: volume).then((player) {
         // Dispose player after playback to free Android audio stream
-        player.onPlayerComplete.first.then((_) {
-          player.dispose();
+        // Use listen instead of .first to avoid "Bad state: No element"
+        // if the player is disposed before the stream emits.
+        var disposed = false;
+        player.onPlayerComplete.listen((_) {
+          if (!disposed) {
+            disposed = true;
+            player.dispose();
+          }
         });
         // Safety: dispose after 3s even if onPlayerComplete doesn't fire
         Future.delayed(const Duration(seconds: 3), () {
-          player.dispose();
+          if (!disposed) {
+            disposed = true;
+            player.dispose();
+          }
         });
       }).catchError((e) {
         debugPrint('[Audio] SFX play error ($file): $e');

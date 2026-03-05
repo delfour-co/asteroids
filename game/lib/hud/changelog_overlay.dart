@@ -25,6 +25,10 @@ class ChangelogOverlay extends PositionComponent
   static const _leftMargin = 32.0;
 
   static const List<_ChangelogVersion> _versions = [
+    _ChangelogVersion('v1.3.1', 'Stability', [
+      '+ Firebase Crashlytics crash reporting',
+      '* Fix audio player dispose crash',
+    ]),
     _ChangelogVersion('v1.3.0', 'Audio', [
       '+ Ambient synth music (reactive volume)',
       '+ 14 sound effects (fire, explosions, dash...)',
