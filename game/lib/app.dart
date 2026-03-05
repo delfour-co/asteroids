@@ -1,7 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/foundation.dart';
 
 import 'asteroids/asteroid_manager.dart';
 import 'background/background_layer.dart';
@@ -58,9 +57,7 @@ class GameLayer extends Component with HasGameReference<AsteroidsNeonGame> {
     eventBus.on<PauseEvent>(_pauseListener);
     eventBus.on<ResumeEvent>(_resumeListener);
 
-    debugPrint('[Game] GameLayer.onLoad() start');
     await _spawnGameplay();
-    debugPrint('[Game] GameLayer.onLoad() done');
   }
 
   @override
@@ -232,7 +229,6 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
   }
 
   void _startGame() {
-    debugPrint('[Game] _startGame() called, children: ${children.length}');
     eventBus.off<StartGameEvent>(_startListener);
 
     // Add gameplay components
@@ -262,7 +258,6 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
 
   void _returnToMenu() {
     _isPaused = false;
-    debugPrint('[Game] _returnToMenu() called, children: ${children.length}');
     // Remove all gameplay components
     _restartOverlay?.removeFromParent();
     _gameLayer?.removeFromParent();
@@ -299,10 +294,8 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     add(TitleScreen());
 
     // Re-register start listener
-    debugPrint('[Game] _returnToMenu() re-registering StartGameEvent listener');
     _startListener = (_) => _startGame();
     eventBus.on<StartGameEvent>(_startListener);
-    debugPrint('[Game] _returnToMenu() done');
   }
 
   @override

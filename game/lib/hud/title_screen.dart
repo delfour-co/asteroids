@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' show TextStyle, FontWeight;
 
 import '../app.dart';
@@ -199,7 +198,6 @@ class TitleScreen extends PositionComponent
     }
 
     // Any other tap starts the game
-    debugPrint('[Game] TitleScreen emitting StartGameEvent');
     eventBus.emit(StartGameEvent());
     removeFromParent();
   }
