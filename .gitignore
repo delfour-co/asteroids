@@ -46,6 +46,9 @@ app.*.map.json
 # === Secrets ===
 **/service-account.json
 
+# === Source assets (local only) ===
+sourcing/
+
 # === Local tooling ===
 .claude/
 _bmad/
