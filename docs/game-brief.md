@@ -11,10 +11,10 @@ lastStep: 0
 project_name: 'mobilegame--asteroids'
 user_name: 'Kevin'
 date: '2026-03-02'
-game_name: 'Asteroids Neon'
+game_name: 'Neon Asteroids'
 ---
 
-# Game Brief: Asteroids Neon
+# Game Brief: Neon Asteroids
 
 **Date:** 2026-03-02
 **Author:** Kevin
@@ -24,7 +24,7 @@ game_name: 'Asteroids Neon'
 
 ## Executive Summary
 
-Asteroids Neon est un shooter arcade néon qui mêle la pureté du gameplay classique d'Asteroids à une narration fragmentée et un univers stellaire contemplatif.
+Neon Asteroids est un shooter arcade néon qui mêle la pureté du gameplay classique d'Asteroids à une narration fragmentée et un univers stellaire contemplatif.
 
 **Target Audience :** Joueurs casual à core de 15-45 ans, sessions courtes (pause café), facile à prendre en main
 
@@ -46,7 +46,7 @@ Un shooter arcade néon qui mêle la pureté du gameplay classique d'Asteroids �
 
 ### Elevator Pitch
 
-Asteroids Neon reprend le gameplay pur qui nous a marqué dans le classique original et le propulse dans un univers néon contemplatif. Survivez en tant que dernier pilote de la Terre, dashez à travers les astéroïdes dans des explosions de lumière, et découvrez fragment par fragment ce qui est arrivé à l'humanité.
+Neon Asteroids reprend le gameplay pur qui nous a marqué dans le classique original et le propulse dans un univers néon contemplatif. Survivez en tant que dernier pilote de la Terre, dashez à travers les astéroïdes dans des explosions de lumière, et découvrez fragment par fragment ce qui est arrivé à l'humanité.
 
 ### Vision Statement
 
@@ -190,7 +190,7 @@ Pas d'audience secondaire ciblée spécifiquement — le jeu se concentre sur so
 3. **Ciel stellaire vivant** — Un background qui évolue et devient plus beau avec la progression, récompense visuelle de la survie
 4. **Arc contemplatif → intense** — Pas juste de l'arcade pure, un voyage émotionnel de la contemplation au chaos néon
 
-**Unique Value Proposition :** Asteroids Neon est le seul remake d'Asteroids qui transforme un classique arcade en expérience contemplative et narrative — la nostalgie des uns devient l'émerveillement des autres.
+**Unique Value Proposition :** Neon Asteroids est le seul remake d'Asteroids qui transforme un classique arcade en expérience contemplative et narrative — la nostalgie des uns devient l'émerveillement des autres.
 
 ---
 

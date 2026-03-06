@@ -10,7 +10,9 @@ import '../audio/audio_events.dart';
 import '../core/event_bus.dart';
 import '../core/game_config.dart';
 import 'changelog_overlay.dart';
+import 'cosmetics_overlay.dart';
 import 'credits_overlay.dart';
+import 'journal_overlay.dart';
 import 'leaderboard_overlay.dart';
 
 /// Event emitted when the player starts the game from the title screen.
@@ -25,12 +27,16 @@ class TitleScreen extends PositionComponent
   late final TextComponent _leaderboardBtn;
   late final TextComponent _creditsBtn;
   late final TextComponent _changelogBtn;
+  late final TextComponent _logBtn;
+  late final TextComponent _shipBtn;
   double _pulseTime = 0;
 
   // Tap zones
   late Rect _leaderboardRect;
   late Rect _creditsRect;
   late Rect _changelogRect;
+  late Rect _logRect;
+  late Rect _shipRect;
 
 
   @override
@@ -39,7 +45,7 @@ class TitleScreen extends PositionComponent
     size = gameSize;
 
     _title = TextComponent(
-      text: 'ASTEROIDS',
+      text: 'NEON',
       textRenderer: TextPaint(
         style: const TextStyle(
           color: GameConfig.shipColor,
@@ -54,7 +60,7 @@ class TitleScreen extends PositionComponent
     await add(_title);
 
     await add(TextComponent(
-      text: 'N E O N',
+      text: 'A S T E R O I D S',
       textRenderer: TextPaint(
         style: const TextStyle(
           color: Color(0xFFFF00FF),
@@ -93,56 +99,88 @@ class TitleScreen extends PositionComponent
         ),
       ),
       anchor: Anchor.center,
-      position: Vector2(gameSize.x / 2, gameSize.y * 0.72),
+      position: Vector2(gameSize.x / 2, gameSize.y * 0.66),
     );
     await add(_leaderboardBtn);
     _leaderboardRect = Rect.fromCenter(
-      center: Offset(gameSize.x / 2, gameSize.y * 0.72),
+      center: Offset(gameSize.x / 2, gameSize.y * 0.66),
       width: 250,
       height: 50,
     );
 
-    // CREDITS and CHANGELOG buttons (same line)
-    final btnY = gameSize.y * 0.80;
+    // HISTORY and SHIP buttons (centered row)
     final btnGap = 40.0;
+    final btnY1 = gameSize.y * 0.74;
 
-    _creditsBtn = TextComponent(
-      text: 'CREDITS',
+    _logBtn = TextComponent(
+      text: 'HISTORY',
       textRenderer: TextPaint(
         style: const TextStyle(
-          color: Color(0xAA00FFFF),
+          color: Color(0xAA00FF66),
           fontSize: 16,
           fontFamily: 'monospace',
         ),
       ),
       anchor: Anchor.centerRight,
-      position: Vector2(gameSize.x / 2 - btnGap / 2, btnY),
+      position: Vector2(gameSize.x / 2 - btnGap / 2, btnY1),
     );
-    await add(_creditsBtn);
-    _creditsRect = Rect.fromCenter(
-      center: Offset(gameSize.x / 2 - btnGap / 2 - 50, btnY),
-      width: 150,
+    await add(_logBtn);
+    _logRect = Rect.fromCenter(
+      center: Offset(gameSize.x / 2 - btnGap / 2 - 40, btnY1),
+      width: 140,
       height: 50,
     );
 
-    _changelogBtn = TextComponent(
-      text: 'CHANGELOG',
+    _shipBtn = TextComponent(
+      text: 'SHIP',
       textRenderer: TextPaint(
         style: const TextStyle(
-          color: Color(0xAA00FFFF),
+          color: Color(0xAA00FF66),
           fontSize: 16,
           fontFamily: 'monospace',
         ),
       ),
       anchor: Anchor.centerLeft,
-      position: Vector2(gameSize.x / 2 + btnGap / 2, btnY),
+      position: Vector2(gameSize.x / 2 + btnGap / 2, btnY1),
     );
-    await add(_changelogBtn);
-    _changelogRect = Rect.fromCenter(
-      center: Offset(gameSize.x / 2 + btnGap / 2 + 60, btnY),
-      width: 170,
+    await add(_shipBtn);
+    _shipRect = Rect.fromCenter(
+      center: Offset(gameSize.x / 2 + btnGap / 2 + 30, btnY1),
+      width: 120,
       height: 50,
     );
+
+    // CREDITS — bottom left
+    _creditsBtn = TextComponent(
+      text: 'CREDITS',
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: Color(0x6600FFFF),
+          fontSize: 14,
+          fontFamily: 'monospace',
+        ),
+      ),
+      anchor: Anchor.bottomLeft,
+      position: Vector2(20, gameSize.y - 16),
+    );
+    await add(_creditsBtn);
+    _creditsRect = Rect.fromLTWH(0, gameSize.y - 60, 160, 60);
+
+    // CHANGELOG — bottom right
+    _changelogBtn = TextComponent(
+      text: 'CHANGELOG',
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: Color(0x6600FFFF),
+          fontSize: 14,
+          fontFamily: 'monospace',
+        ),
+      ),
+      anchor: Anchor.bottomRight,
+      position: Vector2(gameSize.x - 20, gameSize.y - 16),
+    );
+    await add(_changelogBtn);
+    _changelogRect = Rect.fromLTWH(gameSize.x - 180, gameSize.y - 60, 180, 60);
 
     _controls = TextComponent(
       text: 'JOYSTICK: Steer  |  THRUST: Accelerate  |  FIRE: Shoot  |  DASH: Phase through',
@@ -154,7 +192,7 @@ class TitleScreen extends PositionComponent
         ),
       ),
       anchor: Anchor.center,
-      position: Vector2(gameSize.x / 2, gameSize.y * 0.90),
+      position: Vector2(gameSize.x / 2, gameSize.y * 0.88),
     );
     await add(_controls);
   }
@@ -196,6 +234,16 @@ class TitleScreen extends PositionComponent
       _showChangelog();
       return;
     }
+    if (_logRect.contains(offset)) {
+      eventBus.emit(UiNavigationEvent());
+      _showJournal();
+      return;
+    }
+    if (_shipRect.contains(offset)) {
+      eventBus.emit(UiNavigationEvent());
+      _showCosmetics();
+      return;
+    }
 
     // Any other tap starts the game
     eventBus.emit(StartGameEvent());
@@ -217,6 +265,20 @@ class TitleScreen extends PositionComponent
 
   void _showChangelog() {
     game.add(ChangelogOverlay(
+      onDismiss: () {},
+    ));
+  }
+
+  void _showJournal() {
+    game.add(JournalOverlay(
+      unlockedIds: game.fragmentManager.unlockedIds,
+      onDismiss: () {},
+    ));
+  }
+
+  void _showCosmetics() {
+    game.add(CosmeticsOverlay(
+      cosmetics: game.cosmeticsManager,
       onDismiss: () {},
     ));
   }

@@ -131,4 +131,46 @@ abstract class GameConfig {
   static const int emberCountUfo = 7;
   static const int emberCountBoss = 12;
   static const int emberCountShip = 6;
+
+  // Narration — memory fragments
+  static const int fragmentUnlockInterval = 10; // every N waves
+  static const String fragmentsKey = 'unlocked_fragments';
+
+  // Death sequence
+  static const double deathSlowMoDuration = 0.6;
+  static const double deathSlowMoFactor = 0.3;
+  static const double signalLostDuration = 2.5;
+
+  // Shooting stars
+  static const double shootingStarMinInterval = 8.0;
+  static const double shootingStarMaxInterval = 20.0;
+  static const double shootingStarSpeed = 400.0;
+  static const double shootingStarLength = 60.0;
+
+  // Special asteroids
+  static const Color explosiveAsteroidColor = Color(0xFFFF4400);
+  static const Color magneticAsteroidColor = Color(0xFFAA00FF);
+  static const double magneticPullRadius = 150.0;
+  static const double magneticPullForce = 40.0;
+  static const double explosiveBlastRadius = 120.0;
+  static const int explosiveMinWave = 5;
+  static const int magneticMinWave = 8;
+
+  // Perfect kill
+  static const double perfectKillRange = 60.0;
+  static const int perfectKillMultiplier = 2;
+  static const double knockbackRadius = 100.0;
+  static const double knockbackForce = 80.0;
+
+  // Cosmetics
+  static const String selectedColorKey = 'selected_ship_color';
+  static const String unlockedColorsKey = 'unlocked_colors';
+  static const List<int> cosmeticUnlockWaves = [10, 20, 30, 50];
+  static const List<Color> shipColors = [
+    Color(0xFF00FFFF), // Cyan (default)
+    Color(0xFFFF00FF), // Magenta (wave 10)
+    Color(0xFF00FF66), // Green (wave 20)
+    Color(0xFFFFCC00), // Gold (wave 30)
+  ];
+  static const List<String> shipColorNames = ['CYAN', 'MAGENTA', 'GREEN', 'GOLD'];
 }

@@ -37,3 +37,30 @@ class CountdownStartedEvent {}
 
 /// Event emitted when the countdown finishes (unblocks input).
 class CountdownFinishedEvent {}
+
+/// Event emitted when a memory fragment is unlocked.
+class FragmentUnlockedEvent {
+  final int fragmentIndex;
+  FragmentUnlockedEvent(this.fragmentIndex);
+}
+
+/// Event emitted to trigger death slow-mo sequence.
+class DeathSlowMoEvent {
+  final Vector2 position;
+  DeathSlowMoEvent(this.position);
+}
+
+/// Event emitted for a perfect kill (close range).
+class PerfectKillEvent {
+  final Vector2 position;
+  final int points;
+  PerfectKillEvent(this.position, this.points);
+}
+
+/// Event emitted to apply knockback to nearby asteroids.
+class KnockbackEvent {
+  final Vector2 origin;
+  final double radius;
+  final double force;
+  KnockbackEvent(this.origin, this.radius, this.force);
+}

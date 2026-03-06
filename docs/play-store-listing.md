@@ -1,8 +1,8 @@
-# Google Play Store Listing — Asteroids Neon
+# Google Play Store Listing — Neon Asteroids
 
 ## App Details
 
-- **App name:** Asteroids Neon
+- **App name:** Neon Asteroids
 - **Developer:** Delfour.co
 - **Category:** Games > Arcade
 - **Content rating:** Everyone
@@ -19,7 +19,7 @@ Neon arcade shooter — blast asteroids, dodge UFOs, chase high scores!
 ```
 Blast through waves of asteroids in this neon-styled arcade space shooter!
 
-Asteroids Neon is a modern take on the classic arcade game, built for mobile with smooth touch controls. Pilot your ship through increasingly dangerous waves of asteroids and hostile UFOs.
+Neon Asteroids is a modern take on the classic arcade game, built for mobile with smooth touch controls. Pilot your ship through increasingly dangerous waves of asteroids and hostile UFOs.
 
 FEATURES:
 
@@ -39,7 +39,7 @@ HOW TO PLAY:
 
 Use the joystick to steer your ship. Tap the fire button to shoot. Destroy asteroids to score points and advance through waves. Collect power-ups dropped by destroyed UFOs. Build combos by chaining rapid kills. Survive as long as you can and climb the leaderboard!
 
-Asteroids Neon is 100% free with no in-app purchases, no ads, and no data collection. Just pure arcade action.
+Neon Asteroids is 100% free with no in-app purchases, no ads, and no data collection. Just pure arcade action.
 ```
 
 ## Required Assets Checklist

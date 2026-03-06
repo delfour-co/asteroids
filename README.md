@@ -1,4 +1,4 @@
-# Asteroids Neon
+# Neon Asteroids
 
 A neon-themed arcade shooter built with Flutter and the Flame game engine. Pilot your ship through waves of asteroids, dodge UFOs, collect power-ups, and chase the high score.
 

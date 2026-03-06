@@ -21,6 +21,7 @@ class EffectsManager extends Component {
   late final void Function(BossDefeatedEvent) _bossListener;
   late final void Function(ScorePopupEvent) _scorePopupListener;
   late final void Function(SpaceDebrisDestroyedEvent) _debrisListener;
+  late final void Function(PerfectKillEvent) _perfectKillListener;
 
   @override
   Future<void> onLoad() async {
@@ -30,12 +31,14 @@ class EffectsManager extends Component {
     _bossListener = _onBossDefeated;
     _scorePopupListener = _onScorePopup;
     _debrisListener = _onDebrisDestroyed;
+    _perfectKillListener = _onPerfectKill;
     eventBus.on<AsteroidDestroyedEvent>(_asteroidListener);
     eventBus.on<ShipDestroyedEvent>(_shipListener);
     eventBus.on<UfoDestroyedEvent>(_ufoListener);
     eventBus.on<BossDefeatedEvent>(_bossListener);
     eventBus.on<ScorePopupEvent>(_scorePopupListener);
     eventBus.on<SpaceDebrisDestroyedEvent>(_debrisListener);
+    eventBus.on<PerfectKillEvent>(_perfectKillListener);
   }
 
   @override
@@ -46,6 +49,7 @@ class EffectsManager extends Component {
     eventBus.off<BossDefeatedEvent>(_bossListener);
     eventBus.off<ScorePopupEvent>(_scorePopupListener);
     eventBus.off<SpaceDebrisDestroyedEvent>(_debrisListener);
+    eventBus.off<PerfectKillEvent>(_perfectKillListener);
     super.onRemove();
   }
 
@@ -93,6 +97,22 @@ class EffectsManager extends Component {
     }
 
     eventBus.emit(ScreenShakeEvent(shakeIntensity));
+
+    // Perfect kill check — close-range destruction
+    _checkPerfectKill(event.position, event.asteroidSize.points);
+  }
+
+  void _checkPerfectKill(Vector2 destroyPos, int basePoints) {
+    final ships = parent?.children.whereType<Ship>();
+    if (ships == null || ships.isEmpty) return;
+    final shipPos = ships.first.position;
+    final dist = destroyPos.distanceTo(shipPos);
+    if (dist <= GameConfig.perfectKillRange) {
+      eventBus.emit(PerfectKillEvent(
+        destroyPos,
+        basePoints * GameConfig.perfectKillMultiplier,
+      ));
+    }
   }
 
   void _onUfoDestroyed(UfoDestroyedEvent event) {
@@ -178,6 +198,16 @@ class EffectsManager extends Component {
     add(ScorePopup(
       points: event.points,
       multiplier: event.multiplier,
+    )..position = event.position.clone());
+  }
+
+  void _onPerfectKill(PerfectKillEvent event) {
+    // Golden "PERFECT" popup
+    add(ScorePopup(
+      points: event.points,
+      multiplier: 1,
+      label: 'PERFECT',
+      color: const Color(0xFFFFCC00),
     )..position = event.position.clone());
   }
 }

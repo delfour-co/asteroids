@@ -3,9 +3,12 @@ import 'dart:math';
 import 'package:flame/components.dart';
 
 import '../core/event_bus.dart';
+import '../core/game_config.dart';
 import '../core/game_state.dart';
 import '../enemies/ufo_events.dart';
 import 'asteroid.dart';
+import 'explosive_asteroid.dart';
+import 'magnetic_asteroid.dart';
 
 /// Manages asteroid spawning, splitting, and lifecycle.
 ///
@@ -49,7 +52,10 @@ class AsteroidManager extends Component with HasGameReference {
     if (_gameOver || !_waveActive) return;
 
     // Check if all asteroids are destroyed — spawn new wave
-    if (children.whereType<Asteroid>().isEmpty) {
+    final hasAsteroids = children.whereType<Asteroid>().isNotEmpty ||
+        children.whereType<ExplosiveAsteroid>().isNotEmpty ||
+        children.whereType<MagneticAsteroid>().isNotEmpty;
+    if (!hasAsteroids) {
       _waveActive = false;
       // Small delay before next wave
       Future.delayed(const Duration(seconds: 2), () {
@@ -71,7 +77,16 @@ class AsteroidManager extends Component with HasGameReference {
     final speedMultiplier = 1.0 + sqrt(_wave.toDouble()) * 0.15;
 
     for (int i = 0; i < count; i++) {
-      final asteroid = Asteroid(asteroidSize: AsteroidSize.large);
+      // Randomly spawn special asteroid types based on wave
+      final PositionComponent asteroid;
+      final roll = _random.nextDouble();
+      if (_wave >= GameConfig.magneticMinWave && roll < 0.12) {
+        asteroid = MagneticAsteroid(asteroidSize: AsteroidSize.large);
+      } else if (_wave >= GameConfig.explosiveMinWave && roll < 0.20) {
+        asteroid = ExplosiveAsteroid(asteroidSize: AsteroidSize.large);
+      } else {
+        asteroid = Asteroid(asteroidSize: AsteroidSize.large);
+      }
 
       // Spawn on screen edges to avoid spawning on ship
       final edge = _random.nextInt(4);
@@ -96,7 +111,14 @@ class AsteroidManager extends Component with HasGameReference {
       // Random velocity towards center-ish area (scaled by wave)
       final speed = (30.0 + _random.nextDouble() * 50.0) * speedMultiplier;
       final angle = _random.nextDouble() * 2 * pi;
-      asteroid.setVelocity(Vector2(cos(angle) * speed, sin(angle) * speed));
+      final vel = Vector2(cos(angle) * speed, sin(angle) * speed);
+      if (asteroid is Asteroid) {
+        asteroid.setVelocity(vel);
+      } else if (asteroid is ExplosiveAsteroid) {
+        asteroid.setVelocity(vel);
+      } else if (asteroid is MagneticAsteroid) {
+        asteroid.setVelocity(vel);
+      }
 
       add(asteroid);
     }

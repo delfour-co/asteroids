@@ -15,11 +15,11 @@ epics: '_bmad-output/epics.md'
 brief: '_bmad-output/game-brief.md'
 ---
 
-# Game Architecture — Asteroids Neon
+# Game Architecture — Neon Asteroids
 
 ## Executive Summary
 
-**Asteroids Neon** architecture is designed for **Flutter + Flame Engine v1.35.1** (Dart) targeting **Android** (Google Play Store).
+**Neon Asteroids** architecture is designed for **Flutter + Flame Engine v1.35.1** (Dart) targeting **Android** (Google Play Store).
 
 **Key Architectural Decisions:**
 
@@ -45,7 +45,7 @@ brief: '_bmad-output/game-brief.md'
 
 ### Game Overview
 
-**Asteroids Neon** — Shooter arcade néon qui réinvente le classique Asteroids dans un univers stellaire contemplatif. Infinite run par vagues avec narration fragmentée et dash fantomatique signature.
+**Neon Asteroids** — Shooter arcade néon qui réinvente le classique Asteroids dans un univers stellaire contemplatif. Infinite run par vagues avec narration fragmentée et dash fantomatique signature.
 
 ### Technical Scope
 

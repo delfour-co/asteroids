@@ -1,4 +1,4 @@
-Asteroids Neon is a neon-styled arcade shooter inspired by the classic Asteroids.
+Neon Asteroids is a neon-styled arcade shooter inspired by the classic Asteroids.
 
 Pilot your spaceship through asteroid fields, face waves of UFO enemies, and collect power-ups to survive as long as possible.
 

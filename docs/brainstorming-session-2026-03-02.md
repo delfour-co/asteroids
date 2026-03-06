@@ -25,7 +25,7 @@ status: 'complete'
 
 ---
 
-## Concept: Asteroids Neon
+## Concept: Neon Asteroids
 
 **Pitch:** Un remake moderne d'Asteroids en esthétique néon cyberpunk. Le dernier survivant de la Terre se réveille d'un cryo-sommeil dans un espace stellaire magnifique et dangereux. Sessions arcade hypnotiques avec narration fragmentée qui se révèle au fil des runs.
 
@@ -218,7 +218,7 @@ status: 'complete'
 
 This brainstorming session generated:
 
-- 1 fully developed game concept (Asteroids Neon)
+- 1 fully developed game concept (Neon Asteroids)
 - 12 game design domains explored
 - 7 domains identified for future exploration
 

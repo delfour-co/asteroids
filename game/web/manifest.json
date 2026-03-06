@@ -1,6 +1,6 @@
 {
-    "name": "asteroids_neon",
-    "short_name": "asteroids_neon",
+    "name": "Neon Asteroids",
+    "short_name": "Neon Asteroids",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

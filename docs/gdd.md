@@ -14,10 +14,10 @@ project_name: 'mobilegame--asteroids'
 user_name: 'Kevin'
 date: '2026-03-02'
 game_type: 'shooter'
-game_name: 'Asteroids Neon'
+game_name: 'Neon Asteroids'
 ---
 
-# Asteroids Neon - Game Design Document
+# Neon Asteroids - Game Design Document
 
 **Author:** Kevin
 **Game Type:** Shooter (arcade)
@@ -29,11 +29,11 @@ game_name: 'Asteroids Neon'
 
 ### Game Name
 
-Asteroids Neon
+Neon Asteroids
 
 ### Core Concept
 
-Asteroids Neon est un shooter arcade néon qui réinvente le classique Asteroids dans un univers stellaire contemplatif. Le dernier survivant de la Terre se réveille d'un cryo-sommeil pour découvrir que l'humanité a disparu. Seul dans un espace magnifique et dangereux, il survit vague après vague contre des astéroïdes et des UFOs mystérieux.
+Neon Asteroids est un shooter arcade néon qui réinvente le classique Asteroids dans un univers stellaire contemplatif. Le dernier survivant de la Terre se réveille d'un cryo-sommeil pour découvrir que l'humanité a disparu. Seul dans un espace magnifique et dangereux, il survit vague après vague contre des astéroïdes et des UFOs mystérieux.
 
 Le jeu mêle la pureté du gameplay arcade original — tirer, esquiver, détruire — à des mécaniques modernes : un dash fantomatique signature permettant de traverser les astéroïdes, un système d'épaves à récupérer sous pression, et une narration fragmentée qui se dévoile run après run à travers un terminal rétro.
 
@@ -110,17 +110,17 @@ Mixte — certains connaissent le classique Asteroids (nostalgiques), d'autres d
 
 ### Project Goals
 
-1. **Publication** — Publier Asteroids Neon sur le Google Play Store, jouable et fonctionnel
+1. **Publication** — Publier Neon Asteroids sur le Google Play Store, jouable et fonctionnel
 2. **Exemplarité pédagogique** — Produire un code propre, documenté et structuré servant d'exemple concret pour des jeunes en reconversion professionnelle dans le développement de jeux
 3. **Vision intergénérationnelle** — Prouver qu'un gameplay intemporel n'a besoin que d'un écrin moderne pour toucher toutes les générations — la nostalgie des uns devient l'émerveillement des autres
 
 ### Background and Rationale
 
-Asteroids Neon naît d'une passion personnelle : Kevin, développeur né en 1982, a grandi avec les jeux d'arcade qui ont défini une génération. Ce projet est à la fois un hommage à ces classiques et un véhicule pédagogique — démontrer qu'un solo dev peut livrer un jeu mobile complet avec Flutter + Flame, des outils gratuits et open source, en partant d'un concept simple et en l'enrichissant méthodiquement. Le jeu est gratuit, sans enjeu commercial, mais avec une mission : inspirer et former.
+Neon Asteroids naît d'une passion personnelle : Kevin, développeur né en 1982, a grandi avec les jeux d'arcade qui ont défini une génération. Ce projet est à la fois un hommage à ces classiques et un véhicule pédagogique — démontrer qu'un solo dev peut livrer un jeu mobile complet avec Flutter + Flame, des outils gratuits et open source, en partant d'un concept simple et en l'enrichissant méthodiquement. Le jeu est gratuit, sans enjeu commercial, mais avec une mission : inspirer et former.
 
 ### Competitive Positioning
 
-Jeu gratuit, projet passion et pédagogique. Asteroids Neon ne cherche pas à concurrencer commercialement mais à se démarquer par son identité : le seul remake d'Asteroids qui transforme un classique arcade en expérience contemplative et narrative.
+Jeu gratuit, projet passion et pédagogique. Neon Asteroids ne cherche pas à concurrencer commercialement mais à se démarquer par son identité : le seul remake d'Asteroids qui transforme un classique arcade en expérience contemplative et narrative.
 
 ---
 
@@ -181,7 +181,7 @@ Débuter une vague → Survivre et détruire → Collecter épaves (risque/réco
 
 #### Victory Conditions
 
-Pas de "win state" définitif — Asteroids Neon est un infinite run. Le succès se mesure par :
+Pas de "win state" définitif — Neon Asteroids est un infinite run. Le succès se mesure par :
 - **Score** — Battre son high score personnel (leaderboard local)
 - **Survie** — Atteindre la vague la plus haute possible
 - **Narration** — Débloquer tous les fragments de mémoire pour reconstituer l'histoire complète
@@ -254,7 +254,7 @@ Pas de "win state" définitif — Asteroids Neon est un infinite run. Le succès
 
 ### Mechanic Progression
 
-Les mécaniques ne s'upgradent pas de manière permanente — Asteroids Neon est un infinite run arcade. La progression passe par :
+Les mécaniques ne s'upgradent pas de manière permanente — Neon Asteroids est un infinite run arcade. La progression passe par :
 
 - **Upgrades temporaires (run only)** — Trouvés dans les épaves : tir triple, laser, missiles, bouclier temporaire, extra vie, vitesse, dash infini temporaire
 - **Maîtrise du joueur** — Le joueur s'améliore naturellement : meilleur timing de dash, lecture des patterns d'astéroïdes, gestion du risque épaves
@@ -381,7 +381,7 @@ Les mécaniques ne s'upgradent pas de manière permanente — Asteroids Neon est
 
 ### Multiplayer Considerations
 
-Non applicable — Asteroids Neon est une expérience solo uniquement. Pas de multijoueur prévu.
+Non applicable — Neon Asteroids est une expérience solo uniquement. Pas de multijoueur prévu.
 
 ---
 
@@ -389,7 +389,7 @@ Non applicable — Asteroids Neon est une expérience solo uniquement. Pas de mu
 
 ### Player Progression
 
-Asteroids Neon combine trois types de progression complémentaires :
+Neon Asteroids combine trois types de progression complémentaires :
 
 #### Progression par Maîtrise (Skill)
 - **Nature :** Le joueur s'améliore naturellement au fil des runs
@@ -487,7 +487,7 @@ Pas d'économie in-game au lancement. Les déblocages se font par milestones uni
 
 **Endless (Infinite Run par Vagues)**
 
-Asteroids Neon n'a pas de niveaux distincts. Le jeu est un run infini structuré par des vagues successives dans une arène fixe. Chaque run est unique grâce à la variation procédurale.
+Neon Asteroids n'a pas de niveaux distincts. Le jeu est un run infini structuré par des vagues successives dans une arène fixe. Chaque run est unique grâce à la variation procédurale.
 
 ### Level Types
 
@@ -847,7 +847,7 @@ Epic 1: Fondations
 
 ## Document Information
 
-**Document :** Asteroids Neon - Game Design Document
+**Document :** Neon Asteroids - Game Design Document
 **Version :** 1.0
 **Created :** 2026-03-02
 **Author :** Kevin

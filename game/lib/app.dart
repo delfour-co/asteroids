@@ -5,9 +5,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'asteroids/asteroid_manager.dart';
 import 'background/background_layer.dart';
+import 'background/shooting_star.dart';
 import 'core/combo_manager.dart';
+import 'core/cosmetics_manager.dart';
 import 'core/game_config.dart';
 import 'debris/space_debris_manager.dart';
+import 'effects/death_sequence.dart';
 import 'effects/effects_manager.dart';
 import 'audio/audio_manager.dart';
 import 'effects/flash_effect.dart';
@@ -20,9 +23,11 @@ import 'powerups/powerup_manager.dart';
 import 'core/arcade_events.dart';
 import 'core/leaderboard.dart';
 import 'hud/countdown_overlay.dart';
+import 'hud/cosmetics_overlay.dart';
 import 'hud/credits_overlay.dart';
 import 'hud/hud_layer.dart';
 import 'hud/initial_entry_overlay.dart';
+import 'hud/journal_overlay.dart';
 import 'hud/leaderboard_overlay.dart';
 import 'hud/menu_button.dart';
 import 'hud/pause_button.dart';
@@ -33,6 +38,9 @@ import 'input/action_buttons.dart';
 import 'input/dash_button.dart';
 import 'input/fire_button.dart';
 import 'input/joystick.dart';
+import 'narration/fragment_data.dart';
+import 'narration/fragment_manager.dart';
+import 'narration/fragment_overlay.dart';
 import 'projectiles/projectile.dart';
 import 'projectiles/projectile_manager.dart';
 import 'ship/ship.dart';
@@ -82,7 +90,7 @@ class GameLayer extends Component with HasGameReference<AsteroidsNeonGame> {
 
   Future<void> _spawnGameplay() async {
     final gameSize = game.size;
-    final ship = Ship()
+    final ship = Ship(color: game.cosmeticsManager.selectedColor)
       ..position = Vector2(gameSize.x / 2, gameSize.y / 2);
     await add(ship);
     await add(ProjectileManager());
@@ -97,10 +105,13 @@ class GameLayer extends Component with HasGameReference<AsteroidsNeonGame> {
   void _onShipDestroyed(ShipDestroyedEvent event) {
     if (_gameOver) return;
 
+    // Trigger death sequence visual
+    eventBus.emit(DeathSlowMoEvent(event.position));
+
     Future.delayed(const Duration(seconds: 2), () {
       if (isMounted && !_gameOver) {
         final gameSize = game.size;
-        final newShip = Ship()
+        final newShip = Ship(color: game.cosmeticsManager.selectedColor)
           ..position = Vector2(gameSize.x / 2, gameSize.y / 2);
         add(newShip);
       }
@@ -185,12 +196,15 @@ class RestartOverlay extends PositionComponent
 class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
   late final GameState gameState;
   late final LeaderboardManager leaderboardManager;
+  late final FragmentManager fragmentManager;
+  late final CosmeticsManager cosmeticsManager;
   bool _isPaused = false;
 
   late void Function(StartGameEvent) _startListener;
   late final void Function(ReturnToMenuEvent) _menuListener;
   late final void Function(PauseEvent) _gamePauseListener;
   late final void Function(ResumeEvent) _gameResumeListener;
+  late final void Function(FragmentUnlockedEvent) _fragmentListener;
 
   // Refs to gameplay components for cleanup on return-to-menu
   RestartOverlay? _restartOverlay;
@@ -212,18 +226,29 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     leaderboardManager = LeaderboardManager();
     await leaderboardManager.init();
 
+    fragmentManager = FragmentManager();
+    await fragmentManager.init();
+
+    cosmeticsManager = CosmeticsManager();
+    await cosmeticsManager.init();
+
     await add(BackgroundLayer());
+    await add(ShootingStarManager());
     await add(ScreenShakeManager());
     await add(FlashEffect());
+    await add(DeathSequence());
     await add(AudioManager());
     await add(WaveRingEffect());
+    await add(fragmentManager);
 
     _menuListener = (_) => _returnToMenu();
     _gamePauseListener = (_) => _isPaused = true;
     _gameResumeListener = (_) => _isPaused = false;
+    _fragmentListener = _onFragmentUnlocked;
     eventBus.on<ReturnToMenuEvent>(_menuListener);
     eventBus.on<PauseEvent>(_gamePauseListener);
     eventBus.on<ResumeEvent>(_gameResumeListener);
+    eventBus.on<FragmentUnlockedEvent>(_fragmentListener);
 
     // Show title screen
     await add(TitleScreen());
@@ -233,8 +258,20 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     eventBus.on<StartGameEvent>(_startListener);
   }
 
+  void _onFragmentUnlocked(FragmentUnlockedEvent event) {
+    // Show fragment overlay
+    final fragment = FragmentData.fragments[event.fragmentIndex];
+    add(FragmentOverlay(
+      fragment: fragment,
+      onDismiss: () {},
+    ));
+  }
+
   Future<void> _startGame() async {
     eventBus.off<StartGameEvent>(_startListener);
+
+    // Check wave unlocks for cosmetics
+    cosmeticsManager.checkWaveUnlocks(0);
 
     // Add gameplay components
     _restartOverlay = RestartOverlay();
@@ -297,6 +334,9 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     children.whereType<LeaderboardOverlay>().toList().forEach((c) => c.removeFromParent());
     children.whereType<CreditsOverlay>().toList().forEach((c) => c.removeFromParent());
     children.whereType<TutorialOverlay>().toList().forEach((c) => c.removeFromParent());
+    children.whereType<FragmentOverlay>().toList().forEach((c) => c.removeFromParent());
+    children.whereType<JournalOverlay>().toList().forEach((c) => c.removeFromParent());
+    children.whereType<CosmeticsOverlay>().toList().forEach((c) => c.removeFromParent());
 
     _restartOverlay = null;
     _gameLayer = null;
@@ -331,6 +371,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     eventBus.off<ReturnToMenuEvent>(_menuListener);
     eventBus.off<PauseEvent>(_gamePauseListener);
     eventBus.off<ResumeEvent>(_gameResumeListener);
+    eventBus.off<FragmentUnlockedEvent>(_fragmentListener);
     gameState.dispose();
     super.onRemove();
   }

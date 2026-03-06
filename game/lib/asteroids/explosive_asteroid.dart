@@ -8,45 +8,36 @@ import '../core/arcade_events.dart';
 import '../core/event_bus.dart';
 import '../core/game_config.dart';
 import '../effects/neon_renderer.dart';
+import 'asteroid.dart';
 import 'asteroid_generator.dart';
 
-/// Asteroid sizes with associated radius and points.
-enum AsteroidSize {
-  large(radius: 40.0, points: 20),
-  medium(radius: 22.0, points: 50),
-  small(radius: 12.0, points: 100);
-
-  final double radius;
-  final int points;
-  const AsteroidSize({required this.radius, required this.points});
-}
-
-/// Event emitted when an asteroid is destroyed.
-class AsteroidDestroyedEvent {
-  final Vector2 position;
-  final AsteroidSize asteroidSize;
-  final bool byDash;
-  AsteroidDestroyedEvent(this.position, this.asteroidSize,
-      {this.byDash = false});
-}
-
-/// A procedurally generated asteroid with neon rendering.
-class Asteroid extends PositionComponent
+/// An explosive asteroid that triggers a knockback blast on destruction.
+///
+/// Visually distinguished by an orange-red neon color and a pulsing
+/// inner glow. When destroyed, emits a [KnockbackEvent] that pushes
+/// nearby asteroids away, plus an extra-strong screen shake.
+///
+/// Only spawned for large and medium sizes — small fragments use
+/// regular [Asteroid].
+class ExplosiveAsteroid extends PositionComponent
     with HasGameReference, CollisionCallbacks {
   final AsteroidSize asteroidSize;
   final Vector2 _velocity = Vector2.zero();
   final double _rotationSpeed;
 
-  // Pre-allocated rendering
+  // Rendering
   late final Path _shape;
   late final Paint _glowPaint;
   late final Paint _solidPaint;
+  late final Paint _pulseGlowPaint;
+  late final Paint _pulseSolidPaint;
 
-  late final void Function(KnockbackEvent) _knockbackListener;
+  // Pulse tracking
+  double _elapsed = 0.0;
 
   static final Random _random = Random();
 
-  Asteroid({
+  ExplosiveAsteroid({
     required this.asteroidSize,
     Vector2? velocity,
   }) : _rotationSpeed = (_random.nextDouble() - 0.5) * 2.0 {
@@ -67,8 +58,10 @@ class Asteroid extends PositionComponent
   Future<void> onLoad() async {
     _shape = AsteroidGenerator.generateShape(asteroidSize.radius);
 
+    const color = GameConfig.explosiveAsteroidColor;
+
     final paints = NeonRenderer.createNeonPaints(
-      color: const Color(0xFFFF00FF), // Magenta for asteroids
+      color: color,
       glowRadius: 6.0,
       glowOpacity: 0.5,
       strokeWidth: 1.5,
@@ -76,31 +69,24 @@ class Asteroid extends PositionComponent
     _glowPaint = paints.glow;
     _solidPaint = paints.solid;
 
-    // Add hitbox for collision detection
+    // Inner pulse circle paints (filled, not stroked)
+    _pulseGlowPaint = Paint()
+      ..color = color.withValues(alpha: 0.3)
+      ..style = PaintingStyle.fill
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8.0);
+
+    _pulseSolidPaint = Paint()
+      ..color = color.withValues(alpha: 0.15)
+      ..style = PaintingStyle.fill;
+
     await add(CircleHitbox(radius: asteroidSize.radius));
-
-    // Listen for knockback events (explosive asteroid blasts)
-    _knockbackListener = _onKnockback;
-    eventBus.on<KnockbackEvent>(_knockbackListener);
-  }
-
-  @override
-  void onRemove() {
-    eventBus.off<KnockbackEvent>(_knockbackListener);
-    super.onRemove();
-  }
-
-  void _onKnockback(KnockbackEvent event) {
-    final dist = position.distanceTo(event.origin);
-    if (dist < event.radius && dist > 1.0) {
-      final direction = (position - event.origin).normalized();
-      _velocity.add(direction * event.force);
-    }
   }
 
   @override
   void update(double dt) {
     super.update(dt);
+
+    _elapsed += dt;
 
     // Move (affected by slow-mo)
     final sm = GameConfig.enemySpeedMultiplier;
@@ -131,13 +117,25 @@ class Asteroid extends PositionComponent
     }
   }
 
-  /// Destroy this asteroid, emitting event and splitting if needed.
+  /// Destroy this asteroid, emitting knockback blast and events.
   void destroy({bool byDash = false}) {
+    // Knockback blast — push nearby asteroids away
+    eventBus.emit(KnockbackEvent(
+      position.clone(),
+      GameConfig.explosiveBlastRadius,
+      GameConfig.knockbackForce,
+    ));
+
+    // Extra-strong screen shake for explosive blast
+    eventBus.emit(ScreenShakeEvent(GameConfig.shakeIntensityLarge));
+
+    // Standard asteroid destroyed event (scoring, splitting, embers)
     eventBus.emit(AsteroidDestroyedEvent(
       position.clone(),
       asteroidSize,
       byDash: byDash,
     ));
+
     removeFromParent();
   }
 
@@ -145,7 +143,19 @@ class Asteroid extends PositionComponent
   void render(Canvas canvas) {
     canvas.save();
     canvas.translate(size.x / 2, size.y / 2);
+
+    // Pulsing inner glow — distinguishes from normal asteroids
+    final pulse = (sin(_elapsed * 4.0) + 1.0) / 2.0; // 0..1
+    final pulseRadius = asteroidSize.radius * (0.3 + pulse * 0.25);
+
+    _pulseGlowPaint.color = GameConfig.explosiveAsteroidColor
+        .withValues(alpha: 0.15 + pulse * 0.2);
+    canvas.drawCircle(Offset.zero, pulseRadius, _pulseGlowPaint);
+    canvas.drawCircle(Offset.zero, pulseRadius * 0.6, _pulseSolidPaint);
+
+    // Neon asteroid outline
     NeonRenderer.drawNeonPath(canvas, _shape, _glowPaint, _solidPaint);
+
     canvas.restore();
   }
 }

@@ -41,7 +41,7 @@ class CreditsOverlay extends PositionComponent
     _drawText(canvas, 'CREDITS', cx, 100, 40,
         GameConfig.arcadeYellow, FontWeight.bold);
 
-    _drawText(canvas, 'ASTEROIDS NEON', cx, 180, 28,
+    _drawText(canvas, 'NEON ASTEROIDS', cx, 180, 28,
         GameConfig.shipColor, FontWeight.bold);
 
     _drawText(canvas, 'Made with', cx, 240, 20,

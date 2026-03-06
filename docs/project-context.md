@@ -6,7 +6,7 @@ sections_completed: ['technology_stack', 'engine_rules', 'performance_rules', 'c
 status: 'complete'
 ---
 
-# Project Context for AI Agents — Asteroids Neon
+# Project Context for AI Agents — Neon Asteroids
 
 _This file contains critical rules and patterns that AI agents must follow when implementing game code in this project. Focus on unobvious details that agents might otherwise miss._
 

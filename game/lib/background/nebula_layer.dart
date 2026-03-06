@@ -4,16 +4,24 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 
+import '../core/event_bus.dart';
+import '../enemies/ufo_events.dart';
+
 /// Galaxy background layer inspired by Antennae Galaxies (NGC 4038/4039).
 ///
 /// All geometry and paints are pre-computed in onLoad().
-/// Zero allocations in render().
+/// Wave overlay paint evolves with progression.
 class NebulaLayer extends PositionComponent with HasGameReference<FlameGame> {
   // Pre-computed draw commands
   final List<_NebulaBlob> _dustClouds = [];
   final List<_TidalTail> _tidalTails = [];
   final List<_NebulaBlob> _cores = [];
   final List<_StarDot> _starClusters = [];
+
+  // Wave-based evolution
+  late final void Function(WaveStartedEvent) _waveListener;
+  late final Paint _waveOverlayPaint;
+  double _waveIntensity = 0.0;
 
   @override
   Future<void> onLoad() async {
@@ -81,6 +89,14 @@ class NebulaLayer extends PositionComponent with HasGameReference<FlameGame> {
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 25),
     ));
 
+    // Wave overlay paint — subtle color tint that evolves
+    _waveOverlayPaint = Paint()
+      ..color = const Color.fromRGBO(0, 0, 0, 0)
+      ..style = PaintingStyle.fill;
+
+    _waveListener = _onWaveStarted;
+    eventBus.on<WaveStartedEvent>(_waveListener);
+
     // Layer 4: Star clusters (25 dots) — cyan, higher opacity small dots
     for (int i = 0; i < 25; i++) {
       // Cluster around the two cores with some spread
@@ -104,6 +120,23 @@ class NebulaLayer extends PositionComponent with HasGameReference<FlameGame> {
   }
 
   @override
+  void onRemove() {
+    eventBus.off<WaveStartedEvent>(_waveListener);
+    super.onRemove();
+  }
+
+  void _onWaveStarted(WaveStartedEvent event) {
+    // Gradually increase nebula intensity over 50 waves (0.0 -> 1.0)
+    _waveIntensity = (event.wave / 50.0).clamp(0.0, 1.0);
+    // Shift overlay from transparent to deep violet/rose tint
+    final opacity = _waveIntensity * 0.04;
+    final r = (80 + _waveIntensity * 100).toInt();
+    final g = (20 + _waveIntensity * 20).toInt();
+    final b = (100 + _waveIntensity * 60).toInt();
+    _waveOverlayPaint.color = Color.fromRGBO(r, g, b, opacity);
+  }
+
+  @override
   void render(Canvas canvas) {
     // Layer 1: Dust clouds
     for (final blob in _dustClouds) {
@@ -123,6 +156,14 @@ class NebulaLayer extends PositionComponent with HasGameReference<FlameGame> {
     // Layer 4: Star clusters
     for (final star in _starClusters) {
       canvas.drawCircle(star.center, star.radius, star.paint);
+    }
+
+    // Layer 5: Wave evolution overlay
+    if (_waveIntensity > 0) {
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, size.x, size.y),
+        _waveOverlayPaint,
+      );
     }
   }
 }

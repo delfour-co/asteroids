@@ -25,6 +25,19 @@ class ChangelogOverlay extends PositionComponent
   static const _leftMargin = 32.0;
 
   static const List<_ChangelogVersion> _versions = [
+    _ChangelogVersion('v1.5.0', 'Narration & Beyond', [
+      '+ 10 narrative fragments (unlock every 10 waves)',
+      '+ Ship Log journal on title screen',
+      '+ "SIGNAL PERDU" death sequence',
+      '+ Shooting stars background',
+      '+ Explosive asteroids (wave 5+)',
+      '+ Magnetic asteroids (wave 8+)',
+      '+ Perfect kill bonus (close range)',
+      '+ Knockback on explosive blasts',
+      '+ Ship color cosmetics (unlock via waves)',
+      '+ Evolving nebula background',
+      '* Renamed to Neon Asteroids',
+    ]),
     _ChangelogVersion('v1.4.0', 'Polish', [
       '+ Interactive tutorial on first launch',
       '+ Neon ring wave transition (wave 2+)',

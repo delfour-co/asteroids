@@ -1,4 +1,4 @@
-# Asteroids Neon - Development Epics
+# Neon Asteroids - Development Epics
 
 ## Epic Overview
 

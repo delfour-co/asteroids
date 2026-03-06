@@ -66,6 +66,9 @@ class Ship extends PositionComponent
   // Countdown blocking
   bool _countdownActive = false;
 
+  // Ship color (from cosmetics)
+  final Color _color;
+
   // Event listener references for cleanup
   late final void Function(JoystickDirectionEvent) _joystickListener;
   late final void Function(ThrustEvent) _thrustListener;
@@ -74,7 +77,7 @@ class Ship extends PositionComponent
   late final void Function(CountdownStartedEvent) _countdownStartListener;
   late final void Function(CountdownFinishedEvent) _countdownEndListener;
 
-  Ship() {
+  Ship({Color? color}) : _color = color ?? GameConfig.shipColor {
     size = Vector2(_shipHalfWidth * 2, _shipHeight);
     anchor = Anchor.center;
   }
@@ -96,7 +99,7 @@ class Ship extends PositionComponent
 
     // Pre-allocate neon paints
     final paints = NeonRenderer.createNeonPaints(
-      color: GameConfig.shipColor,
+      color: _color,
       glowRadius: GameConfig.glowRadius,
       glowOpacity: GameConfig.glowOpacity,
     );
@@ -282,7 +285,7 @@ class Ship extends PositionComponent
       for (int i = 0; i < _trailPositions.length; i++) {
         final t = _trailPositions[i];
         final opacity = (1.0 - i / _maxTrailLength) * 0.5;
-        trailPaint.color = GameConfig.shipColor.withValues(alpha: opacity);
+        trailPaint.color = _color.withValues(alpha: opacity);
         final dx = t.x - position.x;
         final dy = t.y - position.y;
         canvas.save();

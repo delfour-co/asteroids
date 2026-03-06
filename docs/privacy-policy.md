@@ -1,14 +1,14 @@
-# Privacy Policy — Asteroids Neon
+# Privacy Policy — Neon Asteroids
 
 **Last updated:** March 4, 2026
 
 ## Introduction
 
-Asteroids Neon ("the Game") is developed by Kevin Delfour / Delfour.co. This privacy policy explains how the Game handles your data.
+Neon Asteroids ("the Game") is developed by Kevin Delfour / Delfour.co. This privacy policy explains how the Game handles your data.
 
 ## Data Collection
 
-**Asteroids Neon does not collect, transmit, or share any personal data.**
+**Neon Asteroids does not collect, transmit, or share any personal data.**
 
 The Game is fully offline and does not require an internet connection to function.
 

@@ -70,7 +70,7 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
 
     // Version — top right
     await add(TextComponent(
-      text: 'v1.4.0',
+      text: 'v1.5.0',
       textRenderer: TextPaint(
         style: const TextStyle(
           color: Color(0xAAFFFFFF),
@@ -178,6 +178,8 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
     _waveText.text = 'WAVE ${event.wave}';
     // Spawn big wave announcement
     add(WaveAnnouncement(wave: event.wave));
+    // Check cosmetic unlocks
+    game.cosmeticsManager.checkWaveUnlocks(event.wave);
   }
 
   void _onComboChanged(ComboChangedEvent event) {
@@ -206,11 +208,11 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
     }
 
     _gameOverText = TextComponent(
-      text: 'GAME OVER',
+      text: 'SIGNAL PERDU',
       textRenderer: TextPaint(
         style: const TextStyle(
-          color: Color(0xFFFF0066),
-          fontSize: 60,
+          color: Color(0xFF00FF66),
+          fontSize: 48,
           fontFamily: 'monospace',
           fontWeight: FontWeight.bold,
         ),

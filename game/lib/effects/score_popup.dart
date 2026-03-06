@@ -1,3 +1,5 @@
+import 'dart:ui' show Color;
+
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart' show TextStyle, FontWeight;
 
@@ -7,20 +9,27 @@ import '../core/game_config.dart';
 class ScorePopup extends TextComponent {
   final int points;
   final int multiplier;
+  final Color _baseColor;
   double _elapsed = 0;
 
   ScorePopup({
     required this.points,
     required this.multiplier,
-  }) : super(
-          text: multiplier > 1
-              ? '+${points * multiplier} x$multiplier'
-              : '+$points',
+    String? label,
+    Color? color,
+  })  : _baseColor = color ??
+            (multiplier > 1 ? GameConfig.comboColor : GameConfig.arcadeWhite),
+        super(
+          text: label ??
+              (multiplier > 1
+                  ? '+${points * multiplier} x$multiplier'
+                  : '+$points'),
           textRenderer: TextPaint(
             style: TextStyle(
-              color: multiplier > 1
-                  ? GameConfig.comboColor
-                  : GameConfig.arcadeWhite,
+              color: color ??
+                  (multiplier > 1
+                      ? GameConfig.comboColor
+                      : GameConfig.arcadeWhite),
               fontSize: GameConfig.scorePopupFontSize,
               fontFamily: 'monospace',
               fontWeight: FontWeight.bold,
@@ -40,12 +49,9 @@ class ScorePopup extends TextComponent {
     // Fade out
     final progress = _elapsed / GameConfig.scorePopupDuration;
     final opacity = (1.0 - progress).clamp(0.0, 1.0);
-    final color = multiplier > 1
-        ? GameConfig.comboColor
-        : GameConfig.arcadeWhite;
     textRenderer = TextPaint(
       style: TextStyle(
-        color: color.withValues(alpha: opacity),
+        color: _baseColor.withValues(alpha: opacity),
         fontSize: GameConfig.scorePopupFontSize,
         fontFamily: 'monospace',
         fontWeight: FontWeight.bold,
