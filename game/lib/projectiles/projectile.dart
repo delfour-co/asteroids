@@ -5,6 +5,8 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
 import '../asteroids/asteroid.dart';
+import '../asteroids/explosive_asteroid.dart';
+import '../asteroids/magnetic_asteroid.dart';
 import '../core/game_config.dart';
 import '../effects/neon_renderer.dart';
 
@@ -58,6 +60,12 @@ class Projectile extends PositionComponent
       Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is Asteroid) {
+      other.destroy();
+      removeFromParent();
+    } else if (other is ExplosiveAsteroid) {
+      other.destroy();
+      removeFromParent();
+    } else if (other is MagneticAsteroid) {
       other.destroy();
       removeFromParent();
     }

@@ -809,10 +809,21 @@ Epic 1: Fondations
 ### Différé post-lancement
 
 - Système de crédits / achats in-app (si succès significatif)
-- Nouveaux types d'astéroïdes spéciaux (magnétiques, explosifs, division multiple)
 - Musique adaptative complexe (layers multiples synchronisés)
 - Portage sur plateformes secondaires (iOS, Desktop, Web)
 - Accessibilité (à explorer selon retours utilisateurs)
+
+### Implémenté depuis v1.0
+
+Les fonctionnalités suivantes, initialement prévues post-lancement, ont été intégrées :
+
+- **Astéroïdes spéciaux** (v1.5.0) — Explosifs (wave 5+, knockback blast) et Magnétiques (wave 8+, attirance vers le joueur)
+- **Narration fragmentée** (v1.5.0) — 11 fragments de mémoire, journal consultable, overlay in-game
+- **Cosmétiques** (v1.5.0) — 4 couleurs de vaisseau débloquables par milestones
+- **Séquence de mort** (v1.5.0) — "SIGNAL PERDU" avec scanlines et radial gradient
+- **Perfect kill** (v1.5.0) — Bonus doré pour destruction à courte portée
+- **Étoiles filantes** (v1.5.0) — Background shooting stars avec fréquence croissante
+- **Nébuleuse évolutive** (v1.5.0) — Background teinté violet/rose avec progression
 
 ---
 

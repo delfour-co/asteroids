@@ -5,6 +5,8 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
 import '../asteroids/asteroid.dart';
+import '../asteroids/explosive_asteroid.dart';
+import '../asteroids/magnetic_asteroid.dart';
 import '../core/arcade_events.dart';
 import '../core/event_bus.dart';
 import '../core/game_config.dart';
@@ -179,7 +181,16 @@ class Ship extends PositionComponent
       eventBus.emit(ShipDestroyedEvent(position.clone()));
       removeFromParent();
     } else if (other is Asteroid && _isDashing) {
-      // Destroy asteroid on dash through
+      other.destroy(byDash: true);
+    } else if (other is ExplosiveAsteroid && !_invulnerable) {
+      eventBus.emit(ShipDestroyedEvent(position.clone()));
+      removeFromParent();
+    } else if (other is ExplosiveAsteroid && _isDashing) {
+      other.destroy(byDash: true);
+    } else if (other is MagneticAsteroid && !_invulnerable) {
+      eventBus.emit(ShipDestroyedEvent(position.clone()));
+      removeFromParent();
+    } else if (other is MagneticAsteroid && _isDashing) {
       other.destroy(byDash: true);
     }
   }

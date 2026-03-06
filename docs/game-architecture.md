@@ -208,15 +208,28 @@ canvas.drawPath(shape, solidPaint); // Forme nette
 
 ```
 FlameGame (AsteroidsNeonGame)
-├── BackgroundLayer    — Ciel stellaire, étoiles
-├── GameLayer          — Vaisseau, astéroïdes, projectiles, UFOs, épaves
-│   ├── Ship
-│   ├── AsteroidManager
+├── BackgroundLayer         — Ciel stellaire, étoiles, nébuleuse évolutive
+├── ShootingStarManager     — Étoiles filantes (fréquence croissante)
+├── ScreenShakeManager      — Tremblement d'écran (survit restarts)
+├── FlashEffect             — Flash blanc (survit restarts)
+├── DeathSequence           — "SIGNAL PERDU" (priority 900, survit restarts)
+├── AudioManager            — Musique + SFX
+├── WaveRingEffect          — Anneau néon de transition entre vagues
+├── FragmentManager         — Déblocage narration (survit restarts)
+├── TitleScreen             — INSERT COIN, boutons LEADERBOARD/HISTORY/SHIP/CREDITS/CHANGELOG
+├── GameLayer               — Vaisseau, astéroïdes, projectiles, UFOs, épaves
+│   ├── Ship                — Couleur configurable via CosmeticsManager
+│   ├── AsteroidManager     — Regular + Explosive + Magnetic asteroids
 │   ├── ProjectileManager
-│   ├── UFOManager
-│   └── WreckageManager
-├── EffectsLayer       — Particules, traînées, explosions
-└── UILayer            — HUD, score, vies, jauge énergie
+│   ├── UfoManager
+│   ├── PowerUpManager
+│   ├── EffectsManager      — Explosions, embers, score popups, perfect kills
+│   ├── ComboManager
+│   └── SpaceDebrisManager  — Starlink, ISS/MIR, Tesla+Starman
+├── HudLayer                — Score, vies, vague, jauge dash, version
+├── InputLayer              — Joystick, ThrustButton, FireButton, DashButton
+├── PauseButton / PauseOverlay / MenuButton
+└── RestartOverlay          — Tap-to-restart (priority -1)
 ```
 
 ### Decision 4: Save System
@@ -473,7 +486,9 @@ asteroids_neon/
 │   │   └── dash.dart                   # Mécanique dash fantomatique + jauge
 │   │
 │   ├── asteroids/                      # Astéroïdes
-│   │   ├── asteroid.dart               # Composant astéroïde
+│   │   ├── asteroid.dart               # Composant astéroïde standard
+│   │   ├── explosive_asteroid.dart     # Astéroïde explosif (knockback blast)
+│   │   ├── magnetic_asteroid.dart      # Astéroïde magnétique (attire le joueur)
 │   │   ├── asteroid_manager.dart       # Spawn, pool, gestion du cycle de vie
 │   │   └── asteroid_generator.dart     # Génération procédurale des formes
 │   │
@@ -501,32 +516,41 @@ asteroids_neon/
 │   │
 │   ├── effects/                        # Effets visuels
 │   │   ├── neon_renderer.dart          # Rendu glow (MaskFilter.blur + double draw)
+│   │   ├── effects_manager.dart        # Orchestration explosions, embers, popups
+│   │   ├── ember_effect.dart           # Braises persistantes post-explosion
+│   │   ├── death_sequence.dart         # Séquence SIGNAL PERDU (priority 900)
+│   │   ├── flash_effect.dart           # Flash blanc plein écran
+│   │   ├── screen_shake_manager.dart   # Tremblement d'écran
+│   │   ├── wave_ring_effect.dart       # Anneau néon transition entre vagues
+│   │   ├── score_popup.dart            # Popups de score flottants
 │   │   ├── explosion.dart              # Explosions néon
-│   │   ├── trail.dart                  # Traînées lumineuses
-│   │   └── particle_pool.dart          # Pool de particules
+│   │   └── trail.dart                  # Traînées lumineuses
 │   │
 │   ├── background/                     # Ciel stellaire
 │   │   ├── starfield.dart              # Étoiles, constellations
-│   │   └── background_layer.dart       # Layer évolutif
+│   │   ├── background_layer.dart       # Layer évolutif
+│   │   ├── nebula_layer.dart           # Nébuleuse évolutive (intensité par vagues)
+│   │   └── shooting_star.dart          # Étoiles filantes aléatoires
 │   │
-│   ├── ui/                             # Interface utilisateur
-│   │   ├── hud.dart                    # Score, vies, vague, jauge dash
-│   │   ├── main_menu.dart              # Menu principal
-│   │   ├── game_over_screen.dart       # Écran SIGNAL PERDU
-│   │   ├── crash_screen.dart           # Écran défaillance critique (error handler)
-│   │   ├── controls_screen.dart        # Explication des contrôles
-│   │   ├── leaderboard_screen.dart     # Top scores locaux
-│   │   ├── journal_screen.dart         # Fragments de mémoire
-│   │   └── cosmetics_screen.dart       # Sélection déblocables
+│   ├── hud/                            # Interface utilisateur (overlays)
+│   │   ├── hud_layer.dart              # Score, vies, vague, jauge dash, version
+│   │   ├── title_screen.dart           # INSERT COIN + boutons menu
+│   │   ├── countdown_overlay.dart      # READY..GO countdown
+│   │   ├── pause_overlay.dart          # Pause menu
+│   │   ├── pause_button.dart           # Bouton pause
+│   │   ├── menu_button.dart            # Bouton retour menu
+│   │   ├── leaderboard_overlay.dart    # Top 10 scores
+│   │   ├── credits_overlay.dart        # Crédits
+│   │   ├── changelog_overlay.dart      # Changelog scrollable
+│   │   ├── journal_overlay.dart        # Journal narratif (list + detail view)
+│   │   ├── cosmetics_overlay.dart      # Sélection couleur vaisseau
+│   │   ├── tutorial_overlay.dart       # Tutoriel contrôles (premier lancement)
+│   │   └── initial_entry_overlay.dart  # Entry overlay
 │   │
-│   ├── narrative/                      # Narration
-│   │   ├── memory_fragment.dart        # Modèle de fragment
-│   │   ├── narrative_manager.dart      # Déblocage et progression
-│   │   └── terminal_display.dart       # Affichage terminal rétro
-│   │
-│   ├── progression/                    # Méta-progression
-│   │   ├── milestone_manager.dart      # Déblocages par vagues atteintes
-│   │   └── cosmetic.dart               # Modèle cosmétique (skins, traînées...)
+│   ├── narration/                      # Narration
+│   │   ├── fragment_data.dart          # Données des 11 fragments narratifs
+│   │   ├── fragment_manager.dart       # Déblocage et progression (Component)
+│   │   └── fragment_overlay.dart       # Affichage in-game d'un fragment débloqué
 │   │
 │   ├── audio/                          # Audio (post-MVP)
 │   │   ├── audio_manager.dart          # Lecture musique et SFX

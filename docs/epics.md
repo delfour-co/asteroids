@@ -327,7 +327,7 @@ Le jeu a un menu principal, un HUD fonctionnel, un leaderboard local, et un écr
 
 ---
 
-## Epic 8: Narration & Progression
+## Epic 8: Narration & Progression (COMPLETE - v1.5.0)
 
 ### Goal
 
@@ -374,7 +374,7 @@ Le joueur débloque des fragments de mémoire au fil des runs, peut les consulte
 
 ---
 
-## Epic 9: Polish Visuel
+## Epic 9: Polish Visuel (COMPLETE - v1.4.0 + v1.5.0)
 
 ### Goal
 
@@ -391,10 +391,9 @@ Le joueur débloque des fragments de mémoire au fil des runs, peut les consulte
 - Destructions "parfaites" avec bonus visuel
 - Débris qui repoussent les astéroïdes proches (réactions en chaîne)
 - Optimisation performance : profiling GPU, culling, budget particules
+- Astéroïdes spéciaux : explosifs (wave 5+) et magnétiques (wave 8+)
 
-**Excludes:**
-- Nouveaux types d'astéroïdes (magnétiques, explosifs — post-launch)
-- Audio
+**Status:** All items implemented across v1.4.0 (tutorial, wave ring, embers) and v1.5.0 (special asteroids, perfect kills, knockback, shooting stars, evolving nebula, death sequence).
 
 ### Dependencies
 
