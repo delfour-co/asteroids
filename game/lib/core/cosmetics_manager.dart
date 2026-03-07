@@ -11,6 +11,9 @@ class CosmeticsManager {
   List<int> _unlockedIndices = [0]; // Cyan always unlocked
   int _selectedIndex = 0;
 
+  /// Called when a new color is unlocked (for achievement tracking).
+  void Function()? onColorUnlocked;
+
   List<int> get unlockedIndices => List.unmodifiable(_unlockedIndices);
   int get selectedIndex => _selectedIndex;
   Color get selectedColor => GameConfig.shipColors[_selectedIndex];
@@ -47,6 +50,7 @@ class CosmeticsManager {
     _unlockedIndices.add(index);
     _unlockedIndices.sort();
     _saveUnlocked();
+    onColorUnlocked?.call();
   }
 
   /// Select a color by index and persist.

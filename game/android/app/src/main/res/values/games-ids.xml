@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Google Play game services IDs. Save this file as res/values/games-ids.xml in your project.-->
+<resources>
+  <!--app_id-->
+  <string name="app_id" translatable="false">662836456609</string>
+  <!--package_name-->
+  <string name="package_name" translatable="false">co.delfour.asteroids</string>
+  <!--achievement First Light-->
+  <string name="achievement_first_light" translatable="false">CgkIodmGoaUTEAIQBA</string>
+  <!--achievement Getting Warmer-->
+  <string name="achievement_getting_warmer" translatable="false">CgkIodmGoaUTEAIQBg</string>
+  <!--achievement Double Digits-->
+  <string name="achievement_double_digits" translatable="false">CgkIodmGoaUTEAIQAw</string>
+  <!--achievement Veteran Pilot-->
+  <string name="achievement_veteran_pilot" translatable="false">CgkIodmGoaUTEAIQBw</string>
+  <!--achievement Neon Legend-->
+  <string name="achievement_neon_legend" translatable="false">CgkIodmGoaUTEAIQCg</string>
+  <!--achievement First Memory-->
+  <string name="achievement_first_memory" translatable="false">CgkIodmGoaUTEAIQCw</string>
+  <!--achievement Full Story-->
+  <string name="achievement_full_story" translatable="false">CgkIodmGoaUTEAIQCQ</string>
+  <!--achievement Phantom Dash-->
+  <string name="achievement_phantom_dash" translatable="false">CgkIodmGoaUTEAIQBQ</string>
+  <!--achievement Perfect Shot-->
+  <string name="achievement_perfect_shot" translatable="false">CgkIodmGoaUTEAIQDg</string>
+  <!--achievement Chain Reaction-->
+  <string name="achievement_chain_reaction" translatable="false">CgkIodmGoaUTEAIQDQ</string>
+  <!--achievement UFO Hunter-->
+  <string name="achievement_ufo_hunter" translatable="false">CgkIodmGoaUTEAIQDA</string>
+  <!--achievement New Colors-->
+  <string name="achievement_new_colors" translatable="false">CgkIodmGoaUTEAIQCA</string>
+  <!--leaderboard High Score-->
+  <string name="leaderboard_high_score" translatable="false">CgkIodmGoaUTEAIQDw</string>
+  <!--leaderboard Best Wave-->
+  <string name="leaderboard_best_wave" translatable="false">CgkIodmGoaUTEAIQEA</string>
+</resources>

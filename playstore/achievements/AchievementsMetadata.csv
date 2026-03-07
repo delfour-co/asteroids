@@ -1,0 +1,12 @@
+First Light,Survive wave 1,false,0,REVEALED,5,1
+Getting Warmer,Reach wave 5,false,0,REVEALED,10,2
+Double Digits,Reach wave 10,false,0,REVEALED,15,3
+Veteran Pilot,Reach wave 20,false,0,REVEALED,25,4
+Neon Legend,Reach wave 50,false,0,REVEALED,50,5
+First Memory,Unlock your first narrative fragment,false,0,REVEALED,10,6
+Full Story,Unlock all 11 narrative fragments,false,0,HIDDEN,50,7
+Phantom Dash,Destroy an asteroid by dashing through it,false,0,REVEALED,10,8
+Perfect Shot,Get a perfect kill,false,0,REVEALED,15,9
+Chain Reaction,Destroy an explosive asteroid,false,0,REVEALED,10,10
+UFO Hunter,Destroy your first UFO,false,0,REVEALED,15,11
+New Colors,Unlock a ship color,false,0,REVEALED,10,12

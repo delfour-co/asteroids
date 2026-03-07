@@ -9,6 +9,7 @@ import 'background/shooting_star.dart';
 import 'core/combo_manager.dart';
 import 'core/cosmetics_manager.dart';
 import 'core/game_config.dart';
+import 'core/play_games_service.dart';
 import 'debris/space_debris_manager.dart';
 import 'effects/death_sequence.dart';
 import 'effects/effects_manager.dart';
@@ -198,6 +199,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
   late final LeaderboardManager leaderboardManager;
   late final FragmentManager fragmentManager;
   late final CosmeticsManager cosmeticsManager;
+  late final PlayGamesService playGamesService;
   bool _isPaused = false;
 
   late void Function(StartGameEvent) _startListener;
@@ -231,6 +233,10 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
 
     cosmeticsManager = CosmeticsManager();
     await cosmeticsManager.init();
+
+    playGamesService = PlayGamesService(gameState);
+    await playGamesService.init();
+    cosmeticsManager.onColorUnlocked = playGamesService.onColorUnlocked;
 
     await add(BackgroundLayer());
     await add(ShootingStarManager());
@@ -372,6 +378,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     eventBus.off<PauseEvent>(_gamePauseListener);
     eventBus.off<ResumeEvent>(_gameResumeListener);
     eventBus.off<FragmentUnlockedEvent>(_fragmentListener);
+    playGamesService.dispose();
     gameState.dispose();
     super.onRemove();
   }
