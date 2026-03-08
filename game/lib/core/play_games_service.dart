@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:games_services/games_services.dart';
 
 import '../asteroids/asteroid.dart';
@@ -52,8 +53,10 @@ class PlayGamesService {
     try {
       await GamesServices.signIn();
       _signedIn = true;
-    } catch (_) {
+      FirebaseCrashlytics.instance.log('[PGS] Sign-in SUCCESS');
+    } catch (e, stack) {
       _signedIn = false;
+      FirebaseCrashlytics.instance.recordError(e, stack, reason: 'PGS sign-in failed');
     }
 
     _waveListener = _onWaveStarted;
@@ -85,6 +88,7 @@ class PlayGamesService {
 
   void _onWaveStarted(WaveStartedEvent event) {
     final wave = event.wave;
+    FirebaseCrashlytics.instance.log('[PGS] Wave $wave (signedIn=$_signedIn)');
     if (wave > _bestWave) _bestWave = wave;
 
     // Wave milestone achievements
@@ -127,37 +131,48 @@ class PlayGamesService {
     _submitScores();
   }
 
-  void _unlock(String achievementId) {
-    if (!_signedIn) return;
+  Future<void> _unlock(String achievementId) async {
+    if (!_signedIn) {
+      FirebaseCrashlytics.instance.log('[PGS] Skip unlock $achievementId — not signed in');
+      return;
+    }
     try {
-      GamesServices.unlock(achievement: Achievement(androidID: achievementId));
-    } catch (_) {
-      // Silently fail — not critical
+      await GamesServices.unlock(
+        achievement: Achievement(androidID: achievementId),
+      );
+      FirebaseCrashlytics.instance.log('[PGS] Unlocked $achievementId');
+    } catch (e, stack) {
+      FirebaseCrashlytics.instance.recordError(e, stack, reason: 'PGS unlock failed: $achievementId');
     }
   }
 
-  void _submitScores() {
-    if (!_signedIn) return;
+  Future<void> _submitScores() async {
+    if (!_signedIn) {
+      FirebaseCrashlytics.instance.log('[PGS] Skip score submit — not signed in');
+      return;
+    }
     try {
       final score = _gameState.score;
       if (score > 0) {
-        GamesServices.submitScore(
+        await GamesServices.submitScore(
           score: Score(
             androidLeaderboardID: LeaderboardIds.highScore,
             value: score,
           ),
         );
+        FirebaseCrashlytics.instance.log('[PGS] Submitted high score: $score');
       }
       if (_bestWave > 0) {
-        GamesServices.submitScore(
+        await GamesServices.submitScore(
           score: Score(
             androidLeaderboardID: LeaderboardIds.bestWave,
             value: _bestWave,
           ),
         );
+        FirebaseCrashlytics.instance.log('[PGS] Submitted best wave: $_bestWave');
       }
-    } catch (_) {
-      // Silently fail
+    } catch (e, stack) {
+      FirebaseCrashlytics.instance.recordError(e, stack, reason: 'PGS score submit failed');
     }
     _bestWave = 0;
   }
