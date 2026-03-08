@@ -1,3 +1,5 @@
+import 'dart:developer' as dev;
+
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:games_services/games_services.dart';
 
@@ -6,6 +8,23 @@ import 'arcade_events.dart';
 import 'event_bus.dart';
 import 'game_state.dart';
 import '../enemies/ufo_events.dart';
+
+/// Safe Crashlytics logger — no-ops if Firebase is not initialized.
+void _logPgs(String message) {
+  try {
+    FirebaseCrashlytics.instance.log(message);
+  } catch (_) {
+    dev.log(message);
+  }
+}
+
+void _recordPgsError(Object error, StackTrace stack, String reason) {
+  try {
+    FirebaseCrashlytics.instance.recordError(error, stack, reason: reason);
+  } catch (_) {
+    dev.log('$reason: $error');
+  }
+}
 
 /// Achievement IDs from Google Play Games Services.
 abstract class AchievementIds {
@@ -53,10 +72,10 @@ class PlayGamesService {
     try {
       await GamesServices.signIn();
       _signedIn = true;
-      FirebaseCrashlytics.instance.log('[PGS] Sign-in SUCCESS');
+      _logPgs('[PGS] Sign-in SUCCESS');
     } catch (e, stack) {
       _signedIn = false;
-      FirebaseCrashlytics.instance.recordError(e, stack, reason: 'PGS sign-in failed');
+      _recordPgsError(e, stack, 'PGS sign-in failed');
     }
 
     _waveListener = _onWaveStarted;
@@ -88,7 +107,7 @@ class PlayGamesService {
 
   void _onWaveStarted(WaveStartedEvent event) {
     final wave = event.wave;
-    FirebaseCrashlytics.instance.log('[PGS] Wave $wave (signedIn=$_signedIn)');
+    _logPgs('[PGS] Wave $wave (signedIn=$_signedIn)');
     if (wave > _bestWave) _bestWave = wave;
 
     // Wave milestone achievements
@@ -133,22 +152,22 @@ class PlayGamesService {
 
   Future<void> _unlock(String achievementId) async {
     if (!_signedIn) {
-      FirebaseCrashlytics.instance.log('[PGS] Skip unlock $achievementId — not signed in');
+      _logPgs('[PGS] Skip unlock $achievementId — not signed in');
       return;
     }
     try {
       await GamesServices.unlock(
         achievement: Achievement(androidID: achievementId),
       );
-      FirebaseCrashlytics.instance.log('[PGS] Unlocked $achievementId');
+      _logPgs('[PGS] Unlocked $achievementId');
     } catch (e, stack) {
-      FirebaseCrashlytics.instance.recordError(e, stack, reason: 'PGS unlock failed: $achievementId');
+      _recordPgsError(e, stack, 'PGS unlock failed: $achievementId');
     }
   }
 
   Future<void> _submitScores() async {
     if (!_signedIn) {
-      FirebaseCrashlytics.instance.log('[PGS] Skip score submit — not signed in');
+      _logPgs('[PGS] Skip score submit — not signed in');
       return;
     }
     try {
@@ -160,7 +179,7 @@ class PlayGamesService {
             value: score,
           ),
         );
-        FirebaseCrashlytics.instance.log('[PGS] Submitted high score: $score');
+        _logPgs('[PGS] Submitted high score: $score');
       }
       if (_bestWave > 0) {
         await GamesServices.submitScore(
@@ -169,10 +188,10 @@ class PlayGamesService {
             value: _bestWave,
           ),
         );
-        FirebaseCrashlytics.instance.log('[PGS] Submitted best wave: $_bestWave');
+        _logPgs('[PGS] Submitted best wave: $_bestWave');
       }
     } catch (e, stack) {
-      FirebaseCrashlytics.instance.recordError(e, stack, reason: 'PGS score submit failed');
+      _recordPgsError(e, stack, 'PGS score submit failed');
     }
     _bestWave = 0;
   }
