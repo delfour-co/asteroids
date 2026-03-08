@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/flame.dart';
 import 'package:flutter/painting.dart' show TextStyle, FontWeight;
 
 import '../app.dart';
@@ -21,7 +22,6 @@ class StartGameEvent {}
 /// Neon title screen shown before gameplay.
 class TitleScreen extends PositionComponent
     with HasGameReference<AsteroidsNeonGame>, DragCallbacks {
-  late final TextComponent _title;
   late final TextComponent _subtitle;
   late final TextComponent _controls;
   late final TextComponent _leaderboardBtn;
@@ -44,34 +44,21 @@ class TitleScreen extends PositionComponent
     final gameSize = game.size;
     size = gameSize;
 
-    _title = TextComponent(
-      text: 'NEON',
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: GameConfig.shipColor,
-          fontSize: 56,
-          fontFamily: 'monospace',
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+    // Title logo image
+    final titleImage = await Flame.images.load('title.png');
+    final titleSprite = SpriteComponent(
+      sprite: Sprite(titleImage),
       anchor: Anchor.center,
-      position: Vector2(gameSize.x / 2, gameSize.y * 0.3),
+      position: Vector2(gameSize.x / 2, gameSize.y * 0.32),
     );
-    await add(_title);
-
-    await add(TextComponent(
-      text: 'A S T E R O I D S',
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Color(0xFFFF00FF),
-          fontSize: 32,
-          fontFamily: 'monospace',
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      anchor: Anchor.center,
-      position: Vector2(gameSize.x / 2, gameSize.y * 0.3 + 50),
-    ));
+    // Scale to fit ~60% of screen width
+    final targetWidth = gameSize.x * 0.6;
+    final scale = targetWidth / titleImage.width;
+    titleSprite.size = Vector2(
+      titleImage.width * scale,
+      titleImage.height * scale,
+    );
+    await add(titleSprite);
 
     _subtitle = TextComponent(
       text: 'INSERT COIN',

@@ -66,20 +66,20 @@ void main() {
     );
 
     testWithGame<FlameGame>(
-      'wraps around screen edges',
+      'removes itself when off-screen',
       FlameGame.new,
       (game) async {
         final projectile = Projectile();
         await game.ensureAdd(projectile);
         projectile.init(
-          pos: Vector2(game.size.x + 5, 300),
+          pos: Vector2(game.size.x + 20, 300),
           shipAngle: pi / 2, // Moving right
         );
 
         game.update(1 / 60);
+        game.update(0); // process removal
 
-        // Should wrap to left side
-        expect(projectile.position.x, lessThan(game.size.x));
+        expect(projectile.isMounted, false);
       },
     );
   });

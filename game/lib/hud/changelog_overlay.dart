@@ -25,6 +25,14 @@ class ChangelogOverlay extends PositionComponent
   static const _leftMargin = 32.0;
 
   static const List<_ChangelogVersion> _versions = [
+    _ChangelogVersion('v1.6.0', 'Play Games & Polish', [
+      '+ Google Play Games Services sign-in',
+      '+ 12 achievements (wave milestones, dash, UFO...)',
+      '+ 2 leaderboards (High Score, Best Wave)',
+      '+ Splash screen video on launch (skippable)',
+      '+ Title screen logo image',
+      '* Projectiles no longer wrap around screen',
+    ]),
     _ChangelogVersion('v1.5.0', 'Narration & Beyond', [
       '+ 10 narrative fragments (unlock every 10 waves)',
       '+ Ship Log journal on title screen',

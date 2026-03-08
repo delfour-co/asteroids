@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'app.dart';
+import 'splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,7 +32,29 @@ void main() async {
   // Hide system UI for fullscreen
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
-  runApp(
-    GameWidget(game: AsteroidsNeonGame()),
-  );
+  runApp(const NeonAsteroidsApp());
+}
+
+class NeonAsteroidsApp extends StatefulWidget {
+  const NeonAsteroidsApp({super.key});
+
+  @override
+  State<NeonAsteroidsApp> createState() => _NeonAsteroidsAppState();
+}
+
+class _NeonAsteroidsAppState extends State<NeonAsteroidsApp> {
+  bool _splashDone = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_splashDone) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: SplashScreen(
+          onComplete: () => setState(() => _splashDone = true),
+        ),
+      );
+    }
+    return GameWidget(game: AsteroidsNeonGame());
+  }
 }

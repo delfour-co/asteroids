@@ -10,7 +10,7 @@ import '../asteroids/magnetic_asteroid.dart';
 import '../core/game_config.dart';
 import '../effects/neon_renderer.dart';
 
-/// A laser projectile that travels in a straight line and wraps around.
+/// A laser projectile that travels in a straight line and despawns off-screen.
 class Projectile extends PositionComponent
     with HasGameReference, CollisionCallbacks {
   // Pre-allocated paints
@@ -85,23 +85,18 @@ class Projectile extends PositionComponent
     position.x += _direction.x * _speed * dt;
     position.y += _direction.y * _speed * dt;
 
-    // Wrap around screen
-    _wrapAround();
+    // Remove when off-screen
+    _removeIfOffScreen();
   }
 
-  void _wrapAround() {
+  void _removeIfOffScreen() {
     final gameSize = findGame()!.size;
 
-    if (position.x < -_length) {
-      position.x += gameSize.x + _length;
-    } else if (position.x > gameSize.x + _length) {
-      position.x -= gameSize.x + _length;
-    }
-
-    if (position.y < -_length) {
-      position.y += gameSize.y + _length;
-    } else if (position.y > gameSize.y + _length) {
-      position.y -= gameSize.y + _length;
+    if (position.x < -_length ||
+        position.x > gameSize.x + _length ||
+        position.y < -_length ||
+        position.y > gameSize.y + _length) {
+      removeFromParent();
     }
   }
 
