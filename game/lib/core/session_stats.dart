@@ -3,7 +3,6 @@ import '../enemies/ufo_events.dart';
 import 'arcade_events.dart';
 import 'event_bus.dart';
 import 'game_state.dart';
-import '../projectiles/projectile_manager.dart';
 
 /// Tracks per-session gameplay statistics.
 ///
