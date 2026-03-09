@@ -3,6 +3,7 @@ import 'package:flame/components.dart';
 import '../core/arcade_events.dart';
 import '../core/event_bus.dart';
 import '../core/game_state.dart';
+import '../core/session_stats.dart';
 import '../input/fire_button.dart';
 import '../powerups/powerup.dart';
 import '../powerups/powerup_manager.dart';
@@ -95,6 +96,7 @@ class ProjectileManager extends Component {
 
     final projectile = Projectile()..init(pos: pos, shipAngle: angle);
     parent?.add(projectile);
+    eventBus.emit(ShotFiredEvent());
 
     // Multi-shot: fire two extra projectiles at slight angles
     if (_multiShot) {
@@ -103,6 +105,8 @@ class ProjectileManager extends Component {
       final right = Projectile()..init(pos: pos, shipAngle: angle + spread);
       parent?.add(left);
       parent?.add(right);
+      eventBus.emit(ShotFiredEvent());
+      eventBus.emit(ShotFiredEvent());
     }
   }
 }

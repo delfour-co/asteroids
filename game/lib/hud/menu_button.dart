@@ -23,7 +23,7 @@ class MenuButton extends PositionComponent
   Future<void> onLoad() async {
     size = Vector2(120, 40);
     final gameSize = game.size;
-    position = Vector2(gameSize.x / 2 - 60, gameSize.y / 2 + 90);
+    position = Vector2(gameSize.x / 2 - 60, gameSize.y / 2 + 125);
     priority = 100;
 
     _gameOverListener = (_) => _visible = true;

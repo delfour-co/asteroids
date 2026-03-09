@@ -10,11 +10,13 @@ import 'core/combo_manager.dart';
 import 'core/cosmetics_manager.dart';
 import 'core/game_config.dart';
 import 'core/play_games_service.dart';
+import 'core/session_stats.dart';
 import 'debris/space_debris_manager.dart';
 import 'effects/death_sequence.dart';
 import 'effects/effects_manager.dart';
 import 'audio/audio_manager.dart';
 import 'effects/flash_effect.dart';
+import 'effects/haptic_manager.dart';
 import 'effects/screen_shake_manager.dart';
 import 'effects/wave_ring_effect.dart';
 import 'enemies/ufo_manager.dart';
@@ -200,6 +202,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
   late final FragmentManager fragmentManager;
   late final CosmeticsManager cosmeticsManager;
   late final PlayGamesService playGamesService;
+  late final SessionStats sessionStats;
   bool _isPaused = false;
 
   late void Function(StartGameEvent) _startListener;
@@ -238,6 +241,9 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     await playGamesService.init();
     cosmeticsManager.onColorUnlocked = playGamesService.onColorUnlocked;
 
+    sessionStats = SessionStats();
+    sessionStats.init();
+
     await add(BackgroundLayer());
     await add(ShootingStarManager());
     await add(ScreenShakeManager());
@@ -245,6 +251,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     await add(DeathSequence());
     await add(AudioManager());
     await add(WaveRingEffect());
+    await add(HapticManager());
     await add(fragmentManager);
 
     _menuListener = (_) => _returnToMenu();
@@ -369,6 +376,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
   @override
   void update(double dt) {
     if (_isPaused) return;
+    sessionStats.update(dt);
     super.update(dt);
   }
 
@@ -378,6 +386,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     eventBus.off<PauseEvent>(_gamePauseListener);
     eventBus.off<ResumeEvent>(_gameResumeListener);
     eventBus.off<FragmentUnlockedEvent>(_fragmentListener);
+    sessionStats.dispose();
     playGamesService.dispose();
     gameState.dispose();
     super.onRemove();

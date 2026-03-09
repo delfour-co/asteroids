@@ -25,6 +25,12 @@ class ChangelogOverlay extends PositionComponent
   static const _leftMargin = 32.0;
 
   static const List<_ChangelogVersion> _versions = [
+    _ChangelogVersion('v1.7.0', 'Session Stats & Feel', [
+      '+ Post-game stats screen (accuracy, combos, kills...)',
+      '+ Projectile laser trails',
+      '+ Impact spark particles on hit',
+      '+ Haptic feedback (hit, death, game over)',
+    ]),
     _ChangelogVersion('v1.6.1', 'Play Games & Polish', [
       '+ Google Play Games Services sign-in',
       '+ 12 achievements (wave milestones, dash, UFO...)',

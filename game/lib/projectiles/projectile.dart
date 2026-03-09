@@ -7,6 +7,8 @@ import 'package:flame/components.dart';
 import '../asteroids/asteroid.dart';
 import '../asteroids/explosive_asteroid.dart';
 import '../asteroids/magnetic_asteroid.dart';
+import '../core/arcade_events.dart';
+import '../core/event_bus.dart';
 import '../core/game_config.dart';
 import '../effects/neon_renderer.dart';
 
@@ -25,6 +27,11 @@ class Projectile extends PositionComponent
   // Lifetime
   double _lifetime = 0;
   static const double _maxLifetime = 2.0; // seconds
+
+  // Trail
+  static const int _trailMaxPoints = 8;
+  final List<Vector2> _trailPoints = [];
+  late final Paint _trailPaint;
 
   Projectile() {
     size = Vector2(4, _length);
@@ -52,6 +59,11 @@ class Projectile extends PositionComponent
     _glowPaint = paints.glow;
     _solidPaint = paints.solid;
 
+    _trailPaint = Paint()
+      ..color = GameConfig.shipColor
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round;
+
     await add(RectangleHitbox());
   }
 
@@ -60,12 +72,15 @@ class Projectile extends PositionComponent
       Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is Asteroid) {
+      eventBus.emit(ProjectileHitEvent(position.clone()));
       other.destroy();
       removeFromParent();
     } else if (other is ExplosiveAsteroid) {
+      eventBus.emit(ProjectileHitEvent(position.clone()));
       other.destroy();
       removeFromParent();
     } else if (other is MagneticAsteroid) {
+      eventBus.emit(ProjectileHitEvent(position.clone()));
       other.destroy();
       removeFromParent();
     }
@@ -79,6 +94,12 @@ class Projectile extends PositionComponent
     if (_lifetime >= _maxLifetime) {
       removeFromParent();
       return;
+    }
+
+    // Record trail point before moving
+    _trailPoints.insert(0, position.clone());
+    if (_trailPoints.length > _trailMaxPoints) {
+      _trailPoints.removeLast();
     }
 
     // Move in direction
@@ -102,9 +123,24 @@ class Projectile extends PositionComponent
 
   @override
   void render(Canvas canvas) {
+    // Draw fading trail in world coordinates (undo component transform)
+    if (_trailPoints.length >= 2) {
+      for (int i = 0; i < _trailPoints.length - 1; i++) {
+        final alpha = ((1.0 - i / _trailPoints.length) * 0.4 * 255).toInt();
+        _trailPaint.color = GameConfig.shipColor.withAlpha(alpha);
+        final a = _trailPoints[i] - position;
+        final b = _trailPoints[i + 1] - position;
+        canvas.drawLine(
+          Offset(a.x + size.x / 2, a.y + size.y / 2),
+          Offset(b.x + size.x / 2, b.y + size.y / 2),
+          _trailPaint,
+        );
+      }
+    }
+
     canvas.save();
     canvas.translate(size.x / 2, size.y / 2);
-    // Draw as a short line (laser trail)
+    // Draw as a short line (laser core)
     final path = Path()
       ..moveTo(0, -_length / 2)
       ..lineTo(0, _length / 2);

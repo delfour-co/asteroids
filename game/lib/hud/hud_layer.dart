@@ -32,6 +32,8 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
   TextComponent? _gameOverText;
   TextComponent? _restartText;
   TextComponent? _highScoreGameOverText;
+  TextComponent? _statsLeftText;
+  TextComponent? _statsRightText;
 
   @override
   Future<void> onLoad() async {
@@ -70,7 +72,7 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
 
     // Version — top right
     await add(TextComponent(
-      text: 'v1.6.1',
+      text: 'v1.7.0',
       textRenderer: TextPaint(
         style: const TextStyle(
           color: Color(0xAAFFFFFF),
@@ -193,6 +195,7 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
   void _onGameOver(GameOverEvent event) {
     final gameSize = game.size;
     final gs = game.gameState;
+    final stats = game.sessionStats;
 
     // Check if score qualifies for leaderboard
     if (game.leaderboardManager.qualifies(gs.score)) {
@@ -218,7 +221,7 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
         ),
       ),
       anchor: Anchor.center,
-      position: Vector2(gameSize.x / 2, gameSize.y / 2 - 50),
+      position: Vector2(gameSize.x / 2, gameSize.y / 2 - 80),
     );
     add(_gameOverText!);
 
@@ -232,9 +235,39 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
         ),
       ),
       anchor: Anchor.center,
-      position: Vector2(gameSize.x / 2, gameSize.y / 2 + 10),
+      position: Vector2(gameSize.x / 2, gameSize.y / 2 - 40),
     );
     add(_highScoreGameOverText!);
+
+    // Session stats — two columns
+    const statStyle = TextStyle(
+      color: Color(0xAA00FFFF),
+      fontSize: 16,
+      fontFamily: 'monospace',
+    );
+    final statPaint = TextPaint(style: statStyle);
+
+    _statsLeftText = TextComponent(
+      text: 'ASTEROIDS  ${stats.asteroidsDestroyed}\n'
+          'UFOS       ${stats.ufosDestroyed}\n'
+          'ACCURACY   ${stats.accuracy.toStringAsFixed(0)}%\n'
+          'BEST COMBO x${stats.bestCombo}',
+      textRenderer: statPaint,
+      anchor: Anchor.topRight,
+      position: Vector2(gameSize.x / 2 - 10, gameSize.y / 2 - 12),
+    );
+    add(_statsLeftText!);
+
+    _statsRightText = TextComponent(
+      text: 'WAVE       ${stats.waveReached}\n'
+          'DURATION   ${stats.durationFormatted}\n'
+          'PERFECT    ${stats.perfectKills}\n'
+          'DASH KILLS ${stats.dashKills}',
+      textRenderer: statPaint,
+      anchor: Anchor.topLeft,
+      position: Vector2(gameSize.x / 2 + 10, gameSize.y / 2 - 12),
+    );
+    add(_statsRightText!);
 
     _restartText = TextComponent(
       text: 'TAP TO RESTART',
@@ -246,7 +279,7 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
         ),
       ),
       anchor: Anchor.center,
-      position: Vector2(gameSize.x / 2, gameSize.y / 2 + 50),
+      position: Vector2(gameSize.x / 2, gameSize.y / 2 + 110),
     );
     add(_restartText!);
   }
@@ -256,6 +289,10 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
     _gameOverText = null;
     _highScoreGameOverText?.removeFromParent();
     _highScoreGameOverText = null;
+    _statsLeftText?.removeFromParent();
+    _statsLeftText = null;
+    _statsRightText?.removeFromParent();
+    _statsRightText = null;
     _restartText?.removeFromParent();
     _restartText = null;
   }

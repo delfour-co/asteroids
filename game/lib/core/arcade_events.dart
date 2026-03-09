@@ -57,6 +57,12 @@ class PerfectKillEvent {
   PerfectKillEvent(this.position, this.points);
 }
 
+/// Event emitted when a projectile hits a target.
+class ProjectileHitEvent {
+  final Vector2 position;
+  ProjectileHitEvent(this.position);
+}
+
 /// Event emitted to apply knockback to nearby asteroids.
 class KnockbackEvent {
   final Vector2 origin;

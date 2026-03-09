@@ -11,6 +11,7 @@ import '../enemies/ufo_events.dart';
 import '../ship/ship.dart';
 import 'ember_effect.dart';
 import 'explosion.dart';
+import 'impact_effect.dart';
 import 'score_popup.dart';
 
 /// Spawns visual effects in response to game events.
@@ -22,6 +23,7 @@ class EffectsManager extends Component {
   late final void Function(ScorePopupEvent) _scorePopupListener;
   late final void Function(SpaceDebrisDestroyedEvent) _debrisListener;
   late final void Function(PerfectKillEvent) _perfectKillListener;
+  late final void Function(ProjectileHitEvent) _projectileHitListener;
 
   @override
   Future<void> onLoad() async {
@@ -32,6 +34,7 @@ class EffectsManager extends Component {
     _scorePopupListener = _onScorePopup;
     _debrisListener = _onDebrisDestroyed;
     _perfectKillListener = _onPerfectKill;
+    _projectileHitListener = _onProjectileHit;
     eventBus.on<AsteroidDestroyedEvent>(_asteroidListener);
     eventBus.on<ShipDestroyedEvent>(_shipListener);
     eventBus.on<UfoDestroyedEvent>(_ufoListener);
@@ -39,6 +42,7 @@ class EffectsManager extends Component {
     eventBus.on<ScorePopupEvent>(_scorePopupListener);
     eventBus.on<SpaceDebrisDestroyedEvent>(_debrisListener);
     eventBus.on<PerfectKillEvent>(_perfectKillListener);
+    eventBus.on<ProjectileHitEvent>(_projectileHitListener);
   }
 
   @override
@@ -50,6 +54,7 @@ class EffectsManager extends Component {
     eventBus.off<ScorePopupEvent>(_scorePopupListener);
     eventBus.off<SpaceDebrisDestroyedEvent>(_debrisListener);
     eventBus.off<PerfectKillEvent>(_perfectKillListener);
+    eventBus.off<ProjectileHitEvent>(_projectileHitListener);
     super.onRemove();
   }
 
@@ -208,6 +213,12 @@ class EffectsManager extends Component {
       multiplier: 1,
       label: 'PERFECT',
       color: const Color(0xFFFFCC00),
+    )..position = event.position.clone());
+  }
+
+  void _onProjectileHit(ProjectileHitEvent event) {
+    add(ImpactEffect(
+      color: GameConfig.shipColor,
     )..position = event.position.clone());
   }
 }
