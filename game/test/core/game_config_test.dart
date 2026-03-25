@@ -21,13 +21,13 @@ void main() {
 
     test('visual constants are accessible', () {
       expect(GameConfig.shipColor, const Color(0xFF00FFFF));
-      expect(GameConfig.backgroundColor, const Color(0xFF000011));
-      expect(GameConfig.glowRadius, 10.0);
-      expect(GameConfig.glowOpacity, 0.6);
+      expect(GameConfig.backgroundColor, const Color(0xFF000000));
+      expect(GameConfig.glowRadius, 4.0);
+      expect(GameConfig.glowOpacity, 0.8);
     });
 
     test('starfield constants are accessible', () {
-      expect(GameConfig.starCount, 150);
+      expect(GameConfig.starCount, 30);
       expect(GameConfig.starMinSize, greaterThan(0));
       expect(GameConfig.starMaxSize, greaterThan(GameConfig.starMinSize));
       expect(GameConfig.starMinOpacity, greaterThanOrEqualTo(0));

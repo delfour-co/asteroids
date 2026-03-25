@@ -2,11 +2,11 @@ import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flutter/painting.dart'
-    show TextPainter, TextDirection, TextStyle, TextSpan, FontWeight;
+import 'package:flutter/painting.dart' show FontWeight;
 
 import '../core/cosmetics_manager.dart';
 import '../core/game_config.dart';
+import 'panel_renderer.dart';
 
 /// Ship color selection overlay. DragCallbacks + containsLocalPoint => true
 /// to block inputs below.
@@ -55,10 +55,16 @@ class CosmeticsOverlay extends PositionComponent
   @override
   void render(ui.Canvas canvas) {
     // Background
-    canvas.drawRect(
-      ui.Rect.fromLTWH(0, 0, size.x, size.y),
-      ui.Paint()..color = const ui.Color(0xEE000011),
+    PanelRenderer.drawOverlayBackground(canvas, size.x, size.y);
+
+    // Panel
+    final panelRect = ui.Rect.fromCenter(
+      center: ui.Offset(size.x / 2, size.y / 2),
+      width: size.x * 0.7,
+      height: size.y * 0.75,
     );
+    PanelRenderer.drawPanel(canvas, panelRect, title: 'COSMETICS');
+    PanelRenderer.drawScanlines(canvas, panelRect);
 
     final cx = size.x / 2;
     final cy = size.y / 2;
@@ -68,8 +74,8 @@ class CosmeticsOverlay extends PositionComponent
     final spacing = size.x / (count + 1);
 
     // Title
-    _drawText(canvas, 'SHIP COLOR', cx, cy - 140, 36,
-        GameConfig.shipColor, FontWeight.bold);
+    PanelRenderer.drawTextCentered(canvas, 'SHIP COLOR', cx, cy - 140, 36,
+        GameConfig.shipColor, weight: FontWeight.bold, glow: true);
 
     // Rebuild circle rects each frame
     _circleRects.clear();
@@ -110,36 +116,23 @@ class CosmeticsOverlay extends PositionComponent
       );
 
       // Color name
-      _drawText(canvas, names[i], x, y + _circleRadius + 20, 14,
-          color.withValues(alpha: opacity), FontWeight.bold);
+      PanelRenderer.drawTextCentered(canvas, names[i], x, y + _circleRadius + 20, 14,
+          color.withValues(alpha: opacity), weight: FontWeight.bold);
 
       // Locked label
       if (!unlocked && i - 1 < GameConfig.cosmeticUnlockWaves.length) {
         final wave = GameConfig.cosmeticUnlockWaves[i - 1];
-        _drawText(canvas, 'WAVE $wave', x, y + _circleRadius + 42, 12,
-            const ui.Color(0x88FFFFFF), FontWeight.normal);
+        PanelRenderer.drawTextCentered(canvas, 'WAVE $wave', x, y + _circleRadius + 42, 12,
+            const ui.Color(0x88FFFFFF));
       }
     }
 
-    // Footer
-    _drawText(canvas, 'TAP TO CLOSE', cx, size.y - 60, 18,
-        const ui.Color(0x88FFFFFF), FontWeight.normal);
-  }
+    // Separator line above footer
+    final panelBottom = panelRect.bottom;
+    PanelRenderer.drawSeparator(canvas, size.x * 0.3, size.x * 0.7, panelBottom - 40);
 
-  void _drawText(ui.Canvas canvas, String text, double x, double y,
-      double fontSize, ui.Color color, FontWeight weight) {
-    final tp = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          color: color,
-          fontSize: fontSize,
-          fontWeight: weight,
-          fontFamily: 'monospace',
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    tp.paint(canvas, ui.Offset(x - tp.width / 2, y - tp.height / 2));
+    // Footer
+    PanelRenderer.drawTextCentered(canvas, 'TAP TO CLOSE', cx, panelBottom - 20, 18,
+        const ui.Color(0x88FFFFFF));
   }
 }

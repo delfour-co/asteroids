@@ -4,9 +4,9 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/painting.dart'
-    show TextPainter, TextDirection, TextStyle, TextSpan, FontWeight;
+import 'package:flutter/painting.dart' show FontWeight;
 
+import '../hud/panel_renderer.dart';
 import '../narration/fragment_data.dart';
 
 /// Scrollable journal overlay with list view and detail view.
@@ -35,12 +35,16 @@ class JournalOverlay extends PositionComponent
   double _detailScroll = 0;
   double _detailMaxScroll = 0;
 
-  static const _titleY = 60.0;
-  static const _contentTop = 110.0;
-  static const _footerHeight = 60.0;
   static const _lineHeight = 26.0;
   static const _entryGap = 16.0;
-  static const _leftMargin = 32.0;
+
+  // Panel-relative layout values (computed in onLoad)
+  late double _panelTop;
+  late double _panelBottom;
+  late double _titleY;
+  late double _contentTop;
+  late double _footerHeight;
+  late double _leftMargin;
 
   // Hit-test rects for unlocked entries
   final List<_EntryRect> _entryRects = [];
@@ -51,6 +55,15 @@ class JournalOverlay extends PositionComponent
     size = game.size;
     position = Vector2.zero();
     priority = 300;
+
+    // Compute panel-relative layout
+    _panelTop = size.y * 0.125;
+    _panelBottom = size.y * 0.875;
+    _titleY = _panelTop + 40;
+    _contentTop = _panelTop + 80;
+    _footerHeight = size.y - _panelBottom + 40;
+    _leftMargin = size.x * 0.15 + 20;
+
     _recalcListScroll();
   }
 
@@ -123,11 +136,17 @@ class JournalOverlay extends PositionComponent
 
   @override
   void render(ui.Canvas canvas) {
-    // Dark green-tinted background
-    canvas.drawRect(
-      ui.Rect.fromLTWH(0, 0, size.x, size.y),
-      ui.Paint()..color = const ui.Color(0xFA001100),
+    // Background
+    PanelRenderer.drawOverlayBackground(canvas, size.x, size.y);
+
+    // Panel
+    final panelRect = ui.Rect.fromCenter(
+      center: ui.Offset(size.x / 2, size.y / 2),
+      width: size.x * 0.7,
+      height: size.y * 0.75,
     );
+    PanelRenderer.drawPanel(canvas, panelRect, title: 'SHIP LOG');
+    PanelRenderer.drawScanlines(canvas, panelRect);
 
     if (_selectedFragment != null) {
       _renderDetail(canvas, _selectedFragment!);
@@ -138,8 +157,8 @@ class JournalOverlay extends PositionComponent
 
   void _renderList(ui.Canvas canvas) {
     // Fixed title
-    _drawTextCentered(canvas, 'SHIP LOG', size.x / 2, _titleY, 36,
-        const ui.Color(0xFF00FF66), FontWeight.bold);
+    PanelRenderer.drawTextCentered(canvas, 'SHIP LOG', size.x / 2, _titleY, 36,
+        const ui.Color(0xFF00FF66), weight: FontWeight.bold, glow: true);
 
     // Clip scrollable area
     final clipRect = ui.Rect.fromLTWH(
@@ -155,20 +174,20 @@ class JournalOverlay extends PositionComponent
       final entryStartY = y;
 
       if (unlocked) {
-        _drawTextLeft(
+        PanelRenderer.drawTextLeft(
           canvas,
           'WAVE ${fragment.waveRequired} — ${fragment.title}',
           _leftMargin, y, 20,
-          const ui.Color(0xFF00FFFF), FontWeight.bold,
+          const ui.Color(0xFF00FFFF), weight: FontWeight.bold,
         );
         y += _lineHeight;
 
         final firstLine = fragment.text.split('\n').first;
-        _drawTextLeft(
+        PanelRenderer.drawTextLeft(
           canvas,
           '  $firstLine',
           _leftMargin, y, 16,
-          const ui.Color(0xFF00FF66), FontWeight.normal,
+          const ui.Color(0xFF00FF66),
         );
         y += _lineHeight;
 
@@ -179,11 +198,11 @@ class JournalOverlay extends PositionComponent
         ));
       } else {
         final waveNum = fragment.waveRequired.toString().padLeft(3, '0');
-        _drawTextLeft(
+        PanelRenderer.drawTextLeft(
           canvas,
           'WAVE $waveNum — ???',
           _leftMargin, y, 20,
-          const ui.Color(0x66448844), FontWeight.normal,
+          const ui.Color(0x66448844),
         );
         y += _lineHeight;
       }
@@ -192,10 +211,13 @@ class JournalOverlay extends PositionComponent
 
     canvas.restore();
 
+    // Separator line above footer
+    PanelRenderer.drawSeparator(canvas, size.x * 0.3, size.x * 0.7, _panelBottom - 40);
+
     // Footer
-    _drawTextCentered(canvas, 'TAP ENTRY TO READ  •  TAP OUTSIDE TO CLOSE',
-        size.x / 2, size.y - 40, 14,
-        const ui.Color(0x8800FF66), FontWeight.normal);
+    PanelRenderer.drawTextCentered(canvas, 'TAP ENTRY TO READ  •  TAP OUTSIDE TO CLOSE',
+        size.x / 2, _panelBottom - 20, 14,
+        const ui.Color(0x8800FF66));
   }
 
   void _renderDetail(ui.Canvas canvas, NarrativeFragment fragment) {
@@ -203,23 +225,23 @@ class JournalOverlay extends PositionComponent
 
     // Clip for scrolling
     canvas.save();
-    canvas.clipRect(ui.Rect.fromLTWH(0, 0, size.x, size.y - _footerHeight));
+    canvas.clipRect(ui.Rect.fromLTWH(0, _panelTop, size.x, _panelBottom - _panelTop - 50));
 
-    double y = 60.0 - _detailScroll;
+    double y = _panelTop + 30 - _detailScroll;
 
     // "MEMORY FRAGMENT" header
-    _drawTextCentered(canvas, 'MEMORY FRAGMENT', cx, y, 28,
-        const ui.Color(0xFF00FF66), FontWeight.bold);
+    PanelRenderer.drawTextCentered(canvas, 'MEMORY FRAGMENT', cx, y, 28,
+        const ui.Color(0xFF00FF66), weight: FontWeight.bold, glow: true);
     y += 50;
 
     // Title in cyan
-    _drawTextCentered(canvas, fragment.title, cx, y, 24,
-        const ui.Color(0xFF00FFFF), FontWeight.bold);
+    PanelRenderer.drawTextCentered(canvas, fragment.title, cx, y, 24,
+        const ui.Color(0xFF00FFFF), weight: FontWeight.bold, glow: true);
     y += 20;
 
     // Wave subtitle
-    _drawTextCentered(canvas, 'WAVE ${fragment.waveRequired}', cx, y, 16,
-        const ui.Color(0x8800FFFF), FontWeight.normal);
+    PanelRenderer.drawTextCentered(canvas, 'WAVE ${fragment.waveRequired}', cx, y, 16,
+        const ui.Color(0x8800FFFF));
     y += 40;
 
     // Separator line
@@ -236,13 +258,16 @@ class JournalOverlay extends PositionComponent
       if (line.isEmpty) {
         y += 14; // Empty line gap
       } else {
-        _drawTextCentered(canvas, line, cx, y, 18,
-            const ui.Color(0xFF00FF66), FontWeight.normal);
+        PanelRenderer.drawTextCentered(canvas, line, cx, y, 18,
+            const ui.Color(0xFF00FF66));
         y += 28;
       }
     }
 
     canvas.restore();
+
+    // Separator line above footer
+    PanelRenderer.drawSeparator(canvas, size.x * 0.3, size.x * 0.7, _panelBottom - 40);
 
     // Pulsing footer
     final ms = DateTime.now().millisecondsSinceEpoch;
@@ -250,36 +275,8 @@ class JournalOverlay extends PositionComponent
     final pulseColor = ui.Color.fromARGB(
       (pulse * 255).toInt(), 0, 255, 102,
     );
-    _drawTextCentered(canvas, 'TAP TO GO BACK', cx, size.y - 40, 18,
-        pulseColor, FontWeight.normal);
-  }
-
-  void _drawTextCentered(ui.Canvas canvas, String text, double x, double y,
-      double fontSize, ui.Color color, FontWeight weight) {
-    final tp = _layoutText(text, fontSize, color, weight);
-    tp.paint(canvas, ui.Offset(x - tp.width / 2, y - tp.height / 2));
-  }
-
-  void _drawTextLeft(ui.Canvas canvas, String text, double x, double y,
-      double fontSize, ui.Color color, FontWeight weight) {
-    final tp = _layoutText(text, fontSize, color, weight);
-    tp.paint(canvas, ui.Offset(x, y - tp.height / 2));
-  }
-
-  TextPainter _layoutText(String text, double fontSize, ui.Color color,
-      FontWeight weight) {
-    return TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          color: color,
-          fontSize: fontSize,
-          fontWeight: weight,
-          fontFamily: 'monospace',
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
+    PanelRenderer.drawTextCentered(canvas, 'TAP TO GO BACK', cx, _panelBottom - 20, 18,
+        pulseColor);
   }
 }
 

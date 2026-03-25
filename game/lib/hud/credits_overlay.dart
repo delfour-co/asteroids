@@ -2,10 +2,10 @@ import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flutter/painting.dart'
-    show TextPainter, TextDirection, TextStyle, TextSpan, FontWeight;
+import 'package:flutter/painting.dart' show FontWeight;
 
 import '../core/game_config.dart';
+import 'panel_renderer.dart';
 
 /// Credits screen. Tap to dismiss.
 class CreditsOverlay extends PositionComponent
@@ -31,47 +31,42 @@ class CreditsOverlay extends PositionComponent
   @override
   void render(ui.Canvas canvas) {
     // Background
-    canvas.drawRect(
-      ui.Rect.fromLTWH(0, 0, size.x, size.y),
-      ui.Paint()..color = const ui.Color(0xEE000011),
+    PanelRenderer.drawOverlayBackground(canvas, size.x, size.y);
+
+    // Panel
+    final panelRect = ui.Rect.fromCenter(
+      center: ui.Offset(size.x / 2, size.y / 2),
+      width: size.x * 0.7,
+      height: size.y * 0.75,
     );
+    PanelRenderer.drawPanel(canvas, panelRect, title: 'CREDITS');
+    PanelRenderer.drawScanlines(canvas, panelRect);
 
     final cx = size.x / 2;
+    final panelTop = size.y * 0.125;
+    final panelBottom = size.y * 0.875;
 
-    _drawText(canvas, 'CREDITS', cx, 100, 40,
-        GameConfig.arcadeYellow, FontWeight.bold);
+    PanelRenderer.drawTextCentered(canvas, 'CREDITS', cx, panelTop + 40, 40,
+        GameConfig.arcadeYellow, weight: FontWeight.bold, glow: true);
 
-    _drawText(canvas, 'NEON ASTEROIDS', cx, 180, 28,
-        GameConfig.shipColor, FontWeight.bold);
+    PanelRenderer.drawTextCentered(canvas, 'NEON ASTEROIDS', cx, panelTop + 120, 28,
+        GameConfig.shipColor, weight: FontWeight.bold, glow: true);
 
-    _drawText(canvas, 'Made with', cx, 240, 20,
-        GameConfig.arcadeWhite, FontWeight.normal);
-    _drawText(canvas, 'Flutter & Flame', cx, 270, 24,
-        const ui.Color(0xFF00AAFF), FontWeight.bold);
+    PanelRenderer.drawTextCentered(canvas, 'Made with', cx, panelTop + 180, 20,
+        GameConfig.arcadeWhite);
+    PanelRenderer.drawTextCentered(canvas, 'Flutter & Flame', cx, panelTop + 210, 24,
+        const ui.Color(0xFF00AAFF), weight: FontWeight.bold);
 
-    _drawText(canvas, 'Kevin Delfour', cx, 350, 26,
-        GameConfig.arcadeWhite, FontWeight.bold);
-    _drawText(canvas, 'TAP TO RETURN', cx, size.y - 60, 18,
-        const ui.Color(0x88FFFFFF), FontWeight.normal);
+    PanelRenderer.drawTextCentered(canvas, 'Kevin Delfour', cx, panelTop + 280, 26,
+        GameConfig.arcadeWhite, weight: FontWeight.bold);
 
-    _drawText(canvas, 'Code by human + AI', cx, size.y - 100, 12,
-        const ui.Color(0x66FFFFFF), FontWeight.normal);
-  }
+    PanelRenderer.drawTextCentered(canvas, 'Code by human + AI', cx, panelBottom - 60, 12,
+        const ui.Color(0x66FFFFFF));
 
-  void _drawText(ui.Canvas canvas, String text, double x, double y,
-      double fontSize, ui.Color color, FontWeight weight) {
-    final tp = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          color: color,
-          fontSize: fontSize,
-          fontWeight: weight,
-          fontFamily: 'monospace',
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    tp.paint(canvas, ui.Offset(x - tp.width / 2, y - tp.height / 2));
+    // Separator line above footer
+    PanelRenderer.drawSeparator(canvas, size.x * 0.3, size.x * 0.7, panelBottom - 40);
+
+    PanelRenderer.drawTextCentered(canvas, 'TAP TO RETURN', cx, panelBottom - 20, 18,
+        const ui.Color(0x88FFFFFF));
   }
 }

@@ -3,14 +3,14 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/flame.dart';
-import 'package:flutter/painting.dart' show TextStyle, FontWeight;
+import 'package:flutter/painting.dart' show TextStyle, FontWeight, TextPainter, TextDirection, TextSpan;
 
 import '../app.dart';
 import '../audio/audio_events.dart';
 import '../core/event_bus.dart';
 import '../core/game_config.dart';
 import 'changelog_overlay.dart';
+import 'panel_renderer.dart';
 import 'cosmetics_overlay.dart';
 import 'credits_overlay.dart';
 import 'journal_overlay.dart';
@@ -19,185 +19,254 @@ import 'leaderboard_overlay.dart';
 /// Event emitted when the player starts the game from the title screen.
 class StartGameEvent {}
 
+/// A single menu button with GitHero-style neon glow border.
+class _MenuButton {
+  _MenuButton({
+    required this.label,
+    required this.rect,
+    this.textColor = const Color(0xFF00FFFF),
+    this.fontSize = 16.0,
+    this.outline = false,
+  });
+
+  final String label;
+  final Rect rect;
+  final Color textColor;
+  final double fontSize;
+  final bool outline;
+
+  bool contains(Offset pos) => rect.contains(pos);
+
+  void render(Canvas canvas) {
+    if (outline) {
+      PanelRenderer.drawOutlineButton(canvas, rect, label, textColor,
+          fontSize: fontSize, letterSpacing: 1.5);
+    } else {
+      PanelRenderer.drawGlowButton(canvas, rect, label, textColor,
+          fontSize: fontSize, letterSpacing: 1.5);
+    }
+  }
+}
+
 /// Neon title screen shown before gameplay.
 class TitleScreen extends PositionComponent
     with HasGameReference<AsteroidsNeonGame>, DragCallbacks {
-  late final TextComponent _subtitle;
-  late final TextComponent _controls;
-  late final TextComponent _leaderboardBtn;
-  late final TextComponent _creditsBtn;
-  late final TextComponent _changelogBtn;
-  late final TextComponent _logBtn;
-  late final TextComponent _shipBtn;
   double _pulseTime = 0;
 
-  // Tap zones
-  late Rect _leaderboardRect;
-  late Rect _creditsRect;
-  late Rect _changelogRect;
-  late Rect _logRect;
-  late Rect _shipRect;
+  // Buttons
+  late _MenuButton _leaderboardBtn;
+  late _MenuButton _historyBtn;
+  late _MenuButton _shipBtn;
+  late _MenuButton _creditsBtn;
+  late _MenuButton _changelogBtn;
 
+  // Cached painters
+  late TextPainter _titlePainter;
+  late TextPainter _subtitlePainter;
+  late TextPainter _controlsPainter;
+  late Offset _titleOffset;
+  late Offset _subtitleOffset;
+  late Offset _controlsOffset;
+  late double _insertCoinY;
+  late double _gameWidth;
 
   @override
   Future<void> onLoad() async {
     final gameSize = game.size;
     size = gameSize;
+    _gameWidth = gameSize.x;
 
-    // Title logo image
-    final titleImage = await Flame.images.load('title.png');
-    final titleSprite = SpriteComponent(
-      sprite: Sprite(titleImage),
-      anchor: Anchor.center,
-      position: Vector2(gameSize.x / 2, gameSize.y * 0.32),
-    );
-    // Scale to fit ~60% of screen width
-    final targetWidth = gameSize.x * 0.6;
-    final scale = targetWidth / titleImage.width;
-    titleSprite.size = Vector2(
-      titleImage.width * scale,
-      titleImage.height * scale,
-    );
-    await add(titleSprite);
-
-    _subtitle = TextComponent(
-      text: 'INSERT COIN',
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Color(0xFFFFFFFF),
-          fontSize: 22,
-          fontFamily: 'monospace',
+    // ── Title: "NEON ASTEROIDS" with Tron font ──
+    _titlePainter = TextPainter(
+      text: const TextSpan(
+        text: 'NEON ASTEROIDS',
+        style: TextStyle(
+          color: Color(0xFF003844), // dark teal interior
+          fontSize: 52,
+          fontFamily: 'Tron',
+          letterSpacing: 8.0,
         ),
       ),
-      anchor: Anchor.center,
-      position: Vector2(gameSize.x / 2, gameSize.y * 0.55),
-    );
-    await add(_subtitle);
-
-    // LEADERBOARD button
-    _leaderboardBtn = TextComponent(
-      text: 'LEADERBOARD',
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: GameConfig.arcadeYellow,
-          fontSize: 20,
-          fontFamily: 'monospace',
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      anchor: Anchor.center,
-      position: Vector2(gameSize.x / 2, gameSize.y * 0.66),
-    );
-    await add(_leaderboardBtn);
-    _leaderboardRect = Rect.fromCenter(
-      center: Offset(gameSize.x / 2, gameSize.y * 0.66),
-      width: 250,
-      height: 50,
+      textDirection: TextDirection.ltr,
+    )..layout();
+    _titleOffset = Offset(
+      gameSize.x / 2 - _titlePainter.width / 2,
+      gameSize.y * 0.26 - _titlePainter.height / 2,
     );
 
-    // HISTORY and SHIP buttons (centered row)
-    final btnGap = 40.0;
-    final btnY1 = gameSize.y * 0.74;
-
-    _logBtn = TextComponent(
-      text: 'HISTORY',
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Color(0xAA00FF66),
+    // ── "D4 Games" subtitle ──
+    _subtitlePainter = TextPainter(
+      text: const TextSpan(
+        text: 'D4 Games',
+        style: TextStyle(
+          color: Color(0x6600FFFF), // 40% cyan
           fontSize: 16,
-          fontFamily: 'monospace',
+          fontFamily: 'JetBrainsMono',
+          letterSpacing: 1.5,
         ),
       ),
-      anchor: Anchor.centerRight,
-      position: Vector2(gameSize.x / 2 - btnGap / 2, btnY1),
-    );
-    await add(_logBtn);
-    _logRect = Rect.fromCenter(
-      center: Offset(gameSize.x / 2 - btnGap / 2 - 40, btnY1),
-      width: 140,
-      height: 50,
+      textDirection: TextDirection.ltr,
+    )..layout();
+    _subtitleOffset = Offset(
+      gameSize.x / 2 - _subtitlePainter.width / 2,
+      _titleOffset.dy + _titlePainter.height + 8,
     );
 
-    _shipBtn = TextComponent(
-      text: 'SHIP',
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Color(0xAA00FF66),
-          fontSize: 16,
-          fontFamily: 'monospace',
-        ),
+    // ── INSERT COIN position — centered vertically ──
+    _insertCoinY = gameSize.y * 0.55;
+
+    // ── Menu Buttons ──
+    final cx = gameSize.x / 2;
+
+    // HISTORY — top left corner
+    const cornerW = 140.0;
+    const cornerH = 34.0;
+    const topY = 24.0;
+    _historyBtn = _MenuButton(
+      label: 'HISTORY',
+      rect: Rect.fromLTWH(16, topY, cornerW, cornerH),
+      textColor: const Color(0xFF00FF66),
+      fontSize: 13,
+    );
+
+    // SHIP — top right corner
+    _shipBtn = _MenuButton(
+      label: 'SHIP',
+      rect: Rect.fromLTWH(gameSize.x - cornerW - 16, topY, cornerW, cornerH),
+      textColor: const Color(0xFF00FF66),
+      fontSize: 13,
+    );
+
+    // Bottom row: CREDITS — left, LEADERBOARD — center, CHANGELOG — right
+    final bottomY = gameSize.y - 40;
+
+    const smallW = 110.0;
+    const smallH = 28.0;
+    _creditsBtn = _MenuButton(
+      label: 'CREDITS',
+      rect: Rect.fromLTWH(16, bottomY - smallH / 2, smallW, smallH),
+      textColor: const Color(0x7700FFFF),
+      fontSize: 11,
+      outline: true,
+    );
+
+    const lbW = 200.0;
+    _leaderboardBtn = _MenuButton(
+      label: 'LEADERBOARD',
+      rect: Rect.fromCenter(
+        center: Offset(cx, bottomY),
+        width: lbW,
+        height: cornerH,
       ),
-      anchor: Anchor.centerLeft,
-      position: Vector2(gameSize.x / 2 + btnGap / 2, btnY1),
-    );
-    await add(_shipBtn);
-    _shipRect = Rect.fromCenter(
-      center: Offset(gameSize.x / 2 + btnGap / 2 + 30, btnY1),
-      width: 120,
-      height: 50,
+      textColor: GameConfig.arcadeYellow,
+      fontSize: 13,
     );
 
-    // CREDITS — bottom left
-    _creditsBtn = TextComponent(
-      text: 'CREDITS',
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Color(0x6600FFFF),
-          fontSize: 14,
-          fontFamily: 'monospace',
-        ),
+    _changelogBtn = _MenuButton(
+      label: 'CHANGELOG',
+      rect: Rect.fromLTWH(
+        gameSize.x - smallW - 16,
+        bottomY - smallH / 2,
+        smallW,
+        smallH,
       ),
-      anchor: Anchor.bottomLeft,
-      position: Vector2(20, gameSize.y - 16),
+      textColor: const Color(0x7700FFFF),
+      fontSize: 11,
+      outline: true,
     );
-    await add(_creditsBtn);
-    _creditsRect = Rect.fromLTWH(0, gameSize.y - 60, 160, 60);
 
-    // CHANGELOG — bottom right
-    _changelogBtn = TextComponent(
-      text: 'CHANGELOG',
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Color(0x6600FFFF),
-          fontSize: 14,
-          fontFamily: 'monospace',
-        ),
-      ),
-      anchor: Anchor.bottomRight,
-      position: Vector2(gameSize.x - 20, gameSize.y - 16),
-    );
-    await add(_changelogBtn);
-    _changelogRect = Rect.fromLTWH(gameSize.x - 180, gameSize.y - 60, 180, 60);
-
-    _controls = TextComponent(
-      text: 'JOYSTICK: Steer  |  THRUST: Accelerate  |  FIRE: Shoot  |  DASH: Phase through',
-      textRenderer: TextPaint(
-        style: const TextStyle(
+    // ── Controls legend ──
+    _controlsPainter = TextPainter(
+      text: const TextSpan(
+        text: 'JOYSTICK: Steer  |  THRUST: Accelerate  |  FIRE: Shoot  |  DASH: Phase through',
+        style: TextStyle(
           color: Color(0x88FFFFFF),
-          fontSize: 14,
-          fontFamily: 'monospace',
+          fontSize: 11,
+          fontFamily: 'JetBrainsMono',
         ),
       ),
-      anchor: Anchor.center,
-      position: Vector2(gameSize.x / 2, gameSize.y * 0.88),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    _controlsOffset = Offset(
+      gameSize.x / 2 - _controlsPainter.width / 2,
+      gameSize.y * 0.82,
     );
-    await add(_controls);
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+
+    // ── Title: Tron Legacy style (outline + multi-layer glow) ──
+    // Layer 1: Wide glow halo
+    _drawTitle(canvas, _titleOffset, Paint()
+      ..color = const Color(0x3000FFFF)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6.0
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20));
+    // Layer 2: Medium glow
+    _drawTitle(canvas, _titleOffset, Paint()
+      ..color = const Color(0x6000FFFF)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.0
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+    // Layer 3: Solid filled text (slightly dimmed interior)
+    _titlePainter.paint(canvas, _titleOffset);
+    // Layer 4: Bright outline on top
+    _drawTitle(canvas, _titleOffset, Paint()
+      ..color = const Color(0xDD00FFFF)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2);
+
+    // ── "D4 Games" ──
+    _subtitlePainter.paint(canvas, _subtitleOffset);
+
+    // ── INSERT COIN (pulsing, Tron outline style, Tron font) ──
+    final opacity = 0.5 + sin(_pulseTime * 3) * 0.5;
+    const icText = 'INSERT COIN';
+    const icFontSize = 30.0;
+    const icFont = 'JetBrainsMono';
+    const icLetterSpacing = 3.0;
+
+    // Layer 1: Wide violet glow halo
+    _drawCenteredTextWithPaint(canvas, icText, icFontSize, icFont, icLetterSpacing, _insertCoinY,
+      Paint()
+        ..color = Color.fromARGB((opacity * 40).toInt(), 200, 0, 255)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 4.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16));
+    // Layer 2: Medium violet glow
+    _drawCenteredTextWithPaint(canvas, icText, icFontSize, icFont, icLetterSpacing, _insertCoinY,
+      Paint()
+        ..color = Color.fromARGB((opacity * 90).toInt(), 200, 0, 255)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6));
+    // Layer 3: Dark fill
+    _drawCenteredTextWithPaint(canvas, icText, icFontSize, icFont, icLetterSpacing, _insertCoinY,
+      Paint()..color = Color.fromARGB((opacity * 70).toInt(), 40, 0, 50));
+    // Layer 4: Bright violet outline
+    _drawCenteredTextWithPaint(canvas, icText, icFontSize, icFont, icLetterSpacing, _insertCoinY,
+      Paint()
+        ..color = Color.fromARGB((opacity * 220).toInt(), 200, 0, 255)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0);
+
+    // ── Menu Buttons ──
+    _leaderboardBtn.render(canvas);
+    _historyBtn.render(canvas);
+    _shipBtn.render(canvas);
+    _creditsBtn.render(canvas);
+    _changelogBtn.render(canvas);
+
+    // ── Controls ──
+    _controlsPainter.paint(canvas, _controlsOffset);
   }
 
   @override
   void update(double dt) {
     super.update(dt);
     _pulseTime += dt;
-
-    // Pulse "INSERT COIN" opacity
-    final opacity = 0.5 + sin(_pulseTime * 3) * 0.5;
-    _subtitle.textRenderer = TextPaint(
-      style: TextStyle(
-        color: Color.fromARGB((opacity * 255).toInt(), 255, 255, 255),
-        fontSize: 22,
-        fontFamily: 'monospace',
-      ),
-    );
   }
 
   @override
@@ -206,27 +275,27 @@ class TitleScreen extends PositionComponent
     final pos = event.localPosition;
     final offset = Offset(pos.x, pos.y);
 
-    if (_leaderboardRect.contains(offset)) {
+    if (_leaderboardBtn.contains(offset)) {
       eventBus.emit(UiNavigationEvent());
       _showLeaderboard();
       return;
     }
-    if (_creditsRect.contains(offset)) {
+    if (_creditsBtn.contains(offset)) {
       eventBus.emit(UiNavigationEvent());
       _showCredits();
       return;
     }
-    if (_changelogRect.contains(offset)) {
+    if (_changelogBtn.contains(offset)) {
       eventBus.emit(UiNavigationEvent());
       _showChangelog();
       return;
     }
-    if (_logRect.contains(offset)) {
+    if (_historyBtn.contains(offset)) {
       eventBus.emit(UiNavigationEvent());
       _showJournal();
       return;
     }
-    if (_shipRect.contains(offset)) {
+    if (_shipBtn.contains(offset)) {
       eventBus.emit(UiNavigationEvent());
       _showCosmetics();
       return;
@@ -235,6 +304,42 @@ class TitleScreen extends PositionComponent
     // Any other tap starts the game
     eventBus.emit(StartGameEvent());
     removeFromParent();
+  }
+
+  /// Draw text centered at a given Y position with a custom foreground paint.
+  void _drawCenteredTextWithPaint(Canvas canvas, String text, double fontSize,
+      String fontFamily, double letterSpacing, double centerY, Paint paint) {
+    final tp = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          foreground: paint,
+          fontSize: fontSize,
+          fontFamily: fontFamily,
+          fontWeight: FontWeight.bold,
+          letterSpacing: letterSpacing,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, Offset(_gameWidth / 2 - tp.width / 2, centerY - tp.height / 2));
+  }
+
+  /// Draw title text with a custom foreground paint (for stroke/glow layers).
+  void _drawTitle(Canvas canvas, Offset offset, Paint paint) {
+    final tp = TextPainter(
+      text: TextSpan(
+        text: 'NEON ASTEROIDS',
+        style: TextStyle(
+          foreground: paint,
+          fontSize: 52,
+          fontFamily: 'Tron',
+          letterSpacing: 8.0,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, offset);
   }
 
   void _showLeaderboard() {

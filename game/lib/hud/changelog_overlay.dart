@@ -2,8 +2,9 @@ import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flutter/painting.dart'
-    show TextPainter, TextDirection, TextStyle, TextSpan, FontWeight;
+import 'package:flutter/painting.dart' show FontWeight;
+
+import 'panel_renderer.dart';
 
 /// Scrollable changelog overlay with arcade terminal style.
 class ChangelogOverlay extends PositionComponent
@@ -17,14 +18,25 @@ class ChangelogOverlay extends PositionComponent
   double _dragTotal = 0;
   static const _dragThreshold = 8.0;
 
-  static const _titleY = 60.0;
-  static const _contentTop = 110.0;
-  static const _footerHeight = 60.0;
   static const _lineHeight = 26.0;
   static const _versionGap = 16.0;
-  static const _leftMargin = 32.0;
+
+  // Panel-relative layout values (computed in onLoad)
+  late double _panelTop;
+  late double _panelBottom;
+  late double _titleY;
+  late double _contentTop;
+  late double _footerHeight;
+  late double _leftMargin;
 
   static const List<_ChangelogVersion> _versions = [
+    _ChangelogVersion('v1.8.0', 'Design System Alignment', [
+      '* Aligned UI with Delfour.co design system',
+      '* Pure black background (#000000)',
+      '* Standardised panels, buttons, glows & borders',
+      '* Shared panel renderer (less code, more consistent)',
+      '* Rounded dialog corners (16px) and button corners (8px)',
+    ]),
     _ChangelogVersion('v1.7.0', 'Session Stats & Feel', [
       '+ Post-game stats screen (accuracy, combos, kills...)',
       '+ Projectile laser trails',
@@ -104,6 +116,14 @@ class ChangelogOverlay extends PositionComponent
     position = Vector2.zero();
     priority = 300;
 
+    // Compute panel-relative layout
+    _panelTop = size.y * 0.125;
+    _panelBottom = size.y * 0.875;
+    _titleY = _panelTop + 40;
+    _contentTop = _panelTop + 80;
+    _footerHeight = size.y - _panelBottom + 40;
+    _leftMargin = size.x * 0.15 + 20;
+
     // Calculate total content height
     double totalHeight = 0;
     for (final version in _versions) {
@@ -141,14 +161,20 @@ class ChangelogOverlay extends PositionComponent
   @override
   void render(ui.Canvas canvas) {
     // Background
-    canvas.drawRect(
-      ui.Rect.fromLTWH(0, 0, size.x, size.y),
-      ui.Paint()..color = const ui.Color(0xFA000011),
+    PanelRenderer.drawOverlayBackground(canvas, size.x, size.y);
+
+    // Panel
+    final panelRect = ui.Rect.fromCenter(
+      center: ui.Offset(size.x / 2, size.y / 2),
+      width: size.x * 0.7,
+      height: size.y * 0.75,
     );
+    PanelRenderer.drawPanel(canvas, panelRect, title: 'CHANGELOG');
+    PanelRenderer.drawScanlines(canvas, panelRect);
 
     // Fixed title (centered)
-    _drawTextCentered(canvas, 'CHANGELOG', size.x / 2, _titleY, 36,
-        const ui.Color(0xFFFFFF00), FontWeight.bold);
+    PanelRenderer.drawTextCentered(canvas, 'CHANGELOG', size.x / 2, _titleY, 36,
+        const ui.Color(0xFFAAFFFF), weight: FontWeight.bold, glow: true);
 
     // Clip scrollable area
     final clipRect = ui.Rect.fromLTWH(
@@ -159,16 +185,16 @@ class ChangelogOverlay extends PositionComponent
     double y = _contentTop + 14 - _scrollOffset;
     for (final version in _versions) {
       // Version header (left-aligned)
-      _drawTextLeft(canvas, '${version.tag} — ${version.name}',
+      PanelRenderer.drawTextLeft(canvas, '${version.tag} — ${version.name}',
           _leftMargin, y, 20,
-          const ui.Color(0xFF00FFFF), FontWeight.bold);
+          const ui.Color(0xFF00FFFF), weight: FontWeight.bold);
       y += _lineHeight;
 
       // Description lines (left-aligned, indented)
       for (final line in version.lines) {
-        _drawTextLeft(canvas, '  $line',
+        PanelRenderer.drawTextLeft(canvas, '  $line',
             _leftMargin, y, 16,
-            const ui.Color(0xFFFFFFFF), FontWeight.normal);
+            const ui.Color(0xFFFFFFFF));
         y += _lineHeight;
       }
       y += _versionGap;
@@ -176,37 +202,12 @@ class ChangelogOverlay extends PositionComponent
 
     canvas.restore();
 
+    // Separator line above footer
+    PanelRenderer.drawSeparator(canvas, size.x * 0.3, size.x * 0.7, _panelBottom - 40);
+
     // Footer (centered)
-    _drawTextCentered(canvas, 'TAP TO CLOSE', size.x / 2, size.y - 40, 18,
-        const ui.Color(0x88FFFFFF), FontWeight.normal);
-  }
-
-  void _drawTextCentered(ui.Canvas canvas, String text, double x, double y,
-      double fontSize, ui.Color color, FontWeight weight) {
-    final tp = _layoutText(text, fontSize, color, weight);
-    tp.paint(canvas, ui.Offset(x - tp.width / 2, y - tp.height / 2));
-  }
-
-  void _drawTextLeft(ui.Canvas canvas, String text, double x, double y,
-      double fontSize, ui.Color color, FontWeight weight) {
-    final tp = _layoutText(text, fontSize, color, weight);
-    tp.paint(canvas, ui.Offset(x, y - tp.height / 2));
-  }
-
-  TextPainter _layoutText(String text, double fontSize, ui.Color color,
-      FontWeight weight) {
-    return TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          color: color,
-          fontSize: fontSize,
-          fontWeight: weight,
-          fontFamily: 'monospace',
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
+    PanelRenderer.drawTextCentered(canvas, 'TAP TO CLOSE', size.x / 2, _panelBottom - 20, 18,
+        const ui.Color(0x88FFFFFF));
   }
 }
 

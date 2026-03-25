@@ -26,16 +26,46 @@ abstract class GameConfig {
 
   // Visuals
   static const Color shipColor = Color(0xFF00FFFF);
-  static const Color backgroundColor = Color(0xFF000011);
-  static const double glowRadius = 10.0;
-  static const double glowOpacity = 0.6;
+  static const Color backgroundColor = Color(0xFF000000);
+  static const double glowRadius = 4.0;
+  static const double glowOpacity = 0.8;
+
+  // Design system — surfaces
+  static const Color surfaceColor = Color(0xFF0A0A0A);
+  static const Color surfaceElevatedColor = Color(0xFF111111);
+  static const Color overlayColor = Color(0xCC000000);
+
+  // Design system — borders & glows
+  static const Color borderCyanColor = Color(0x3300FFFF);
+  static const Color glowCyanColor = Color(0x6600FFFF);
+
+  // Design system — text
+  static const Color textSecondaryColor = Color(0xFFB0B0B0);
+  static const Color textDimmedColor = Color(0xFF666666);
+
+  // Design system — accents
+  static const Color secondaryColor = Color(0xFF1E90FF);
+  static const Color errorColor = Color(0xFFFF3333);
+
+  // Design system — radii
+  static const double buttonRadius = 8.0;
+  static const double cardRadius = 12.0;
+  static const double dialogRadius = 16.0;
+
+  // Design system — glow values
+  static const double buttonGlowBlur = 16.0;
+  static const double buttonGlowSpread = 2.0;
+  static const double buttonGlowAlpha = 0.4;
+  static const double cardGlowBlur = 12.0;
+  static const double cardGlowSpread = 1.0;
+  static const double cardGlowAlpha = 0.4;
 
   // Starfield
-  static const int starCount = 150;
+  static const int starCount = 30;
   static const double starMinSize = 1.0;
-  static const double starMaxSize = 3.0;
-  static const double starMinOpacity = 0.3;
-  static const double starMaxOpacity = 1.0;
+  static const double starMaxSize = 1.5;
+  static const double starMinOpacity = 0.1;
+  static const double starMaxOpacity = 0.3;
 
   // Joystick
   static final Paint joystickKnobPaint = Paint()
@@ -63,7 +93,7 @@ abstract class GameConfig {
   // Combo
   static const double comboTimeout = 2.0; // seconds before combo resets
   static const int comboMaxMultiplier = 8;
-  static const Color comboColor = Color(0xFFFFFF00);
+  static const Color comboColor = Color(0xFFCC00FF);
 
   // Score popup
   static const double scorePopupDuration = 0.8;
@@ -95,7 +125,7 @@ abstract class GameConfig {
   static const String leaderboardKey = 'leaderboard_v1';
 
   // Arcade colors
-  static const Color arcadeYellow = Color(0xFFFFFF00);
+  static const Color arcadeYellow = Color(0xFFAAFFFF);
   static const Color arcadeGreen = Color(0xFF00FF66);
   static const Color arcadeRed = Color(0xFFFF0066);
   static const Color arcadeWhite = Color(0xFFFFFFFF);

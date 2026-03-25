@@ -3,11 +3,12 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/painting.dart'
-    show TextPainter, TextDirection, TextStyle, TextSpan, FontWeight;
+    show FontWeight, Shadow;
 
 import '../core/event_bus.dart';
 import '../core/game_config.dart';
 import '../core/leaderboard.dart';
+import 'panel_renderer.dart';
 
 /// Event emitted when initials entry is complete.
 class InitialsEnteredEvent {
@@ -117,65 +118,93 @@ class InitialEntryOverlay extends PositionComponent
   void render(ui.Canvas canvas) {
     if (_done) return;
 
-    // Semi-transparent background
-    canvas.drawRect(
-      ui.Rect.fromLTWH(0, 0, size.x, size.y),
-      ui.Paint()..color = const ui.Color(0xDD000011),
-    );
+    final cx = size.x / 2;
+    final cy = size.y / 2;
 
-    // Title
-    _drawText(canvas, 'NEW HIGH SCORE!', size.x / 2, size.y / 2 - 120, 32,
-        GameConfig.arcadeYellow, FontWeight.bold);
-    _drawText(canvas, '$score', size.x / 2, size.y / 2 - 80, 28,
-        GameConfig.arcadeWhite, FontWeight.normal);
-    _drawText(canvas, 'ENTER YOUR INITIALS', size.x / 2, size.y / 2 - 50, 18,
-        GameConfig.shipColor, FontWeight.normal);
+    // Background
+    PanelRenderer.drawOverlayBackground(canvas, size.x, size.y);
+
+    // Panel
+    final panelRect = ui.Rect.fromCenter(
+      center: ui.Offset(cx, cy),
+      width: size.x * 0.5,
+      height: size.y * 0.75,
+    );
+    PanelRenderer.drawPanel(canvas, panelRect, title: 'HIGH SCORE');
+    PanelRenderer.drawScanlines(canvas, panelRect);
+
+    // ── "NEW HIGH SCORE!" — monospace bold outline style ──
+    PanelRenderer.drawTronTitle(canvas, 'NEW HIGH SCORE!', cx, cy - 120, 32,
+        letterSpacing: 2.0);
+
+    // Score value
+    PanelRenderer.drawTextCentered(canvas, '$score', cx, cy - 80, 28,
+        const ui.Color(0xFF00FFFF),
+        weight: FontWeight.bold,
+        letterSpacing: 2.0,
+        shadows: [
+          const Shadow(color: ui.Color(0x9900FFFF), blurRadius: 10),
+        ]);
+
+    // Instruction
+    PanelRenderer.drawTextCentered(canvas, 'ENTER YOUR INITIALS', cx, cy - 50,
+        16, const ui.Color(0xAA00FFFF),
+        letterSpacing: 2.0);
 
     // Letter slots
     for (int i = 0; i < 3; i++) {
       final letter = String.fromCharCode(65 + _letters[i]);
       final x = _slotStartX + i * _slotWidth + _slotWidth / 2;
       final isSelected = i == _selectedSlot;
-      final color =
-          isSelected ? GameConfig.arcadeYellow : GameConfig.arcadeWhite;
-      _drawText(canvas, letter, x, _slotY, 48, color, FontWeight.bold);
+      final color = isSelected
+          ? GameConfig.arcadeYellow
+          : const ui.Color(0xFFFFFFFF);
+
+      PanelRenderer.drawTextCentered(canvas, letter, x, _slotY, 48, color,
+          weight: FontWeight.bold,
+          letterSpacing: 2.0,
+          shadows: isSelected
+              ? [Shadow(color: GameConfig.arcadeYellow.withValues(alpha: 0.6), blurRadius: 10)]
+              : []);
 
       // Underline selected
       if (isSelected) {
+        final underlinePaint = ui.Paint()
+          ..color = GameConfig.arcadeYellow
+          ..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 3);
         canvas.drawRect(
           ui.Rect.fromCenter(
             center: ui.Offset(x, _slotY + 30),
             width: 30,
-            height: 3,
+            height: 2,
+          ),
+          underlinePaint,
+        );
+        canvas.drawRect(
+          ui.Rect.fromCenter(
+            center: ui.Offset(x, _slotY + 30),
+            width: 30,
+            height: 2,
           ),
           ui.Paint()..color = GameConfig.arcadeYellow,
         );
       }
 
-      // Up/down arrows
-      _drawText(canvas, '▲', x, _slotY - 40, 16, color, FontWeight.normal);
-      _drawText(canvas, '▼', x, _slotY + 50, 16, color, FontWeight.normal);
+      // Up/down arrows with glow
+      final arrowColor = isSelected
+          ? GameConfig.arcadeYellow
+          : const ui.Color(0xAAFFFFFF);
+      PanelRenderer.drawTextCentered(
+          canvas, '▲', x, _slotY - 40, 16, arrowColor,
+          letterSpacing: 2.0);
+      PanelRenderer.drawTextCentered(
+          canvas, '▼', x, _slotY + 50, 16, arrowColor,
+          letterSpacing: 2.0);
     }
 
-    // DONE button
-    _drawText(canvas, 'DONE', size.x / 2, size.y / 2 + 150, 24,
-        GameConfig.arcadeGreen, FontWeight.bold);
-  }
-
-  void _drawText(ui.Canvas canvas, String text, double x, double y,
-      double fontSize, ui.Color color, FontWeight weight) {
-    final tp = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          color: color,
-          fontSize: fontSize,
-          fontWeight: weight,
-          fontFamily: 'monospace',
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    tp.paint(canvas, ui.Offset(x - tp.width / 2, y - tp.height / 2));
+    // DONE glow button
+    PanelRenderer.drawGlowButton(
+        canvas, _doneRect, 'DONE', GameConfig.arcadeGreen,
+        fontSize: 18, letterSpacing: 2.0);
   }
 }

@@ -5,11 +5,12 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/painting.dart'
-    show TextPainter, TextDirection, TextStyle, TextSpan, FontWeight;
+    show FontWeight, Shadow;
 
+import '../hud/panel_renderer.dart';
 import 'fragment_data.dart';
 
-/// Full-screen overlay showing a single narrative fragment in retro terminal style.
+/// Full-screen overlay showing a single narrative fragment in Tron terminal style.
 ///
 /// Uses DateTime.now() for pulse animation (game might be paused).
 /// DragCallbacks + containsLocalPoint => true to block inputs below.
@@ -48,55 +49,64 @@ class FragmentOverlay extends PositionComponent
     final w = size.x;
     final h = size.y;
 
-    // Dark green-tinted background
-    canvas.drawRect(
-      ui.Rect.fromLTWH(0, 0, w, h),
-      ui.Paint()..color = const ui.Color(0xEE001100),
-    );
+    // Tron black background
+    PanelRenderer.drawOverlayBackground(canvas, w, h);
 
     final cx = w / 2;
 
-    // "MEMORY FRAGMENT" title in green
-    _drawTextCentered(canvas, 'MEMORY FRAGMENT', cx, _titleY, 32,
-        const ui.Color(0xFF00FF66), FontWeight.bold);
+    // Panel dimensions
+    final panelW = w * 0.7;
+    final panelH = h * 0.75;
+    final panelRect = ui.Rect.fromCenter(
+      center: ui.Offset(cx, h / 2),
+      width: panelW,
+      height: panelH,
+    );
+    PanelRenderer.drawPanel(canvas, panelRect, title: 'MEMORY FRAGMENT');
 
-    // Fragment title in cyan
-    _drawTextCentered(canvas, fragment.title, cx, _fragmentTitleY, 24,
-        const ui.Color(0xFF00FFFF), FontWeight.bold);
+    // Scanlines over the panel
+    PanelRenderer.drawScanlines(canvas, panelRect);
 
-    // Fragment text line by line in green monospace
+    // "MEMORY FRAGMENT" title in cyan with glow
+    PanelRenderer.drawTextCentered(canvas, 'MEMORY FRAGMENT', cx, _titleY, 32,
+        const ui.Color(0xFF00FFFF),
+        weight: FontWeight.bold, letterSpacing: 2.0, shadows: const [
+          Shadow(color: ui.Color(0x9900FFFF), blurRadius: 8),
+          Shadow(color: ui.Color(0x4400FFFF), blurRadius: 16),
+        ]);
+
+    // Separator line in cyan
+    PanelRenderer.drawSeparator(canvas, cx - 120, cx + 120, _titleY + 22);
+
+    // Fragment title in cyan with glow
+    PanelRenderer.drawTextCentered(canvas, fragment.title, cx, _fragmentTitleY,
+        24, const ui.Color(0xFF00FFFF),
+        weight: FontWeight.bold, letterSpacing: 2.0, shadows: const [
+          Shadow(color: ui.Color(0x9900FFFF), blurRadius: 8),
+          Shadow(color: ui.Color(0x4400FFFF), blurRadius: 16),
+        ]);
+
+    // Fragment text line by line in cyan monospace
     final lines = fragment.text.split('\n');
     double y = _contentTop;
     for (final line in lines) {
-      _drawTextCentered(canvas, line, cx, y, 18,
-          const ui.Color(0xFF00FF66), FontWeight.normal);
+      PanelRenderer.drawTextCentered(
+          canvas, line, cx, y, 18, const ui.Color(0xFF00FFFF),
+          letterSpacing: 2.0);
       y += _lineHeight;
     }
 
-    // Pulsing "TAP TO CONTINUE" at bottom
+    // Pulsing "TAP TO CONTINUE" at bottom with glow
     final ms = DateTime.now().millisecondsSinceEpoch;
     final pulse = 0.5 + sin(ms / 300.0) * 0.5;
     final pulseColor = ui.Color.fromARGB(
-      (pulse * 255).toInt(), 0, 255, 102,
+      (pulse * 255).toInt(), 0, 255, 255,
     );
-    _drawTextCentered(canvas, 'TAP TO CONTINUE', cx, h - _footerOffset, 18,
-        pulseColor, FontWeight.normal);
-  }
-
-  void _drawTextCentered(ui.Canvas canvas, String text, double x, double y,
-      double fontSize, ui.Color color, FontWeight weight) {
-    final tp = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          color: color,
-          fontSize: fontSize,
-          fontWeight: weight,
-          fontFamily: 'monospace',
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    tp.paint(canvas, ui.Offset(x - tp.width / 2, y - tp.height / 2));
+    PanelRenderer.drawTextCentered(canvas, 'TAP TO CONTINUE', cx,
+        h - _footerOffset, 18, pulseColor,
+        letterSpacing: 2.0, shadows: [
+          Shadow(color: ui.Color.fromARGB((pulse * 153).toInt(), 0, 255, 255), blurRadius: 8),
+          Shadow(color: ui.Color.fromARGB((pulse * 68).toInt(), 0, 255, 255), blurRadius: 16),
+        ]);
   }
 }
