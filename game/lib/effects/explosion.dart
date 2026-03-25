@@ -27,9 +27,11 @@ class Explosion extends PositionComponent {
   @override
   Future<void> onLoad() async {
     _particles = List.generate(particleCount, (_) {
-      final angle = _random.nextDouble() * 2 * pi;
-      final speed = 20.0 + _random.nextDouble() * maxSpeed;
-      final size = 1.0 + _random.nextDouble() * 3.0;
+      // Quantize angles to 45° increments for geometric feel
+      final angleIndex = _random.nextInt(8);
+      final angle = angleIndex * (pi / 4);
+      final speed = 30.0 + _random.nextDouble() * maxSpeed;
+      final size = 1.0 + _random.nextDouble() * 2.5;
       return _Particle(
         dx: cos(angle) * speed,
         dy: sin(angle) * speed,
@@ -68,8 +70,19 @@ class Explosion extends PositionComponent {
 
     for (final p in _particles) {
       final offset = Offset(p.x, p.y);
-      canvas.drawCircle(offset, p.size * 1.5, glowPaint);
-      canvas.drawCircle(offset, p.size, paint);
+      // Tron-style geometric fragments
+      final rect = Rect.fromCenter(
+        center: offset,
+        width: p.size * 2,
+        height: p.size * 1.2,
+      );
+      final glowRect = Rect.fromCenter(
+        center: offset,
+        width: p.size * 2.5,
+        height: p.size * 1.8,
+      );
+      canvas.drawRect(glowRect, glowPaint);
+      canvas.drawRect(rect, paint);
     }
   }
 }

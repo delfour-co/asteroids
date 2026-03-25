@@ -69,8 +69,8 @@ class Asteroid extends PositionComponent
 
     final paints = NeonRenderer.createNeonPaints(
       color: const Color(0xFFFF00FF), // Magenta for asteroids
-      glowRadius: 6.0,
-      glowOpacity: 0.5,
+      glowRadius: 3.0,
+      glowOpacity: 0.6,
       strokeWidth: 1.5,
     );
     _glowPaint = paints.glow;

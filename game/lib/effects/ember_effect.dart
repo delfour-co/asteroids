@@ -90,10 +90,12 @@ class EmberEffect extends PositionComponent {
 
       final offset = Offset(p.x, p.y);
       _glowPaint.color = _corePaint.color.withValues(alpha: opacity * 0.4);
-      canvas.drawCircle(offset, p.size * 2, _glowPaint);
+      final glowRect = Rect.fromCenter(center: offset, width: p.size * 3, height: p.size * 2);
+      canvas.drawRect(glowRect, _glowPaint);
 
       _corePaint.color = _corePaint.color.withValues(alpha: opacity);
-      canvas.drawCircle(offset, p.size, _corePaint);
+      final rect = Rect.fromCenter(center: offset, width: p.size * 2, height: p.size);
+      canvas.drawRect(rect, _corePaint);
     }
   }
 }

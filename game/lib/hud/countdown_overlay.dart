@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flutter/painting.dart' show TextStyle, FontWeight;
+import 'package:flutter/painting.dart' show FontWeight, Shadow, TextStyle;
 
 import '../core/arcade_events.dart';
 import '../core/event_bus.dart';
@@ -60,15 +60,26 @@ class CountdownOverlay extends PositionComponent with HasGameReference {
     }
 
     final color = _currentText == 'GO!'
-        ? GameConfig.arcadeGreen
-        : GameConfig.arcadeWhite;
+        ? const Color(0xFF00FF66)
+        : GameConfig.shipColor;
 
     TextPaint(
       style: TextStyle(
         color: color.withValues(alpha: opacity),
-        fontSize: 72,
-        fontFamily: 'monospace',
+        fontSize: 64,
+        fontFamily: 'JetBrainsMono',
         fontWeight: FontWeight.bold,
+        letterSpacing: 2.0,
+        shadows: [
+          Shadow(
+            color: color.withValues(alpha: opacity * 0.6),
+            blurRadius: 12,
+          ),
+          Shadow(
+            color: color.withValues(alpha: opacity * 0.3),
+            blurRadius: 24,
+          ),
+        ],
       ),
     ).render(
       canvas,

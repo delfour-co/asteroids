@@ -5,7 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/painting.dart'
-    show TextPainter, TextDirection, TextStyle, TextSpan, FontWeight;
+    show TextPainter, TextDirection, TextStyle, TextSpan, FontWeight, Shadow;
 
 import '../core/game_config.dart';
 
@@ -44,12 +44,15 @@ class TutorialOverlay extends PositionComponent
     // Semi-transparent background
     canvas.drawRect(
       ui.Rect.fromLTWH(0, 0, w, h),
-      ui.Paint()..color = const ui.Color(0xDD000011),
+      ui.Paint()..color = const ui.Color(0xF5000005),
     );
 
     // "CONTROLS" title
     _drawText(canvas, 'CONTROLS', w / 2, 80, 48,
-        GameConfig.shipColor, FontWeight.bold);
+        GameConfig.shipColor, FontWeight.bold, shadows: const [
+          Shadow(color: ui.Color(0x9900FFFF), blurRadius: 8),
+          Shadow(color: ui.Color(0x4400FFFF), blurRadius: 16),
+        ]);
 
     // Control positions (same formulas as actual buttons)
     // Joystick: left:40, bottom:40, radius 75
@@ -94,11 +97,22 @@ class TutorialOverlay extends PositionComponent
       (pulse * 255).toInt(), 255, 255, 255,
     );
     _drawText(canvas, 'TAP TO PLAY', w / 2, h / 2 + 40, 28,
-        tapColor, FontWeight.normal);
+        tapColor, FontWeight.normal, shadows: const [
+          Shadow(color: ui.Color(0x9900FFFF), blurRadius: 8),
+          Shadow(color: ui.Color(0x4400FFFF), blurRadius: 16),
+        ]);
   }
 
   void _drawGlowCircle(ui.Canvas canvas, double x, double y, double radius) {
-    // Outer glow
+    // Diffuse outer glow (wider, softer)
+    canvas.drawCircle(
+      ui.Offset(x, y),
+      radius * 1.3,
+      ui.Paint()
+        ..color = GameConfig.shipColor.withValues(alpha: 0.06)
+        ..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 40),
+    );
+    // Inner glow
     canvas.drawCircle(
       ui.Offset(x, y),
       radius,
@@ -118,7 +132,8 @@ class TutorialOverlay extends PositionComponent
   }
 
   void _drawText(ui.Canvas canvas, String text, double x, double y,
-      double fontSize, ui.Color color, FontWeight weight) {
+      double fontSize, ui.Color color, FontWeight weight,
+      {List<Shadow>? shadows}) {
     final tp = TextPainter(
       text: TextSpan(
         text: text,
@@ -126,7 +141,9 @@ class TutorialOverlay extends PositionComponent
           color: color,
           fontSize: fontSize,
           fontWeight: weight,
-          fontFamily: 'monospace',
+          fontFamily: 'JetBrainsMono',
+          letterSpacing: 1.5,
+          shadows: shadows,
         ),
       ),
       textDirection: TextDirection.ltr,

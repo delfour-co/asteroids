@@ -5,15 +5,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:asteroids_neon/background/starfield.dart';
 
 void main() {
-  group('Starfield', () {
+  group('TronGrid', () {
     testWithGame<FlameGame>(
       'initializes and renders without error',
       FlameGame.new,
       (game) async {
-        final starfield = Starfield();
-        await game.ensureAdd(starfield);
+        final grid = TronGrid();
+        await game.ensureAdd(grid);
 
-        expect(starfield.isMounted, isTrue);
+        expect(grid.isMounted, isTrue);
 
         // Trigger render cycle
         game.update(0.016);
@@ -24,10 +24,10 @@ void main() {
       'size matches game size',
       FlameGame.new,
       (game) async {
-        final starfield = Starfield();
-        await game.ensureAdd(starfield);
+        final grid = TronGrid();
+        await game.ensureAdd(grid);
 
-        expect(starfield.size, game.size);
+        expect(grid.size, game.size);
       },
     );
   });

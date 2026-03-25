@@ -52,7 +52,7 @@ class Projectile extends PositionComponent
   Future<void> onLoad() async {
     final paints = NeonRenderer.createNeonPaints(
       color: GameConfig.shipColor,
-      glowRadius: 6.0,
+      glowRadius: 3.0,
       glowOpacity: 0.8,
       strokeWidth: 1.5,
     );
@@ -123,8 +123,13 @@ class Projectile extends PositionComponent
 
   @override
   void render(Canvas canvas) {
-    // Draw fading trail in world coordinates (undo component transform)
+    // Draw fading trail — undo component rotation since trail is in world coords
     if (_trailPoints.length >= 2) {
+      canvas.save();
+      canvas.translate(size.x / 2, size.y / 2);
+      canvas.rotate(-angle);
+      canvas.translate(-size.x / 2, -size.y / 2);
+
       for (int i = 0; i < _trailPoints.length - 1; i++) {
         final alpha = ((1.0 - i / _trailPoints.length) * 0.4 * 255).toInt();
         _trailPaint.color = GameConfig.shipColor.withAlpha(alpha);
@@ -136,6 +141,7 @@ class Projectile extends PositionComponent
           _trailPaint,
         );
       }
+      canvas.restore();
     }
 
     canvas.save();

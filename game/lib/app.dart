@@ -44,6 +44,7 @@ import 'input/joystick.dart';
 import 'narration/fragment_data.dart';
 import 'narration/fragment_manager.dart';
 import 'narration/fragment_overlay.dart';
+import 'effects/scanlines_overlay.dart';
 import 'projectiles/projectile.dart';
 import 'projectiles/projectile_manager.dart';
 import 'ship/ship.dart';
@@ -253,6 +254,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     await add(WaveRingEffect());
     await add(HapticManager());
     await add(fragmentManager);
+    await add(ScanlinesOverlay());
 
     _menuListener = (_) => _returnToMenu();
     _gamePauseListener = (_) => _isPaused = true;

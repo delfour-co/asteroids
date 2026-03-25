@@ -11,7 +11,7 @@ import '../ship/ship.dart';
 /// Types of power-ups.
 enum PowerUpType {
   shield(color: Color(0xFF00AAFF), label: 'S'), // Blue
-  multiShot(color: Color(0xFFFFFF00), label: 'M'), // Yellow
+  multiShot(color: Color(0xFFCC00FF), label: 'M'), // Violet
   slowMo(color: Color(0xFFAA00FF), label: '~'); // Purple
 
   final Color color;

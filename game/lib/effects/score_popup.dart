@@ -1,7 +1,7 @@
 import 'dart:ui' show Color;
 
 import 'package:flame/components.dart';
-import 'package:flutter/painting.dart' show TextStyle, FontWeight;
+import 'package:flutter/painting.dart' show FontWeight, Shadow, TextStyle;
 
 import '../core/game_config.dart';
 
@@ -31,8 +31,19 @@ class ScorePopup extends TextComponent {
                       ? GameConfig.comboColor
                       : GameConfig.arcadeWhite),
               fontSize: GameConfig.scorePopupFontSize,
-              fontFamily: 'monospace',
+              fontFamily: 'JetBrainsMono',
               fontWeight: FontWeight.bold,
+              letterSpacing: 1.5,
+              shadows: [
+                Shadow(
+                  color: (color ??
+                          (multiplier > 1
+                              ? GameConfig.comboColor
+                              : GameConfig.arcadeWhite))
+                      .withValues(alpha: 0.6),
+                  blurRadius: 6,
+                ),
+              ],
             ),
           ),
           anchor: Anchor.center,
@@ -53,8 +64,15 @@ class ScorePopup extends TextComponent {
       style: TextStyle(
         color: _baseColor.withValues(alpha: opacity),
         fontSize: GameConfig.scorePopupFontSize,
-        fontFamily: 'monospace',
+        fontFamily: 'JetBrainsMono',
         fontWeight: FontWeight.bold,
+        letterSpacing: 2.0,
+        shadows: [
+          Shadow(
+            color: _baseColor.withValues(alpha: opacity * 0.6),
+            blurRadius: 6,
+          ),
+        ],
       ),
     );
 

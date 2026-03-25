@@ -18,33 +18,17 @@ class AsteroidGenerator {
     final path = Path();
     final angleStep = (2 * pi) / vertices;
 
-    // Pre-generate radii with occasional deep notches (craters)
+    // Gentle variation for geometric but not perfect shapes
     final radii = <double>[];
     for (int i = 0; i < vertices; i++) {
-      if (_random.nextDouble() < 0.25) {
-        // Deep concavity — crater/notch (25% chance)
-        radii.add(radius * (0.45 + _random.nextDouble() * 0.15));
-      } else {
-        // Normal variation
-        radii.add(radius * (0.7 + _random.nextDouble() * 0.3));
-      }
-    }
-
-    // Smooth adjacent vertices slightly to avoid spikes
-    final smoothed = <double>[];
-    for (int i = 0; i < vertices; i++) {
-      final prev = radii[(i - 1 + vertices) % vertices];
-      final curr = radii[i];
-      final next = radii[(i + 1) % vertices];
-      smoothed.add(curr * 0.6 + (prev + next) * 0.2);
+      radii.add(radius * (0.85 + _random.nextDouble() * 0.15));
     }
 
     for (int i = 0; i < vertices; i++) {
-      final r = smoothed[i];
+      final r = radii[i];
       final a = angleStep * i;
       final x = cos(a) * r;
       final y = sin(a) * r;
-
       if (i == 0) {
         path.moveTo(x, y);
       } else {
@@ -55,10 +39,9 @@ class AsteroidGenerator {
     return path;
   }
 
-  /// More vertices for larger asteroids = more detail.
   static int _verticesForRadius(double radius) {
-    if (radius >= 35) return 12 + _random.nextInt(4); // large: 12-15
-    if (radius >= 18) return 10 + _random.nextInt(3); // medium: 10-12
-    return 8 + _random.nextInt(3); // small: 8-10
+    if (radius >= 35) return 6 + _random.nextInt(3); // large: 6-8
+    if (radius >= 18) return 5 + _random.nextInt(2); // medium: 5-6
+    return 4 + _random.nextInt(2); // small: 4-5
   }
 }

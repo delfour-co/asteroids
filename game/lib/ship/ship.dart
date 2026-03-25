@@ -57,10 +57,13 @@ class Ship extends PositionComponent
 
   // Dash trail positions
   final List<Vector2> _trailPositions = [];
-  static const int _maxTrailLength = 8;
+  static const int _maxTrailLength = 16;
 
   // Thrust flame
   double _thrustFlicker = 0;
+
+  // Incremental acceleration
+  double _thrustPower = 0;
 
   // Shield power-up
   bool _shieldActive = false;
@@ -199,23 +202,22 @@ class Ship extends PositionComponent
   void update(double dt) {
     super.update(dt);
 
-    // Update dash
-    if (_isDashing) {
-      _dashTimer -= dt;
-      // Record trail
+    // Always record trail when moving
+    if (_velocity.length > 5.0) {
       _trailPositions.insert(0, position.clone());
       if (_trailPositions.length > _maxTrailLength) {
         _trailPositions.removeLast();
       }
+    } else if (_trailPositions.isNotEmpty) {
+      _trailPositions.removeLast();
+    }
+
+    // Update dash
+    if (_isDashing) {
+      _dashTimer -= dt;
       if (_dashTimer <= 0) {
         _isDashing = false;
-        // Keep invulnerable briefly after dash
         _invulnerableTimer = 0.3;
-      }
-    } else {
-      // Fade trail
-      if (_trailPositions.isNotEmpty) {
-        _trailPositions.removeLast();
       }
     }
 
@@ -232,15 +234,23 @@ class Ship extends PositionComponent
       _invulnerable = true;
     }
 
-    // Thrust flame animation
+    // Thrust flame animation + incremental power
     if (_isThrusting) {
       _thrustFlicker += dt * 20;
+      // Ramp up thrust power over ~1 second to full
+      _thrustPower = (_thrustPower + dt * 1.5).clamp(0.0, 1.0);
+    } else {
+      // Reset power when not thrusting
+      _thrustPower = (_thrustPower - dt * 3.0).clamp(0.0, 1.0);
     }
 
     // Apply thrust in ship's facing direction (reduced during dash)
     if (_isThrusting && !_isDashing) {
-      final dx = sin(angle) * GameConfig.shipAcceleration * dt;
-      final dy = -cos(angle) * GameConfig.shipAcceleration * dt;
+      // Start at 20% power, ramp to 100%
+      final power = 0.2 + _thrustPower * 0.8;
+      final accel = GameConfig.shipAcceleration * power;
+      final dx = sin(angle) * accel * dt;
+      final dy = -cos(angle) * accel * dt;
       _velocity.x += dx;
       _velocity.y += dy;
 
@@ -288,22 +298,48 @@ class Ship extends PositionComponent
 
   @override
   void render(Canvas canvas) {
-    // Draw dash trail
-    if (_trailPositions.isNotEmpty) {
-      final trailPaint = Paint()
+    // Draw light trail (Tron style) — must undo component rotation
+    // since trail positions are in world coordinates
+    if (_trailPositions.length >= 2) {
+      canvas.save();
+      // Undo the component's rotation (applied by Flame before render)
+      canvas.translate(size.x / 2, size.y / 2);
+      canvas.rotate(-angle);
+      canvas.translate(-size.x / 2, -size.y / 2);
+
+      final trailGlowPaint = Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5;
-      for (int i = 0; i < _trailPositions.length; i++) {
-        final t = _trailPositions[i];
-        final opacity = (1.0 - i / _maxTrailLength) * 0.5;
-        trailPaint.color = _color.withValues(alpha: opacity);
-        final dx = t.x - position.x;
-        final dy = t.y - position.y;
-        canvas.save();
-        canvas.translate(size.x / 2 + dx, size.y / 2 + dy);
-        canvas.drawPath(_shipPath, trailPaint);
-        canvas.restore();
+        ..strokeWidth = 3.0
+        ..strokeCap = StrokeCap.round
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+      final trailCorePaint = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..strokeCap = StrokeCap.round;
+
+      for (int i = 0; i < _trailPositions.length - 1; i++) {
+        final opacity = (1.0 - i / _trailPositions.length);
+        final a = _trailPositions[i];
+        final b = _trailPositions[i + 1];
+        final dx1 = a.x - position.x;
+        final dy1 = a.y - position.y;
+        final dx2 = b.x - position.x;
+        final dy2 = b.y - position.y;
+
+        trailGlowPaint.color = _color.withValues(alpha: opacity * 0.3);
+        canvas.drawLine(
+          Offset(size.x / 2 + dx1, size.y / 2 + dy1),
+          Offset(size.x / 2 + dx2, size.y / 2 + dy2),
+          trailGlowPaint,
+        );
+        trailCorePaint.color = _color.withValues(alpha: opacity * 0.6);
+        canvas.drawLine(
+          Offset(size.x / 2 + dx1, size.y / 2 + dy1),
+          Offset(size.x / 2 + dx2, size.y / 2 + dy2),
+          trailCorePaint,
+        );
       }
+      canvas.restore();
     }
 
     canvas.save();

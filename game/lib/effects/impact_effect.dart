@@ -19,7 +19,8 @@ class ImpactEffect extends PositionComponent {
   @override
   Future<void> onLoad() async {
     _sparks = List.generate(_count, (_) {
-      final angle = _rng.nextDouble() * 2 * pi;
+      final angleIndex = _rng.nextInt(8);
+      final angle = angleIndex * (pi / 4);
       final speed = 40.0 + _rng.nextDouble() * 80.0;
       return _Spark(
         dx: cos(angle) * speed,
@@ -57,8 +58,10 @@ class ImpactEffect extends PositionComponent {
 
     for (final s in _sparks) {
       final offset = Offset(s.x, s.y);
-      canvas.drawCircle(offset, s.size * 1.2, glowPaint);
-      canvas.drawCircle(offset, s.size, paint);
+      final rect = Rect.fromCenter(center: offset, width: s.size * 2, height: s.size);
+      final glowRect = Rect.fromCenter(center: offset, width: s.size * 2.5, height: s.size * 1.5);
+      canvas.drawRect(glowRect, glowPaint);
+      canvas.drawRect(rect, paint);
     }
   }
 }

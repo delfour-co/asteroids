@@ -525,6 +525,7 @@ class _StatsVisualBars extends PositionComponent {
   _StatsVisualBars({
     required this.accuracy,
     required this.bestCombo,
+    // ignore: unused_element_parameter
     this.maxCombo = 8,
     required this.gameSize,
   });

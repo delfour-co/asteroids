@@ -122,7 +122,7 @@ class DeathSequence extends PositionComponent
       radius,
       [
         Color.fromRGBO(0, 0, 0, opacity),
-        Color.fromRGBO(10, 0, 20, opacity * 0.8),
+        Color.fromRGBO(0, 10, 20, opacity * 0.8),
         Color.fromRGBO(0, 0, 0, opacity * 0.4),
       ],
       [0.0, 0.5, 1.0],
@@ -189,13 +189,13 @@ class DeathSequence extends PositionComponent
     final paragraphBuilder = ParagraphBuilder(ParagraphStyle(
       textAlign: TextAlign.center,
       fontSize: _fontSize,
-      fontFamily: 'monospace',
+      fontFamily: 'JetBrainsMono',
     ))
       ..pushStyle(TextStyle(
-        color: Color.fromRGBO(0, 255, 100, opacity),
+        color: Color.fromRGBO(0, 255, 255, opacity),
         fontSize: _fontSize,
-        fontFamily: 'monospace',
-        letterSpacing: 6.0,
+        fontFamily: 'JetBrainsMono',
+        letterSpacing: 3.0,
       ))
       ..addText(_signalText);
 
@@ -204,8 +204,8 @@ class DeathSequence extends PositionComponent
 
     final textY = cy - _fontSize / 2;
 
-    // Green glow behind text
-    _textGlowPaint.color = Color.fromRGBO(0, 255, 100, 0.3 * opacity);
+    // Cyan glow behind text
+    _textGlowPaint.color = Color.fromRGBO(0, 255, 255, 0.3 * opacity);
     canvas.drawRect(
       Rect.fromCenter(center: Offset(cx, cy), width: 360, height: 60),
       _textGlowPaint,

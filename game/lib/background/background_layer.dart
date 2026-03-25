@@ -4,7 +4,7 @@ import 'package:flame/game.dart';
 import 'nebula_layer.dart';
 import 'starfield.dart';
 
-/// Background layer containing the starfield and nebula.
+/// Background layer containing the Tron grid and wave overlay.
 ///
 /// First layer in the hierarchy — rendered behind everything else.
 class BackgroundLayer extends PositionComponent
@@ -12,7 +12,7 @@ class BackgroundLayer extends PositionComponent
   @override
   Future<void> onLoad() async {
     size = game.size;
-    await add(Starfield());
-    await add(NebulaLayer());
+    await add(TronGrid());
+    await add(WaveOverlay());
   }
 }

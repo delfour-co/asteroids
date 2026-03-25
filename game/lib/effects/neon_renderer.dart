@@ -18,7 +18,7 @@ class NeonRenderer {
     final glowPaint = Paint()
       ..color = color.withValues(alpha: glowOpacity)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth + 4.0
+      ..strokeWidth = strokeWidth + 2.0
       ..maskFilter = MaskFilter.blur(BlurStyle.normal, glowRadius);
 
     final solidPaint = Paint()
