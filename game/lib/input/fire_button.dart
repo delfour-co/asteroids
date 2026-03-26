@@ -87,8 +87,7 @@ class FireButton extends PositionComponent
     const innerR = 28.0;
 
     // Glow fill
-    canvas.drawCircle(
-        center, radius, Paint()..color = const Color(0x1AFF00FF));
+    canvas.drawCircle(center, radius, Paint()..color = const Color(0x1AFF00FF));
 
     // Outer segmented ring — 4 arcs with gaps
     final ringPaint = Paint()
@@ -124,31 +123,36 @@ class FireButton extends PositionComponent
       final innerX = cx + cos(a) * (radius + 1);
       final innerY = cy + sin(a) * (radius + 1);
       canvas.drawLine(
-          Offset(innerX, innerY), Offset(outerX, outerY), tickPaint);
+        Offset(innerX, innerY),
+        Offset(outerX, outerY),
+        tickPaint,
+      );
     }
 
     // Inner scope ring
     final innerRect = Rect.fromCircle(center: center, radius: innerR);
     canvas.drawArc(
-        innerRect,
-        -0.4,
-        0.8,
-        false,
-        Paint()
-          ..color = _magenta
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5
-          ..strokeCap = StrokeCap.round);
+      innerRect,
+      -0.4,
+      0.8,
+      false,
+      Paint()
+        ..color = _magenta
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..strokeCap = StrokeCap.round,
+    );
     canvas.drawArc(
-        innerRect,
-        pi - 0.4,
-        0.8,
-        false,
-        Paint()
-          ..color = _magenta
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5
-          ..strokeCap = StrokeCap.round);
+      innerRect,
+      pi - 0.4,
+      0.8,
+      false,
+      Paint()
+        ..color = _magenta
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..strokeCap = StrokeCap.round,
+    );
 
     // Crosshair lines (4 ticks pointing inward)
     final crossPaint = Paint()
@@ -163,5 +167,4 @@ class FireButton extends PositionComponent
     // Center dot
     canvas.drawCircle(center, 2.0, Paint()..color = _magenta);
   }
-
 }

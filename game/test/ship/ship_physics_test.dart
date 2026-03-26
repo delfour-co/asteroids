@@ -71,11 +71,9 @@ void main() {
         await game.ensureAdd(ship);
 
         // Rotate to face right (pi/2)
-        eventBus.emit(JoystickDirectionEvent(
-          angle: pi / 2,
-          isActive: true,
-          intensity: 1.0,
-        ));
+        eventBus.emit(
+          JoystickDirectionEvent(angle: pi / 2, isActive: true, intensity: 1.0),
+        );
 
         // Thrust
         eventBus.emit(ThrustEvent(true));
@@ -94,8 +92,7 @@ void main() {
       'ship wraps from right edge to left',
       FlameGame.new,
       (game) async {
-        final ship = Ship()
-          ..position = Vector2(game.size.x + 20, 300);
+        final ship = Ship()..position = Vector2(game.size.x + 20, 300);
         await game.ensureAdd(ship);
 
         game.update(1 / 60);
@@ -109,8 +106,7 @@ void main() {
       'ship wraps from left edge to right',
       FlameGame.new,
       (game) async {
-        final ship = Ship()
-          ..position = Vector2(-20, 300);
+        final ship = Ship()..position = Vector2(-20, 300);
         await game.ensureAdd(ship);
 
         game.update(1 / 60);
@@ -120,32 +116,26 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'ship wraps from bottom to top',
-      FlameGame.new,
-      (game) async {
-        final ship = Ship()
-          ..position = Vector2(400, game.size.y + 20);
-        await game.ensureAdd(ship);
+    testWithGame<FlameGame>('ship wraps from bottom to top', FlameGame.new, (
+      game,
+    ) async {
+      final ship = Ship()..position = Vector2(400, game.size.y + 20);
+      await game.ensureAdd(ship);
 
-        game.update(1 / 60);
+      game.update(1 / 60);
 
-        expect(ship.position.y, lessThan(0));
-      },
-    );
+      expect(ship.position.y, lessThan(0));
+    });
 
-    testWithGame<FlameGame>(
-      'ship wraps from top to bottom',
-      FlameGame.new,
-      (game) async {
-        final ship = Ship()
-          ..position = Vector2(400, -20);
-        await game.ensureAdd(ship);
+    testWithGame<FlameGame>('ship wraps from top to bottom', FlameGame.new, (
+      game,
+    ) async {
+      final ship = Ship()..position = Vector2(400, -20);
+      await game.ensureAdd(ship);
 
-        game.update(1 / 60);
+      game.update(1 / 60);
 
-        expect(ship.position.y, greaterThan(game.size.y));
-      },
-    );
+      expect(ship.position.y, greaterThan(game.size.y));
+    });
   });
 }

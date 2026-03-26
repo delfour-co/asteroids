@@ -22,25 +22,23 @@ void main() {
   });
 
   group('ProjectileManager', () {
-    testWithGame<FlameGame>(
-      'spawns projectile when firing',
-      FlameGame.new,
-      (game) async {
-        final container = Component();
-        await game.ensureAdd(container);
-        final manager = ProjectileManager();
-        await container.ensureAdd(manager);
+    testWithGame<FlameGame>('spawns projectile when firing', FlameGame.new, (
+      game,
+    ) async {
+      final container = Component();
+      await game.ensureAdd(container);
+      final manager = ProjectileManager();
+      await container.ensureAdd(manager);
 
-        eventBus.emit(ShipFireRequestEvent(Vector2(200, 200), 0));
-        eventBus.emit(FireEvent(true));
+      eventBus.emit(ShipFireRequestEvent(Vector2(200, 200), 0));
+      eventBus.emit(FireEvent(true));
 
-        game.update(1 / 60);
-        await _flushAsync(game);
+      game.update(1 / 60);
+      await _flushAsync(game);
 
-        final projectiles = container.children.whereType<Projectile>();
-        expect(projectiles.length, 1);
-      },
-    );
+      final projectiles = container.children.whereType<Projectile>();
+      expect(projectiles.length, 1);
+    });
 
     testWithGame<FlameGame>(
       'does not fire without ship position',
@@ -60,26 +58,24 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'respects fire rate cooldown',
-      FlameGame.new,
-      (game) async {
-        final container = Component();
-        await game.ensureAdd(container);
-        final manager = ProjectileManager();
-        await container.ensureAdd(manager);
+    testWithGame<FlameGame>('respects fire rate cooldown', FlameGame.new, (
+      game,
+    ) async {
+      final container = Component();
+      await game.ensureAdd(container);
+      final manager = ProjectileManager();
+      await container.ensureAdd(manager);
 
-        eventBus.emit(ShipFireRequestEvent(Vector2(200, 200), 0));
-        eventBus.emit(FireEvent(true));
+      eventBus.emit(ShipFireRequestEvent(Vector2(200, 200), 0));
+      eventBus.emit(FireEvent(true));
 
-        game.update(1 / 60); // Fire first
-        game.update(1 / 60); // Too soon
-        await _flushAsync(game);
+      game.update(1 / 60); // Fire first
+      game.update(1 / 60); // Too soon
+      await _flushAsync(game);
 
-        final projectiles = container.children.whereType<Projectile>();
-        expect(projectiles.length, 1);
-      },
-    );
+      final projectiles = container.children.whereType<Projectile>();
+      expect(projectiles.length, 1);
+    });
 
     testWithGame<FlameGame>(
       'fires again after cooldown expires',
@@ -103,26 +99,24 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'stops firing after game over',
-      FlameGame.new,
-      (game) async {
-        final container = Component();
-        await game.ensureAdd(container);
-        final manager = ProjectileManager();
-        await container.ensureAdd(manager);
+    testWithGame<FlameGame>('stops firing after game over', FlameGame.new, (
+      game,
+    ) async {
+      final container = Component();
+      await game.ensureAdd(container);
+      final manager = ProjectileManager();
+      await container.ensureAdd(manager);
 
-        eventBus.emit(ShipFireRequestEvent(Vector2(200, 200), 0));
-        eventBus.emit(FireEvent(true));
-        eventBus.emit(GameOverEvent());
+      eventBus.emit(ShipFireRequestEvent(Vector2(200, 200), 0));
+      eventBus.emit(FireEvent(true));
+      eventBus.emit(GameOverEvent());
 
-        game.update(1 / 60);
-        await _flushAsync(game);
+      game.update(1 / 60);
+      await _flushAsync(game);
 
-        final projectiles = container.children.whereType<Projectile>();
-        expect(projectiles.length, 0);
-      },
-    );
+      final projectiles = container.children.whereType<Projectile>();
+      expect(projectiles.length, 0);
+    });
 
     testWithGame<FlameGame>(
       'stops firing when fire event is false',

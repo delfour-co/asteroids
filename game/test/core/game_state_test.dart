@@ -24,10 +24,7 @@ void main() {
     test('score increases on asteroid destroyed', () async {
       final state = GameState();
       await state.init();
-      eventBus.emit(AsteroidDestroyedEvent(
-        Vector2.zero(),
-        AsteroidSize.large,
-      ));
+      eventBus.emit(AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.large));
       expect(state.score, AsteroidSize.large.points);
       state.dispose();
     });
@@ -35,15 +32,12 @@ void main() {
     test('score accumulates across multiple asteroids', () async {
       final state = GameState();
       await state.init();
-      eventBus.emit(AsteroidDestroyedEvent(
-        Vector2.zero(),
-        AsteroidSize.large,
-      ));
-      eventBus.emit(AsteroidDestroyedEvent(
-        Vector2.zero(),
-        AsteroidSize.small,
-      ));
-      expect(state.score, AsteroidSize.large.points + AsteroidSize.small.points);
+      eventBus.emit(AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.large));
+      eventBus.emit(AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.small));
+      expect(
+        state.score,
+        AsteroidSize.large.points + AsteroidSize.small.points,
+      );
       state.dispose();
     });
 
@@ -53,10 +47,9 @@ void main() {
       int? lastScore;
       eventBus.on<ScoreChangedEvent>((e) => lastScore = e.score);
 
-      eventBus.emit(AsteroidDestroyedEvent(
-        Vector2.zero(),
-        AsteroidSize.medium,
-      ));
+      eventBus.emit(
+        AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.medium),
+      );
       expect(lastScore, AsteroidSize.medium.points);
       state.dispose();
     });
@@ -100,13 +93,12 @@ void main() {
       eventBus.on<ExtraLifeEvent>((_) => gotExtraLife = true);
 
       // Score enough for extra life (100 points per small asteroid)
-      final needed =
-          (GameConfig.extraLifeScore / AsteroidSize.small.points).ceil();
+      final needed = (GameConfig.extraLifeScore / AsteroidSize.small.points)
+          .ceil();
       for (int i = 0; i < needed; i++) {
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.small,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.small),
+        );
       }
 
       expect(gotExtraLife, true);
@@ -121,10 +113,7 @@ void main() {
       await state.init();
 
       // Score some points
-      eventBus.emit(AsteroidDestroyedEvent(
-        Vector2.zero(),
-        AsteroidSize.large,
-      ));
+      eventBus.emit(AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.large));
       final expectedScore = AsteroidSize.large.points;
 
       // Trigger game over

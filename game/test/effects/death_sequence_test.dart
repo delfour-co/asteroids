@@ -13,49 +13,43 @@ void main() {
   });
 
   group('DeathSequence', () {
-    testWithGame<FlameGame>(
-      'mounts with priority 900',
-      FlameGame.new,
-      (game) async {
-        final sequence = DeathSequence();
-        await game.ensureAdd(sequence);
+    testWithGame<FlameGame>('mounts with priority 900', FlameGame.new, (
+      game,
+    ) async {
+      final sequence = DeathSequence();
+      await game.ensureAdd(sequence);
 
-        expect(sequence.isMounted, true);
-        expect(sequence.priority, 900);
-      },
-    );
+      expect(sequence.isMounted, true);
+      expect(sequence.priority, 900);
+    });
 
-    testWithGame<FlameGame>(
-      'activates on DeathSlowMoEvent',
-      FlameGame.new,
-      (game) async {
-        final sequence = DeathSequence();
-        await game.ensureAdd(sequence);
+    testWithGame<FlameGame>('activates on DeathSlowMoEvent', FlameGame.new, (
+      game,
+    ) async {
+      final sequence = DeathSequence();
+      await game.ensureAdd(sequence);
 
-        eventBus.emit(DeathSlowMoEvent(Vector2(100, 100)));
+      eventBus.emit(DeathSlowMoEvent(Vector2(100, 100)));
 
-        // Should remain mounted and process the event
-        game.update(0.1);
-        expect(sequence.isMounted, true);
-      },
-    );
+      // Should remain mounted and process the event
+      game.update(0.1);
+      expect(sequence.isMounted, true);
+    });
 
-    testWithGame<FlameGame>(
-      'deactivates after total duration',
-      FlameGame.new,
-      (game) async {
-        final sequence = DeathSequence();
-        await game.ensureAdd(sequence);
+    testWithGame<FlameGame>('deactivates after total duration', FlameGame.new, (
+      game,
+    ) async {
+      final sequence = DeathSequence();
+      await game.ensureAdd(sequence);
 
-        eventBus.emit(DeathSlowMoEvent(Vector2(100, 100)));
+      eventBus.emit(DeathSlowMoEvent(Vector2(100, 100)));
 
-        // Advance past total duration
-        game.update(GameConfig.signalLostDuration + 0.1);
+      // Advance past total duration
+      game.update(GameConfig.signalLostDuration + 0.1);
 
-        // Still mounted (persistent component) but no longer active
-        expect(sequence.isMounted, true);
-      },
-    );
+      // Still mounted (persistent component) but no longer active
+      expect(sequence.isMounted, true);
+    });
 
     testWithGame<FlameGame>(
       'does not intercept input (containsLocalPoint returns false)',

@@ -2,8 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flutter/painting.dart'
-    show FontWeight, Shadow;
+import 'package:flutter/painting.dart' show FontWeight, Shadow;
 
 import '../core/event_bus.dart';
 import '../core/game_config.dart';
@@ -134,22 +133,38 @@ class InitialEntryOverlay extends PositionComponent
     PanelRenderer.drawScanlines(canvas, panelRect);
 
     // ── "NEW HIGH SCORE!" — monospace bold outline style ──
-    PanelRenderer.drawTronTitle(canvas, 'NEW HIGH SCORE!', cx, cy - 120, 32,
-        letterSpacing: 2.0);
+    PanelRenderer.drawTronTitle(
+      canvas,
+      'NEW HIGH SCORE!',
+      cx,
+      cy - 120,
+      32,
+      letterSpacing: 2.0,
+    );
 
     // Score value
-    PanelRenderer.drawTextCentered(canvas, '$score', cx, cy - 80, 28,
-        const ui.Color(0xFF00FFFF),
-        weight: FontWeight.bold,
-        letterSpacing: 2.0,
-        shadows: [
-          const Shadow(color: ui.Color(0x9900FFFF), blurRadius: 10),
-        ]);
+    PanelRenderer.drawTextCentered(
+      canvas,
+      '$score',
+      cx,
+      cy - 80,
+      28,
+      const ui.Color(0xFF00FFFF),
+      weight: FontWeight.bold,
+      letterSpacing: 2.0,
+      shadows: [const Shadow(color: ui.Color(0x9900FFFF), blurRadius: 10)],
+    );
 
     // Instruction
-    PanelRenderer.drawTextCentered(canvas, 'ENTER YOUR INITIALS', cx, cy - 50,
-        16, const ui.Color(0xAA00FFFF),
-        letterSpacing: 2.0);
+    PanelRenderer.drawTextCentered(
+      canvas,
+      'ENTER YOUR INITIALS',
+      cx,
+      cy - 50,
+      16,
+      const ui.Color(0xAA00FFFF),
+      letterSpacing: 2.0,
+    );
 
     // Letter slots
     for (int i = 0; i < 3; i++) {
@@ -160,12 +175,24 @@ class InitialEntryOverlay extends PositionComponent
           ? GameConfig.arcadeYellow
           : const ui.Color(0xFFFFFFFF);
 
-      PanelRenderer.drawTextCentered(canvas, letter, x, _slotY, 48, color,
-          weight: FontWeight.bold,
-          letterSpacing: 2.0,
-          shadows: isSelected
-              ? [Shadow(color: GameConfig.arcadeYellow.withValues(alpha: 0.6), blurRadius: 10)]
-              : []);
+      PanelRenderer.drawTextCentered(
+        canvas,
+        letter,
+        x,
+        _slotY,
+        48,
+        color,
+        weight: FontWeight.bold,
+        letterSpacing: 2.0,
+        shadows: isSelected
+            ? [
+                Shadow(
+                  color: GameConfig.arcadeYellow.withValues(alpha: 0.6),
+                  blurRadius: 10,
+                ),
+              ]
+            : [],
+      );
 
       // Underline selected
       if (isSelected) {
@@ -195,16 +222,33 @@ class InitialEntryOverlay extends PositionComponent
           ? GameConfig.arcadeYellow
           : const ui.Color(0xAAFFFFFF);
       PanelRenderer.drawTextCentered(
-          canvas, '▲', x, _slotY - 40, 16, arrowColor,
-          letterSpacing: 2.0);
+        canvas,
+        '▲',
+        x,
+        _slotY - 40,
+        16,
+        arrowColor,
+        letterSpacing: 2.0,
+      );
       PanelRenderer.drawTextCentered(
-          canvas, '▼', x, _slotY + 50, 16, arrowColor,
-          letterSpacing: 2.0);
+        canvas,
+        '▼',
+        x,
+        _slotY + 50,
+        16,
+        arrowColor,
+        letterSpacing: 2.0,
+      );
     }
 
     // DONE glow button
     PanelRenderer.drawGlowButton(
-        canvas, _doneRect, 'DONE', GameConfig.arcadeGreen,
-        fontSize: 18, letterSpacing: 2.0);
+      canvas,
+      _doneRect,
+      'DONE',
+      GameConfig.arcadeGreen,
+      fontSize: 18,
+      letterSpacing: 2.0,
+    );
   }
 }

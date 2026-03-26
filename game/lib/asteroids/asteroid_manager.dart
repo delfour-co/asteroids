@@ -52,7 +52,8 @@ class AsteroidManager extends Component with HasGameReference {
     if (_gameOver || !_waveActive) return;
 
     // Check if all asteroids are destroyed — spawn new wave
-    final hasAsteroids = children.whereType<Asteroid>().isNotEmpty ||
+    final hasAsteroids =
+        children.whereType<Asteroid>().isNotEmpty ||
         children.whereType<ExplosiveAsteroid>().isNotEmpty ||
         children.whereType<MagneticAsteroid>().isNotEmpty;
     if (!hasAsteroids) {

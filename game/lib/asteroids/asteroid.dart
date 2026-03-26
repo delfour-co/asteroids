@@ -26,8 +26,11 @@ class AsteroidDestroyedEvent {
   final Vector2 position;
   final AsteroidSize asteroidSize;
   final bool byDash;
-  AsteroidDestroyedEvent(this.position, this.asteroidSize,
-      {this.byDash = false});
+  AsteroidDestroyedEvent(
+    this.position,
+    this.asteroidSize, {
+    this.byDash = false,
+  });
 }
 
 /// A procedurally generated asteroid with neon rendering.
@@ -46,10 +49,8 @@ class Asteroid extends PositionComponent
 
   static final Random _random = Random();
 
-  Asteroid({
-    required this.asteroidSize,
-    Vector2? velocity,
-  }) : _rotationSpeed = (_random.nextDouble() - 0.5) * 2.0 {
+  Asteroid({required this.asteroidSize, Vector2? velocity})
+    : _rotationSpeed = (_random.nextDouble() - 0.5) * 2.0 {
     final r = asteroidSize.radius;
     size = Vector2.all(r * 2);
     anchor = Anchor.center;
@@ -133,11 +134,9 @@ class Asteroid extends PositionComponent
 
   /// Destroy this asteroid, emitting event and splitting if needed.
   void destroy({bool byDash = false}) {
-    eventBus.emit(AsteroidDestroyedEvent(
-      position.clone(),
-      asteroidSize,
-      byDash: byDash,
-    ));
+    eventBus.emit(
+      AsteroidDestroyedEvent(position.clone(), asteroidSize, byDash: byDash),
+    );
     removeFromParent();
   }
 

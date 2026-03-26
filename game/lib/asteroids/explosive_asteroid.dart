@@ -37,10 +37,8 @@ class ExplosiveAsteroid extends PositionComponent
 
   static final Random _random = Random();
 
-  ExplosiveAsteroid({
-    required this.asteroidSize,
-    Vector2? velocity,
-  }) : _rotationSpeed = (_random.nextDouble() - 0.5) * 2.0 {
+  ExplosiveAsteroid({required this.asteroidSize, Vector2? velocity})
+    : _rotationSpeed = (_random.nextDouble() - 0.5) * 2.0 {
     final r = asteroidSize.radius;
     size = Vector2.all(r * 2);
     anchor = Anchor.center;
@@ -120,21 +118,21 @@ class ExplosiveAsteroid extends PositionComponent
   /// Destroy this asteroid, emitting knockback blast and events.
   void destroy({bool byDash = false}) {
     // Knockback blast — push nearby asteroids away
-    eventBus.emit(KnockbackEvent(
-      position.clone(),
-      GameConfig.explosiveBlastRadius,
-      GameConfig.knockbackForce,
-    ));
+    eventBus.emit(
+      KnockbackEvent(
+        position.clone(),
+        GameConfig.explosiveBlastRadius,
+        GameConfig.knockbackForce,
+      ),
+    );
 
     // Extra-strong screen shake for explosive blast
     eventBus.emit(ScreenShakeEvent(GameConfig.shakeIntensityLarge));
 
     // Standard asteroid destroyed event (scoring, splitting, embers)
-    eventBus.emit(AsteroidDestroyedEvent(
-      position.clone(),
-      asteroidSize,
-      byDash: byDash,
-    ));
+    eventBus.emit(
+      AsteroidDestroyedEvent(position.clone(), asteroidSize, byDash: byDash),
+    );
 
     removeFromParent();
   }
@@ -148,8 +146,9 @@ class ExplosiveAsteroid extends PositionComponent
     final pulse = (sin(_elapsed * 4.0) + 1.0) / 2.0; // 0..1
     final pulseRadius = asteroidSize.radius * (0.3 + pulse * 0.25);
 
-    _pulseGlowPaint.color = GameConfig.explosiveAsteroidColor
-        .withValues(alpha: 0.15 + pulse * 0.2);
+    _pulseGlowPaint.color = GameConfig.explosiveAsteroidColor.withValues(
+      alpha: 0.15 + pulse * 0.2,
+    );
     canvas.drawCircle(Offset.zero, pulseRadius, _pulseGlowPaint);
     canvas.drawCircle(Offset.zero, pulseRadius * 0.6, _pulseSolidPaint);
 

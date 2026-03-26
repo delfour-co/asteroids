@@ -20,26 +20,22 @@ void main() {
       expect(hunter.anchor, Anchor.center);
     });
 
-    testWithGame<FlameGame>(
-      'wraps around screen edges',
-      FlameGame.new,
-      (game) async {
-        final hunter = UfoHunter()
-          ..position = Vector2(game.size.x + 30, 200);
-        await game.ensureAdd(hunter);
+    testWithGame<FlameGame>('wraps around screen edges', FlameGame.new, (
+      game,
+    ) async {
+      final hunter = UfoHunter()..position = Vector2(game.size.x + 30, 200);
+      await game.ensureAdd(hunter);
 
-        game.update(1 / 60);
+      game.update(1 / 60);
 
-        expect(hunter.position.x, lessThan(0));
-      },
-    );
+      expect(hunter.position.x, lessThan(0));
+    });
 
     testWithGame<FlameGame>(
       'emits UfoDestroyedEvent with correct points on destroy',
       FlameGame.new,
       (game) async {
-        final hunter = UfoHunter()
-          ..position = Vector2(200, 200);
+        final hunter = UfoHunter()..position = Vector2(200, 200);
         await game.ensureAdd(hunter);
 
         eventBus.on<UfoDestroyedEvent>((_) {});

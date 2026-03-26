@@ -19,29 +19,25 @@ void main() {
       expect(scout.anchor, Anchor.center);
     });
 
-    testWithGame<FlameGame>(
-      'moves in set direction',
-      FlameGame.new,
-      (game) async {
-        final scout = UfoScout()
-          ..position = Vector2(200, 200);
-        await game.ensureAdd(scout);
-        scout.setDirection(Vector2(1, 0));
+    testWithGame<FlameGame>('moves in set direction', FlameGame.new, (
+      game,
+    ) async {
+      final scout = UfoScout()..position = Vector2(200, 200);
+      await game.ensureAdd(scout);
+      scout.setDirection(Vector2(1, 0));
 
-        for (int i = 0; i < 10; i++) {
-          game.update(1 / 60);
-        }
+      for (int i = 0; i < 10; i++) {
+        game.update(1 / 60);
+      }
 
-        expect(scout.position.x, greaterThan(200));
-      },
-    );
+      expect(scout.position.x, greaterThan(200));
+    });
 
     testWithGame<FlameGame>(
       'removes itself when far off screen',
       FlameGame.new,
       (game) async {
-        final scout = UfoScout()
-          ..position = Vector2(-100, 200);
+        final scout = UfoScout()..position = Vector2(-100, 200);
         await game.ensureAdd(scout);
         scout.setDirection(Vector2(-1, 0));
 
@@ -59,8 +55,7 @@ void main() {
       'speed affected by enemySpeedMultiplier',
       FlameGame.new,
       (game) async {
-        final scout = UfoScout()
-          ..position = Vector2(200, 200);
+        final scout = UfoScout()..position = Vector2(200, 200);
         await game.ensureAdd(scout);
         scout.setDirection(Vector2(1, 0));
 

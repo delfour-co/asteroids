@@ -107,8 +107,10 @@ class SpaceDebrisManager extends Component with HasGameReference {
   }
 
   ({Vector2 position, Vector2 velocity}) _randomEdgeSpawn(Vector2 gameSize) {
-    final speed = GameConfig.debrisMinSpeed +
-        _random.nextDouble() * (GameConfig.debrisMaxSpeed - GameConfig.debrisMinSpeed);
+    final speed =
+        GameConfig.debrisMinSpeed +
+        _random.nextDouble() *
+            (GameConfig.debrisMaxSpeed - GameConfig.debrisMinSpeed);
 
     final edge = _random.nextInt(4);
     final Vector2 pos;
@@ -134,8 +136,14 @@ class SpaceDebrisManager extends Component with HasGameReference {
 
   /// Remove all debris (for game over / restart).
   void clearAll() {
-    children.whereType<StarlinkTrain>().toList().forEach((d) => d.removeFromParent());
-    children.whereType<SpaceStation>().toList().forEach((d) => d.removeFromParent());
-    children.whereType<TeslaRoadster>().toList().forEach((d) => d.removeFromParent());
+    children.whereType<StarlinkTrain>().toList().forEach(
+      (d) => d.removeFromParent(),
+    );
+    children.whereType<SpaceStation>().toList().forEach(
+      (d) => d.removeFromParent(),
+    );
+    children.whereType<TeslaRoadster>().toList().forEach(
+      (d) => d.removeFromParent(),
+    );
   }
 }

@@ -67,8 +67,10 @@ class UfoManager extends Component with HasGameReference {
     if (_spawnTimer <= 0) {
       _spawnUfo();
       // Next spawn interval — decreases with wave
-      final interval = (_baseSpawnInterval - _currentWave * 0.5)
-          .clamp(_minSpawnInterval, _baseSpawnInterval);
+      final interval = (_baseSpawnInterval - _currentWave * 0.5).clamp(
+        _minSpawnInterval,
+        _baseSpawnInterval,
+      );
       _spawnTimer = interval + _random.nextDouble() * 3.0;
     }
   }
@@ -96,12 +98,14 @@ class UfoManager extends Component with HasGameReference {
 
     if (fromLeft) {
       scout.position = Vector2(-20, y);
-      scout.setDirection(Vector2(1, (_random.nextDouble() - 0.5) * 0.5)
-        ..normalize());
+      scout.setDirection(
+        Vector2(1, (_random.nextDouble() - 0.5) * 0.5)..normalize(),
+      );
     } else {
       scout.position = Vector2(gameSize.x + 20, y);
-      scout.setDirection(Vector2(-1, (_random.nextDouble() - 0.5) * 0.5)
-        ..normalize());
+      scout.setDirection(
+        Vector2(-1, (_random.nextDouble() - 0.5) * 0.5)..normalize(),
+      );
     }
 
     add(scout);
@@ -114,17 +118,19 @@ class UfoManager extends Component with HasGameReference {
     final edge = _random.nextInt(4);
     switch (edge) {
       case 0:
-        hunter.position =
-            Vector2(_random.nextDouble() * gameSize.x, -20);
+        hunter.position = Vector2(_random.nextDouble() * gameSize.x, -20);
       case 1:
-        hunter.position =
-            Vector2(gameSize.x + 20, _random.nextDouble() * gameSize.y);
+        hunter.position = Vector2(
+          gameSize.x + 20,
+          _random.nextDouble() * gameSize.y,
+        );
       case 2:
-        hunter.position =
-            Vector2(_random.nextDouble() * gameSize.x, gameSize.y + 20);
+        hunter.position = Vector2(
+          _random.nextDouble() * gameSize.x,
+          gameSize.y + 20,
+        );
       default:
-        hunter.position =
-            Vector2(-20, _random.nextDouble() * gameSize.y);
+        hunter.position = Vector2(-20, _random.nextDouble() * gameSize.y);
     }
 
     add(hunter);
@@ -142,12 +148,15 @@ class UfoManager extends Component with HasGameReference {
 
   /// Remove all UFOs and enemy projectiles (for restart).
   void clearAll() {
-    children.whereType<UfoScout>().toList().forEach((u) => u.removeFromParent());
-    children.whereType<UfoHunter>().toList().forEach((u) => u.removeFromParent());
+    children.whereType<UfoScout>().toList().forEach(
+      (u) => u.removeFromParent(),
+    );
+    children.whereType<UfoHunter>().toList().forEach(
+      (u) => u.removeFromParent(),
+    );
     children.whereType<UfoBoss>().toList().forEach((u) => u.removeFromParent());
-    children
-        .whereType<EnemyProjectile>()
-        .toList()
-        .forEach((p) => p.removeFromParent());
+    children.whereType<EnemyProjectile>().toList().forEach(
+      (p) => p.removeFromParent(),
+    );
   }
 }

@@ -202,5 +202,10 @@ abstract class GameConfig {
     Color(0xFF00FF66), // Green (wave 20)
     Color(0xFFFFCC00), // Gold (wave 30)
   ];
-  static const List<String> shipColorNames = ['CYAN', 'MAGENTA', 'GREEN', 'GOLD'];
+  static const List<String> shipColorNames = [
+    'CYAN',
+    'MAGENTA',
+    'GREEN',
+    'GOLD',
+  ];
 }

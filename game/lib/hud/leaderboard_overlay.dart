@@ -47,14 +47,27 @@ class LeaderboardOverlay extends PositionComponent
     final panelTop = panelRect.top;
     final panelBottom = panelRect.bottom;
 
-    PanelRenderer.drawTextCentered(canvas, 'LEADERBOARD', size.x / 2,
-        panelTop + 40, 36, GameConfig.arcadeYellow,
-        weight: FontWeight.bold, glow: true);
+    PanelRenderer.drawTextCentered(
+      canvas,
+      'LEADERBOARD',
+      size.x / 2,
+      panelTop + 40,
+      36,
+      GameConfig.arcadeYellow,
+      weight: FontWeight.bold,
+      glow: true,
+    );
 
     final entries = leaderboard.entries;
     if (entries.isEmpty) {
-      PanelRenderer.drawTextCentered(canvas, 'NO SCORES YET', size.x / 2,
-          size.y / 2, 22, GameConfig.arcadeWhite);
+      PanelRenderer.drawTextCentered(
+        canvas,
+        'NO SCORES YET',
+        size.x / 2,
+        size.y / 2,
+        22,
+        GameConfig.arcadeWhite,
+      );
     } else {
       for (int i = 0; i < entries.length; i++) {
         final e = entries[i];
@@ -63,18 +76,26 @@ class LeaderboardOverlay extends PositionComponent
         final name = e.name.padRight(4);
         final score = e.score.toString().padLeft(8);
         final text = '$rank $name $score';
-        final color =
-            i == 0 ? GameConfig.arcadeYellow : GameConfig.arcadeWhite;
-        PanelRenderer.drawTextCentered(
-            canvas, text, size.x / 2, y, 22, color);
+        final color = i == 0 ? GameConfig.arcadeYellow : GameConfig.arcadeWhite;
+        PanelRenderer.drawTextCentered(canvas, text, size.x / 2, y, 22, color);
       }
     }
 
     // Separator line above footer
     PanelRenderer.drawSeparator(
-        canvas, size.x * 0.3, size.x * 0.7, panelBottom - 40);
+      canvas,
+      size.x * 0.3,
+      size.x * 0.7,
+      panelBottom - 40,
+    );
 
-    PanelRenderer.drawTextCentered(canvas, 'TAP TO CLOSE', size.x / 2,
-        panelBottom - 20, 18, const ui.Color(0x88FFFFFF));
+    PanelRenderer.drawTextCentered(
+      canvas,
+      'TAP TO CLOSE',
+      size.x / 2,
+      panelBottom - 20,
+      18,
+      const ui.Color(0x88FFFFFF),
+    );
   }
 }

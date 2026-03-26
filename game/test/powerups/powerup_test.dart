@@ -23,30 +23,27 @@ void main() {
       expect(powerUp.size.y, 28);
     });
 
-    testWithGame<FlameGame>(
-      'removes itself after lifetime',
-      FlameGame.new,
-      (game) async {
-        final powerUp = PowerUp(type: PowerUpType.multiShot)
-          ..position = Vector2(200, 200);
-        await game.ensureAdd(powerUp);
+    testWithGame<FlameGame>('removes itself after lifetime', FlameGame.new, (
+      game,
+    ) async {
+      final powerUp = PowerUp(type: PowerUpType.multiShot)
+        ..position = Vector2(200, 200);
+      await game.ensureAdd(powerUp);
 
-        // Advance past 8 second lifetime
-        for (int i = 0; i < 500; i++) {
-          game.update(1 / 60);
-        }
+      // Advance past 8 second lifetime
+      for (int i = 0; i < 500; i++) {
+        game.update(1 / 60);
+      }
 
-        expect(powerUp.isMounted, false);
-      },
-    );
+      expect(powerUp.isMounted, false);
+    });
 
     testWithGame<FlameGame>(
       'renders without error for each type',
       FlameGame.new,
       (game) async {
         for (final type in PowerUpType.values) {
-          final powerUp = PowerUp(type: type)
-            ..position = Vector2(200, 200);
+          final powerUp = PowerUp(type: type)..position = Vector2(200, 200);
           await game.ensureAdd(powerUp);
           game.update(1 / 60);
         }

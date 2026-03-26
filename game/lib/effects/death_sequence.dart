@@ -134,8 +134,8 @@ class DeathSequence extends PositionComponent
 
   /// Phase 2: "SIGNAL PERDU" fades in with scanlines.
   void _renderPhase2(Canvas canvas, Rect screenRect, Vector2 gameSize) {
-    final phaseProgress =
-        ((_timer - _phase1End) / (_phase2End - _phase1End)).clamp(0.0, 1.0);
+    final phaseProgress = ((_timer - _phase1End) / (_phase2End - _phase1End))
+        .clamp(0.0, 1.0);
 
     // Dark overlay at full strength
     _overlayPaint.color = Color.fromRGBO(0, 0, 0, 0.55);
@@ -156,7 +156,8 @@ class DeathSequence extends PositionComponent
       fadeProgress = 1.0;
     } else {
       fadeProgress =
-          1.0 - ((_timer - holdEnd) / (_totalDuration - holdEnd)).clamp(0.0, 1.0);
+          1.0 -
+          ((_timer - holdEnd) / (_totalDuration - holdEnd)).clamp(0.0, 1.0);
     }
 
     // Dark overlay fading out
@@ -186,18 +187,23 @@ class DeathSequence extends PositionComponent
     final cy = gameSize.y / 2;
 
     // Build text paragraph
-    final paragraphBuilder = ParagraphBuilder(ParagraphStyle(
-      textAlign: TextAlign.center,
-      fontSize: _fontSize,
-      fontFamily: 'JetBrainsMono',
-    ))
-      ..pushStyle(TextStyle(
-        color: Color.fromRGBO(0, 255, 255, opacity),
-        fontSize: _fontSize,
-        fontFamily: 'JetBrainsMono',
-        letterSpacing: 3.0,
-      ))
-      ..addText(_signalText);
+    final paragraphBuilder =
+        ParagraphBuilder(
+            ParagraphStyle(
+              textAlign: TextAlign.center,
+              fontSize: _fontSize,
+              fontFamily: 'JetBrainsMono',
+            ),
+          )
+          ..pushStyle(
+            TextStyle(
+              color: Color.fromRGBO(0, 255, 255, opacity),
+              fontSize: _fontSize,
+              fontFamily: 'JetBrainsMono',
+              letterSpacing: 3.0,
+            ),
+          )
+          ..addText(_signalText);
 
     final paragraph = paragraphBuilder.build()
       ..layout(ParagraphConstraints(width: gameSize.x));

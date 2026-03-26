@@ -36,8 +36,7 @@ class UfoScout extends PositionComponent
 
   static final Random _random = Random();
 
-  UfoScout()
-      : _waveAmplitude = 30.0 + _random.nextDouble() * 40.0 {
+  UfoScout() : _waveAmplitude = 30.0 + _random.nextDouble() * 40.0 {
     size = Vector2.all(_radius * 2);
     anchor = Anchor.center;
   }
@@ -77,7 +76,9 @@ class UfoScout extends PositionComponent
 
   @override
   void onCollisionStart(
-      Set<Vector2> intersectionPoints, PositionComponent other) {
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is Projectile) {
       _destroy();

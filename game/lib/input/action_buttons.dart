@@ -87,8 +87,7 @@ class ThrustButton extends PositionComponent
     const color = GameConfig.shipColor;
 
     // Glow fill
-    canvas.drawCircle(
-        center, radius, Paint()..color = const Color(0x1500FFFF));
+    canvas.drawCircle(center, radius, Paint()..color = const Color(0x1500FFFF));
 
     // Outer segmented ring — 3 arcs with gaps (top open for arrow emphasis)
     final ringPaint = Paint()
@@ -137,5 +136,4 @@ class ThrustButton extends PositionComponent
       ..close();
     canvas.drawPath(arrow, arrowPaint);
   }
-
 }

@@ -20,15 +20,13 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'size matches game size',
-      FlameGame.new,
-      (game) async {
-        final grid = TronGrid();
-        await game.ensureAdd(grid);
+    testWithGame<FlameGame>('size matches game size', FlameGame.new, (
+      game,
+    ) async {
+      final grid = TronGrid();
+      await game.ensureAdd(grid);
 
-        expect(grid.size, game.size);
-      },
-    );
+      expect(grid.size, game.size);
+    });
   });
 }

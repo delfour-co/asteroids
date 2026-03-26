@@ -110,7 +110,9 @@ class GameState {
     final totalPoints = basePoints * _comboMultiplier;
     _score += totalPoints;
     eventBus.emit(ScoreChangedEvent(_score));
-    eventBus.emit(ScorePopupEvent(event.position, basePoints, _comboMultiplier));
+    eventBus.emit(
+      ScorePopupEvent(event.position, basePoints, _comboMultiplier),
+    );
 
     _checkExtraLife();
   }
@@ -119,7 +121,9 @@ class GameState {
     final totalPoints = event.points * _comboMultiplier;
     _score += totalPoints;
     eventBus.emit(ScoreChangedEvent(_score));
-    eventBus.emit(ScorePopupEvent(event.position, event.points, _comboMultiplier));
+    eventBus.emit(
+      ScorePopupEvent(event.position, event.points, _comboMultiplier),
+    );
 
     _checkExtraLife();
   }
@@ -128,7 +132,9 @@ class GameState {
     final totalPoints = event.points * _comboMultiplier;
     _score += totalPoints;
     eventBus.emit(ScoreChangedEvent(_score));
-    eventBus.emit(ScorePopupEvent(event.position, event.points, _comboMultiplier));
+    eventBus.emit(
+      ScorePopupEvent(event.position, event.points, _comboMultiplier),
+    );
 
     _checkExtraLife();
   }

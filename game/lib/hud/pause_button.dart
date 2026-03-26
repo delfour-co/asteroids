@@ -87,10 +87,8 @@ class PauseButton extends PositionComponent
     for (int i = 0; i < 4; i++) {
       final a = i * pi / 2;
       canvas.drawLine(
-        Offset(
-            cx + cos(a) * (ringRadius + 1), cy + sin(a) * (ringRadius + 1)),
-        Offset(
-            cx + cos(a) * (ringRadius + 4), cy + sin(a) * (ringRadius + 4)),
+        Offset(cx + cos(a) * (ringRadius + 1), cy + sin(a) * (ringRadius + 1)),
+        Offset(cx + cos(a) * (ringRadius + 4), cy + sin(a) * (ringRadius + 4)),
         tickPaint,
       );
     }

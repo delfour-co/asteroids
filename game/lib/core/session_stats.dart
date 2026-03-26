@@ -79,8 +79,7 @@ class SessionStats {
     _running = true;
   }
 
-  double get accuracy =>
-      shotsFired > 0 ? (shotsHit / shotsFired * 100) : 0;
+  double get accuracy => shotsFired > 0 ? (shotsHit / shotsFired * 100) : 0;
 
   String get durationFormatted {
     final m = (duration ~/ 60).toString().padLeft(2, '0');

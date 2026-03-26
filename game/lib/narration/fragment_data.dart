@@ -7,7 +7,8 @@ class FragmentData {
     NarrativeFragment(
       id: -1,
       title: 'AWAKENING',
-      text: 'Where am I?\n'
+      text:
+          'Where am I?\n'
           'Everything is... cold.\n'
           'My hands won\'t stop shaking.\n\n'
           'The console says I\'ve been asleep.\n'
@@ -17,7 +18,8 @@ class FragmentData {
     NarrativeFragment(
       id: 0,
       title: 'FIRST THOUGHTS',
-      text: 'The engines hum. Good.\n'
+      text:
+          'The engines hum. Good.\n'
           'At least something still works.\n\n'
           'I remember training. I remember\n'
           'a launch. I remember... nothing else.\n\n'
@@ -27,7 +29,8 @@ class FragmentData {
     NarrativeFragment(
       id: 1,
       title: 'SILENCE',
-      text: 'I\'ve been scanning for hours.\n'
+      text:
+          'I\'ve been scanning for hours.\n'
           'Every frequency. Every channel.\n'
           'Earth. Moon. Mars. Nothing.\n\n'
           'Not even static. Just...\n'
@@ -37,7 +40,8 @@ class FragmentData {
     NarrativeFragment(
       id: 2,
       title: 'WRECKAGE',
-      text: 'There are pieces of ships\n'
+      text:
+          'There are pieces of ships\n'
           'mixed in with the rocks.\n'
           'Human ships.\n\n'
           'I found a name plate today.\n'
@@ -48,7 +52,8 @@ class FragmentData {
     NarrativeFragment(
       id: 3,
       title: 'GHOSTS',
-      text: 'A Tesla drifted past today.\n'
+      text:
+          'A Tesla drifted past today.\n'
           'Still playing Bowie on loop.\n'
           'A Starlink satellite blinked\n'
           'at me like an old friend.\n\n'
@@ -59,7 +64,8 @@ class FragmentData {
     NarrativeFragment(
       id: 4,
       title: 'THEM',
-      text: 'The UFOs aren\'t just machines.\n'
+      text:
+          'The UFOs aren\'t just machines.\n'
           'They react. They adapt.\n'
           'Today one hesitated before firing.\n\n'
           'And their hull plating...\n'
@@ -70,7 +76,8 @@ class FragmentData {
     NarrativeFragment(
       id: 5,
       title: 'A VOICE',
-      text: 'Caught a fragment. A human voice.\n'
+      text:
+          'Caught a fragment. A human voice.\n'
           'Looping for 347 years:\n\n'
           '"...all ships to the Gate...\n'
           '...this is not a drill..."\n\n'
@@ -81,7 +88,8 @@ class FragmentData {
     NarrativeFragment(
       id: 6,
       title: 'THE GATE',
-      text: 'They found something.\n'
+      text:
+          'They found something.\n'
           'Beyond the belt. A structure.\n'
           'Not ours. Not theirs.\n'
           'Something older.\n\n'
@@ -92,7 +100,8 @@ class FragmentData {
     NarrativeFragment(
       id: 7,
       title: 'LAST WORDS',
-      text: 'Found the final broadcast:\n\n'
+      text:
+          'Found the final broadcast:\n\n'
           '"To whoever hears this:\n'
           'we chose to leave. All of us.\n'
           'Don\'t be afraid.\n'
@@ -104,7 +113,8 @@ class FragmentData {
     NarrativeFragment(
       id: 8,
       title: 'STAYING',
-      text: 'I could look for the Gate.\n'
+      text:
+          'I could look for the Gate.\n'
           'Follow them. See what\'s\n'
           'on the other side.\n\n'
           'But these rocks won\'t\n'
@@ -115,7 +125,8 @@ class FragmentData {
     NarrativeFragment(
       id: 9,
       title: 'NOT ALONE',
-      text: 'Something pinged my scanner.\n'
+      text:
+          'Something pinged my scanner.\n'
           'Not rock. Not human. Not UFO.\n'
           'Something new.\n\n'
           'It\'s been there a while.\n'

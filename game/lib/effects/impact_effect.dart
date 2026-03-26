@@ -58,8 +58,16 @@ class ImpactEffect extends PositionComponent {
 
     for (final s in _sparks) {
       final offset = Offset(s.x, s.y);
-      final rect = Rect.fromCenter(center: offset, width: s.size * 2, height: s.size);
-      final glowRect = Rect.fromCenter(center: offset, width: s.size * 2.5, height: s.size * 1.5);
+      final rect = Rect.fromCenter(
+        center: offset,
+        width: s.size * 2,
+        height: s.size,
+      );
+      final glowRect = Rect.fromCenter(
+        center: offset,
+        width: s.size * 2.5,
+        height: s.size * 1.5,
+      );
       canvas.drawRect(glowRect, glowPaint);
       canvas.drawRect(rect, paint);
     }

@@ -144,8 +144,7 @@ class ChangelogOverlay extends PositionComponent
   @override
   void onDragUpdate(DragUpdateEvent event) {
     _dragTotal += event.localDelta.y.abs();
-    _scrollOffset = (_scrollOffset - event.localDelta.y)
-        .clamp(0, _maxScroll);
+    _scrollOffset = (_scrollOffset - event.localDelta.y).clamp(0, _maxScroll);
   }
 
   @override
@@ -173,28 +172,51 @@ class ChangelogOverlay extends PositionComponent
     PanelRenderer.drawScanlines(canvas, panelRect);
 
     // Fixed title (centered)
-    PanelRenderer.drawTextCentered(canvas, 'CHANGELOG', size.x / 2, _titleY, 36,
-        const ui.Color(0xFFAAFFFF), weight: FontWeight.bold, glow: true);
+    PanelRenderer.drawTextCentered(
+      canvas,
+      'CHANGELOG',
+      size.x / 2,
+      _titleY,
+      36,
+      const ui.Color(0xFFAAFFFF),
+      weight: FontWeight.bold,
+      glow: true,
+    );
 
     // Clip scrollable area
     final clipRect = ui.Rect.fromLTWH(
-        0, _contentTop, size.x, size.y - _contentTop - _footerHeight);
+      0,
+      _contentTop,
+      size.x,
+      size.y - _contentTop - _footerHeight,
+    );
     canvas.save();
     canvas.clipRect(clipRect);
 
     double y = _contentTop + 14 - _scrollOffset;
     for (final version in _versions) {
       // Version header (left-aligned)
-      PanelRenderer.drawTextLeft(canvas, '${version.tag} — ${version.name}',
-          _leftMargin, y, 20,
-          const ui.Color(0xFF00FFFF), weight: FontWeight.bold);
+      PanelRenderer.drawTextLeft(
+        canvas,
+        '${version.tag} — ${version.name}',
+        _leftMargin,
+        y,
+        20,
+        const ui.Color(0xFF00FFFF),
+        weight: FontWeight.bold,
+      );
       y += _lineHeight;
 
       // Description lines (left-aligned, indented)
       for (final line in version.lines) {
-        PanelRenderer.drawTextLeft(canvas, '  $line',
-            _leftMargin, y, 16,
-            const ui.Color(0xFFFFFFFF));
+        PanelRenderer.drawTextLeft(
+          canvas,
+          '  $line',
+          _leftMargin,
+          y,
+          16,
+          const ui.Color(0xFFFFFFFF),
+        );
         y += _lineHeight;
       }
       y += _versionGap;
@@ -203,11 +225,22 @@ class ChangelogOverlay extends PositionComponent
     canvas.restore();
 
     // Separator line above footer
-    PanelRenderer.drawSeparator(canvas, size.x * 0.3, size.x * 0.7, _panelBottom - 40);
+    PanelRenderer.drawSeparator(
+      canvas,
+      size.x * 0.3,
+      size.x * 0.7,
+      _panelBottom - 40,
+    );
 
     // Footer (centered)
-    PanelRenderer.drawTextCentered(canvas, 'TAP TO CLOSE', size.x / 2, _panelBottom - 20, 18,
-        const ui.Color(0x88FFFFFF));
+    PanelRenderer.drawTextCentered(
+      canvas,
+      'TAP TO CLOSE',
+      size.x / 2,
+      _panelBottom - 20,
+      18,
+      const ui.Color(0x88FFFFFF),
+    );
   }
 }
 

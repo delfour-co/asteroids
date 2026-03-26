@@ -13,30 +13,31 @@ void main() {
   });
 
   group('ScreenShakeManager', () {
-    testWithGame<FlameGame>(
-      'responds to ScreenShakeEvent by offsetting viewfinder',
-      FlameGame.new,
-      (game) async {
-        final manager = ScreenShakeManager();
-        await game.ensureAdd(manager);
+    testWithGame<
+      FlameGame
+    >('responds to ScreenShakeEvent by offsetting viewfinder', FlameGame.new, (
+      game,
+    ) async {
+      final manager = ScreenShakeManager();
+      await game.ensureAdd(manager);
 
-        final centerX = game.size.x / 2;
-        final centerY = game.size.y / 2;
+      final centerX = game.size.x / 2;
+      final centerY = game.size.y / 2;
 
-        // Emit a shake event
-        eventBus.emit(ScreenShakeEvent(GameConfig.shakeIntensityLarge));
+      // Emit a shake event
+      eventBus.emit(ScreenShakeEvent(GameConfig.shakeIntensityLarge));
 
-        // Update to apply shake
-        game.update(0.01);
+      // Update to apply shake
+      game.update(0.01);
 
-        final vfPos = game.camera.viewfinder.position;
-        // The viewfinder should have been displaced from center
-        // (with a large intensity, it's extremely unlikely to land exactly on center)
-        final displaced = (vfPos.x - centerX).abs() > 0.001 ||
-            (vfPos.y - centerY).abs() > 0.001;
-        expect(displaced, true);
-      },
-    );
+      final vfPos = game.camera.viewfinder.position;
+      // The viewfinder should have been displaced from center
+      // (with a large intensity, it's extremely unlikely to land exactly on center)
+      final displaced =
+          (vfPos.x - centerX).abs() > 0.001 ||
+          (vfPos.y - centerY).abs() > 0.001;
+      expect(displaced, true);
+    });
 
     testWithGame<FlameGame>(
       'resets viewfinder position after shake duration',
@@ -78,7 +79,8 @@ void main() {
         final centerX = game.size.x / 2;
         final centerY = game.size.y / 2;
         final vfPos = game.camera.viewfinder.position;
-        final displaced = (vfPos.x - centerX).abs() > 0.001 ||
+        final displaced =
+            (vfPos.x - centerX).abs() > 0.001 ||
             (vfPos.y - centerY).abs() > 0.001;
         expect(displaced, true);
       },

@@ -11,17 +11,15 @@ void main() {
   });
 
   group('TutorialOverlay', () {
-    testWithGame<FlameGame>(
-      'mounts with correct priority',
-      FlameGame.new,
-      (game) async {
-        final overlay = TutorialOverlay(onDismiss: () {});
-        await game.ensureAdd(overlay);
+    testWithGame<FlameGame>('mounts with correct priority', FlameGame.new, (
+      game,
+    ) async {
+      final overlay = TutorialOverlay(onDismiss: () {});
+      await game.ensureAdd(overlay);
 
-        expect(overlay.isMounted, true);
-        expect(overlay.priority, 250);
-      },
-    );
+      expect(overlay.isMounted, true);
+      expect(overlay.priority, 250);
+    });
 
     testWithGame<FlameGame>(
       'always intercepts touches (containsLocalPoint returns true)',
@@ -35,17 +33,15 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'covers full game size',
-      FlameGame.new,
-      (game) async {
-        final overlay = TutorialOverlay(onDismiss: () {});
-        await game.ensureAdd(overlay);
+    testWithGame<FlameGame>('covers full game size', FlameGame.new, (
+      game,
+    ) async {
+      final overlay = TutorialOverlay(onDismiss: () {});
+      await game.ensureAdd(overlay);
 
-        expect(overlay.size.x, game.size.x);
-        expect(overlay.size.y, game.size.y);
-      },
-    );
+      expect(overlay.size.x, game.size.x);
+      expect(overlay.size.y, game.size.y);
+    });
 
     testWithGame<FlameGame>(
       'onDismiss callback is provided and overlay is functional',
@@ -61,16 +57,14 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'position is at origin',
-      FlameGame.new,
-      (game) async {
-        final overlay = TutorialOverlay(onDismiss: () {});
-        await game.ensureAdd(overlay);
+    testWithGame<FlameGame>('position is at origin', FlameGame.new, (
+      game,
+    ) async {
+      final overlay = TutorialOverlay(onDismiss: () {});
+      await game.ensureAdd(overlay);
 
-        expect(overlay.position.x, 0);
-        expect(overlay.position.y, 0);
-      },
-    );
+      expect(overlay.position.x, 0);
+      expect(overlay.position.y, 0);
+    });
   });
 }

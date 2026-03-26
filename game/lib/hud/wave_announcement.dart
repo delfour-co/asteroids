@@ -16,23 +16,23 @@ class WaveAnnouncement extends TextComponent with HasGameReference {
       GameConfig.waveAnnounceFadeOut;
 
   WaveAnnouncement({required this.wave})
-      : super(
-          text: 'WAVE $wave',
-          textRenderer: TextPaint(
-            style: TextStyle(
-              color: GameConfig.shipColor,
-              fontSize: GameConfig.waveAnnounceSize,
-              fontFamily: 'JetBrainsMono',
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2.0,
-              shadows: [
-                Shadow(color: Color(0x9900FFFF), blurRadius: 12),
-                Shadow(color: Color(0x4400FFFF), blurRadius: 24),
-              ],
-            ),
+    : super(
+        text: 'WAVE $wave',
+        textRenderer: TextPaint(
+          style: TextStyle(
+            color: GameConfig.shipColor,
+            fontSize: GameConfig.waveAnnounceSize,
+            fontFamily: 'JetBrainsMono',
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2.0,
+            shadows: [
+              Shadow(color: Color(0x9900FFFF), blurRadius: 12),
+              Shadow(color: Color(0x4400FFFF), blurRadius: 24),
+            ],
           ),
-          anchor: Anchor.center,
-        );
+        ),
+        anchor: Anchor.center,
+      );
 
   @override
   Future<void> onLoad() async {
@@ -47,10 +47,14 @@ class WaveAnnouncement extends TextComponent with HasGameReference {
     double opacity;
     if (_elapsed < GameConfig.waveAnnounceFadeIn) {
       opacity = _elapsed / GameConfig.waveAnnounceFadeIn;
-    } else if (_elapsed < GameConfig.waveAnnounceFadeIn + GameConfig.waveAnnounceHold) {
+    } else if (_elapsed <
+        GameConfig.waveAnnounceFadeIn + GameConfig.waveAnnounceHold) {
       opacity = 1.0;
     } else {
-      final fadeProgress = (_elapsed - GameConfig.waveAnnounceFadeIn - GameConfig.waveAnnounceHold) /
+      final fadeProgress =
+          (_elapsed -
+              GameConfig.waveAnnounceFadeIn -
+              GameConfig.waveAnnounceHold) /
           GameConfig.waveAnnounceFadeOut;
       opacity = (1.0 - fadeProgress).clamp(0.0, 1.0);
     }
@@ -63,8 +67,14 @@ class WaveAnnouncement extends TextComponent with HasGameReference {
         fontWeight: FontWeight.bold,
         letterSpacing: 4.0,
         shadows: [
-          Shadow(color: Color(0x9900FFFF).withValues(alpha: opacity), blurRadius: 12),
-          Shadow(color: Color(0x4400FFFF).withValues(alpha: opacity), blurRadius: 24),
+          Shadow(
+            color: Color(0x9900FFFF).withValues(alpha: opacity),
+            blurRadius: 12,
+          ),
+          Shadow(
+            color: Color(0x4400FFFF).withValues(alpha: opacity),
+            blurRadius: 24,
+          ),
         ],
       ),
     );

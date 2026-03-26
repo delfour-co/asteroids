@@ -1,34 +1,524 @@
+# Delfour.co — Standard CI Pipeline for Flutter projects
+# Synced from tools/ci-templates/ — do not edit manually
+#
+# Configuration via repository variables:
+#   FLUTTER_VERSION  — Flutter version to pin (default: uses stable channel)
+#   FLUTTER_CHANNEL  — Flutter channel (default: stable)
+#   WORKING_DIR      — Working directory if project is nested (default: .)
+#   COVERAGE_MIN     — Minimum coverage %, 0 to skip (default: 0)
+#   HAS_FIREBASE     — Set to "true" if project uses Firebase (default: false)
+
 name: CI
 
 on:
   push:
     branches: [main]
+    tags:
+      - 'v*.*.*'
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag for release (e.g., v1.0.0) — leave empty for CI only'
+        required: false
+        default: ''
+
+# Single run per commit — tag push takes priority over branch push
+# (concurrency group uses the commit SHA so both events collapse into one)
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: ci-${{ github.sha }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: ${{ vars.FLUTTER_VERSION || '' }}
+  FLUTTER_CHANNEL: ${{ vars.FLUTTER_CHANNEL || 'stable' }}
+  WORKING_DIR: ${{ vars.WORKING_DIR || '.' }}
 
 jobs:
-  build:
+  # ──────────────────────────────────────────────
+  #  1. Lint — formatting + static analysis
+  # ──────────────────────────────────────────────
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     defaults:
       run:
-        working-directory: game
+        working-directory: ${{ env.WORKING_DIR }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: subosito/flutter-action@v2
+      - name: Configure git for private deps
+        run: git config --global url."https://x-access-token:${{ secrets.ORG_TOKEN || github.token }}@github.com/".insteadOf "git@github.com:"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.41.2'
-          channel: 'master'
+          flutter-version: ${{ env.FLUTTER_VERSION || '' }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Check formatting
+        run: dart format --set-exit-if-changed lib/ test/
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+  # ──────────────────────────────────────────────
+  #  2. Test — unit & widget tests + coverage
+  # ──────────────────────────────────────────────
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure git for private deps
+        run: git config --global url."https://x-access-token:${{ secrets.ORG_TOKEN || github.token }}@github.com/".insteadOf "git@github.com:"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION || '' }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
 
       - name: Decode google-services.json
+        if: ${{ vars.HAS_FIREBASE == 'true' }}
         run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > android/app/google-services.json
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Analyze
-        run: flutter analyze
+      - name: Run tests with coverage
+        run: flutter test --coverage
 
-      - name: Run tests
-        run: flutter test
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ${{ env.WORKING_DIR }}/coverage/lcov.info
+          retention-days: 5
+
+  # ──────────────────────────────────────────────
+  #  3. Security — dependency audit
+  # ──────────────────────────────────────────────
+  security:
+    name: Security
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure git for private deps
+        run: git config --global url."https://x-access-token:${{ secrets.ORG_TOKEN || github.token }}@github.com/".insteadOf "git@github.com:"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION || '' }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Check outdated dependencies
+        run: |
+          echo "## Dependency Audit" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          flutter pub outdated 2>&1 | tee -a "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Scan for known vulnerabilities
+        run: |
+          # Check pubspec.lock for packages with known advisories
+          if dart pub deps --json 2>/dev/null | grep -q "advisories"; then
+            echo "::warning::Dependency advisories found — review with 'dart pub deps'"
+          fi
+
+          # Verify no git dependencies pointing to non-https sources
+          if grep -q "git:" pubspec.yaml; then
+            echo "### Git Dependencies" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            grep -A2 "git:" pubspec.yaml >> "$GITHUB_STEP_SUMMARY" || true
+          fi
+
+      - name: Check Gradle dependencies
+        run: |
+          cd android
+          if [[ -f "gradlew" ]]; then
+            chmod +x gradlew
+            ./gradlew dependencies --configuration releaseRuntimeClasspath 2>/dev/null | head -100 >> "$GITHUB_STEP_SUMMARY" || true
+          fi
+
+  # ──────────────────────────────────────────────
+  #  4. Quality — coverage threshold + metrics
+  # ──────────────────────────────────────────────
+  quality:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+    needs: test
+    timeout-minutes: 5
+    if: ${{ vars.COVERAGE_MIN != '' && vars.COVERAGE_MIN != '0' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: coverage/lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+
+      - name: Check coverage threshold
+        run: |
+          LCOV_FILE="coverage/lcov.info"
+          if [[ ! -f "$LCOV_FILE" ]]; then
+            echo "::error::No coverage file found"
+            exit 1
+          fi
+
+          TOTAL_LINES=$(grep -c "^DA:" "$LCOV_FILE" || true)
+          HIT_LINES=$(grep "^DA:" "$LCOV_FILE" | grep -cv ",0$" || true)
+
+          if [[ "$TOTAL_LINES" -eq 0 ]]; then
+            echo "::warning::No coverage data found"
+            exit 0
+          fi
+
+          COVERAGE=$(( HIT_LINES * 100 / TOTAL_LINES ))
+          THRESHOLD=${{ vars.COVERAGE_MIN }}
+
+          echo "## Coverage Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Lines covered | ${HIT_LINES} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Total lines | ${TOTAL_LINES} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Coverage** | **${COVERAGE}%** |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Threshold | ${THRESHOLD}% |" >> "$GITHUB_STEP_SUMMARY"
+
+          if [[ "$COVERAGE" -lt "$THRESHOLD" ]]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "> **FAILED** — coverage ${COVERAGE}% is below threshold ${THRESHOLD}%" >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::Coverage ${COVERAGE}% is below threshold ${THRESHOLD}%"
+            exit 1
+          fi
+
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "> **PASSED**" >> "$GITHUB_STEP_SUMMARY"
+
+  # ──────────────────────────────────────────────
+  #  5. Build — compile signed APK
+  # ──────────────────────────────────────────────
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    needs: [lint, test, security]
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure git for private deps
+        run: git config --global url."https://x-access-token:${{ secrets.ORG_TOKEN || github.token }}@github.com/".insteadOf "git@github.com:"
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION || '' }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Decode google-services.json
+        if: ${{ vars.HAS_FIREBASE == 'true' }}
+        run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > android/app/google-services.json
+
+      - name: Decode keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [[ -n "$KEYSTORE_BASE64" ]]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > android/release.jks
+            echo "SIGNED=true" >> "$GITHUB_ENV"
+          else
+            echo "::warning::No keystore configured — building with debug signing"
+            echo "SIGNED=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Create key.properties
+        if: ${{ env.SIGNED == 'true' }}
+        run: |
+          cat > android/key.properties <<EOF
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=../release.jks
+          EOF
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-${{ github.sha }}
+          path: ${{ env.WORKING_DIR }}/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
+
+      - name: Build summary
+        run: |
+          APK_SIZE=$(du -h build/app/outputs/flutter-apk/app-release.apk | cut -f1)
+          echo "## Build Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| APK size | ${APK_SIZE} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Signed | ${{ env.SIGNED }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Flutter | $(flutter --version | head -1) |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Commit | \`${{ github.sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
+
+  # ──────────────────────────────────────────────
+  #  6. Release — only on tag push or manual dispatch
+  # ──────────────────────────────────────────────
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.event.inputs.version != '') }}
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    env:
+      BUILD_APK: ${{ vars.BUILD_APK || 'true' }}
+      BUILD_AAB: ${{ vars.BUILD_AAB || 'false' }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git for private deps
+        run: git config --global url."https://x-access-token:${{ secrets.ORG_TOKEN || github.token }}@github.com/".insteadOf "git@github.com:"
+
+      - name: Extract version
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "tag=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "semver=${VERSION#v}" >> "$GITHUB_OUTPUT"
+        working-directory: .
+
+      # Build AAB if needed (APK already built by build job)
+      - name: Setup Java
+        if: ${{ env.BUILD_AAB == 'true' }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        if: ${{ env.BUILD_AAB == 'true' }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION || '' }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Decode google-services.json
+        if: ${{ env.BUILD_AAB == 'true' && vars.HAS_FIREBASE == 'true' }}
+        run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > android/app/google-services.json
+
+      - name: Setup signing
+        if: ${{ env.BUILD_AAB == 'true' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > android/release.jks
+          cat > android/key.properties <<EOF
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=../release.jks
+          EOF
+
+      - name: Install dependencies
+        if: ${{ env.BUILD_AAB == 'true' }}
+        run: flutter pub get
+
+      - name: Build App Bundle
+        if: ${{ env.BUILD_AAB == 'true' }}
+        run: flutter build appbundle --release
+
+      - name: Upload AAB
+        if: ${{ env.BUILD_AAB == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-aab
+          path: ${{ env.WORKING_DIR }}/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 90
+
+      # Download APK from build job
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: apk-${{ github.sha }}
+          path: /tmp/release-apk
+
+      - name: Generate changelog
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          {
+            echo "## What's Changed"
+            echo ""
+            if [[ -n "$PREV_TAG" ]]; then
+              FEATS=$(git log "${PREV_TAG}..HEAD" --pretty=format:"- %s (%h)" --no-merges --grep="^feat" || true)
+              FIXES=$(git log "${PREV_TAG}..HEAD" --pretty=format:"- %s (%h)" --no-merges --grep="^fix" || true)
+              OTHERS=$(git log "${PREV_TAG}..HEAD" --pretty=format:"- %s (%h)" --no-merges --grep="^feat" --grep="^fix" --grep="^chore: bump" --invert-grep || true)
+              [[ -n "$FEATS" ]] && echo "### Features" && echo "$FEATS" && echo ""
+              [[ -n "$FIXES" ]] && echo "### Bug Fixes" && echo "$FIXES" && echo ""
+              [[ -n "$OTHERS" ]] && echo "### Other" && echo "$OTHERS" && echo ""
+              echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${{ steps.version.outputs.tag }}"
+            else
+              git log --pretty=format:"- %s (%h)" --no-merges -50
+            fi
+          } > /tmp/changelog.md
+        working-directory: .
+
+      - name: Create GitHub Release
+        id: gh_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          body_path: /tmp/changelog.md
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.tag, '-') }}
+          files: |
+            /tmp/release-apk/*.apk
+            ${{ env.WORKING_DIR }}/build/app/outputs/bundle/release/app-release.aab
+          fail_on_unmatched_files: false
+
+      - name: Create deploy issue
+        if: ${{ !contains(steps.version.outputs.tag, '-') }}
+        uses: actions/github-script@v7
+        env:
+          VERSION: ${{ steps.version.outputs.tag }}
+          BUILD_AAB: ${{ env.BUILD_AAB }}
+          RUN_NUMBER: ${{ github.run_number }}
+          RUN_ID: ${{ github.run_id }}
+        with:
+          script: |
+            const fs = require('fs');
+            const version = process.env.VERSION;
+            const repo = context.repo;
+            const repoUrl = `https://github.com/${repo.owner}/${repo.repo}`;
+            const releaseUrl = `${repoUrl}/releases/tag/${version}`;
+            const runUrl = `${repoUrl}/actions/runs/${process.env.RUN_ID}`;
+            const apkUrl = `${repoUrl}/releases/download/${version}/app-release.apk`;
+            const aabUrl = `${repoUrl}/releases/download/${version}/app-release.aab`;
+
+            let changelog = '';
+            try { changelog = fs.readFileSync('/tmp/changelog.md', 'utf8'); } catch {}
+
+            let artifacts = `| APK | [app-release.apk](${apkUrl}) |`;
+            if (process.env.BUILD_AAB === 'true') {
+              artifacts += `\n| AAB | [app-release.aab](${aabUrl}) |`;
+            }
+
+            const body = `## Deploy ${version} to Google Play Store
+
+            | | |
+            |---|---|
+            | **Release** | [${version}](${releaseUrl}) |
+            | **CI Run** | [#${process.env.RUN_NUMBER}](${runUrl}) |
+            | **Commit** | \`${context.sha}\` |
+
+            ### Artifacts
+
+            | Type | Download |
+            |------|----------|
+            ${artifacts}
+
+            ### Changelog
+
+            ${changelog}
+
+            ### Deploy Checklist
+
+            - [ ] Download and test APK on physical device
+            - [ ] Upload AAB to Google Play Console
+            - [ ] Fill release notes
+            - [ ] Submit for review
+            - [ ] Confirm rollout percentage
+
+            ---
+            *Auto-generated by CI — close this issue once deployed*`.replace(/^            /gm, '');
+
+            // Ensure label exists
+            try {
+              await github.rest.issues.createLabel({ ...repo, name: 'deploy', color: '0E8A16', description: 'Play Store deployment' });
+            } catch {}
+
+            const issue = await github.rest.issues.create({
+              ...repo,
+              title: `Deploy ${version} to Play Store`,
+              body,
+              labels: ['deploy']
+            });
+
+            core.info(`Created issue #${issue.data.number}: ${issue.data.html_url}`);

@@ -12,32 +12,26 @@ void main() {
   });
 
   group('ShootingStarManager', () {
-    testWithGame<FlameGame>(
-      'mounts successfully',
-      FlameGame.new,
-      (game) async {
-        final manager = ShootingStarManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('mounts successfully', FlameGame.new, (game) async {
+      final manager = ShootingStarManager();
+      await game.ensureAdd(manager);
 
-        expect(manager.isMounted, true);
-      },
-    );
+      expect(manager.isMounted, true);
+    });
 
-    testWithGame<FlameGame>(
-      'survives update without errors',
-      FlameGame.new,
-      (game) async {
-        final manager = ShootingStarManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('survives update without errors', FlameGame.new, (
+      game,
+    ) async {
+      final manager = ShootingStarManager();
+      await game.ensureAdd(manager);
 
-        // Run several updates to trigger spawn logic
-        for (int i = 0; i < 100; i++) {
-          game.update(0.5);
-        }
+      // Run several updates to trigger spawn logic
+      for (int i = 0; i < 100; i++) {
+        game.update(0.5);
+      }
 
-        expect(manager.isMounted, true);
-      },
-    );
+      expect(manager.isMounted, true);
+    });
 
     testWithGame<FlameGame>(
       'responds to WaveStartedEvent without errors',

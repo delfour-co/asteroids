@@ -94,11 +94,12 @@ class JournalOverlay extends PositionComponent
   void onDragUpdate(DragUpdateEvent event) {
     _dragTotal += event.localDelta.y.abs();
     if (_selectedFragment != null) {
-      _detailScroll = (_detailScroll - event.localDelta.y)
-          .clamp(0, _detailMaxScroll);
+      _detailScroll = (_detailScroll - event.localDelta.y).clamp(
+        0,
+        _detailMaxScroll,
+      );
     } else {
-      _scrollOffset = (_scrollOffset - event.localDelta.y)
-          .clamp(0, _maxScroll);
+      _scrollOffset = (_scrollOffset - event.localDelta.y).clamp(0, _maxScroll);
     }
   }
 
@@ -157,12 +158,24 @@ class JournalOverlay extends PositionComponent
 
   void _renderList(ui.Canvas canvas) {
     // Fixed title
-    PanelRenderer.drawTextCentered(canvas, 'SHIP LOG', size.x / 2, _titleY, 36,
-        const ui.Color(0xFF00FF66), weight: FontWeight.bold, glow: true);
+    PanelRenderer.drawTextCentered(
+      canvas,
+      'SHIP LOG',
+      size.x / 2,
+      _titleY,
+      36,
+      const ui.Color(0xFF00FF66),
+      weight: FontWeight.bold,
+      glow: true,
+    );
 
     // Clip scrollable area
     final clipRect = ui.Rect.fromLTWH(
-        0, _contentTop, size.x, size.y - _contentTop - _footerHeight);
+      0,
+      _contentTop,
+      size.x,
+      size.y - _contentTop - _footerHeight,
+    );
     canvas.save();
     canvas.clipRect(clipRect);
 
@@ -177,8 +190,11 @@ class JournalOverlay extends PositionComponent
         PanelRenderer.drawTextLeft(
           canvas,
           'WAVE ${fragment.waveRequired} — ${fragment.title}',
-          _leftMargin, y, 20,
-          const ui.Color(0xFF00FFFF), weight: FontWeight.bold,
+          _leftMargin,
+          y,
+          20,
+          const ui.Color(0xFF00FFFF),
+          weight: FontWeight.bold,
         );
         y += _lineHeight;
 
@@ -186,22 +202,33 @@ class JournalOverlay extends PositionComponent
         PanelRenderer.drawTextLeft(
           canvas,
           '  $firstLine',
-          _leftMargin, y, 16,
+          _leftMargin,
+          y,
+          16,
           const ui.Color(0xFF00FF66),
         );
         y += _lineHeight;
 
         // Store hit rect for this entry
-        _entryRects.add(_EntryRect(
-          fragment: fragment,
-          rect: ui.Rect.fromLTWH(0, entryStartY - 6, size.x, y - entryStartY + 6),
-        ));
+        _entryRects.add(
+          _EntryRect(
+            fragment: fragment,
+            rect: ui.Rect.fromLTWH(
+              0,
+              entryStartY - 6,
+              size.x,
+              y - entryStartY + 6,
+            ),
+          ),
+        );
       } else {
         final waveNum = fragment.waveRequired.toString().padLeft(3, '0');
         PanelRenderer.drawTextLeft(
           canvas,
           'WAVE $waveNum — ???',
-          _leftMargin, y, 20,
+          _leftMargin,
+          y,
+          20,
           const ui.Color(0x66448844),
         );
         y += _lineHeight;
@@ -212,12 +239,22 @@ class JournalOverlay extends PositionComponent
     canvas.restore();
 
     // Separator line above footer
-    PanelRenderer.drawSeparator(canvas, size.x * 0.3, size.x * 0.7, _panelBottom - 40);
+    PanelRenderer.drawSeparator(
+      canvas,
+      size.x * 0.3,
+      size.x * 0.7,
+      _panelBottom - 40,
+    );
 
     // Footer
-    PanelRenderer.drawTextCentered(canvas, 'TAP ENTRY TO READ  •  TAP OUTSIDE TO CLOSE',
-        size.x / 2, _panelBottom - 20, 14,
-        const ui.Color(0x8800FF66));
+    PanelRenderer.drawTextCentered(
+      canvas,
+      'TAP ENTRY TO READ  •  TAP OUTSIDE TO CLOSE',
+      size.x / 2,
+      _panelBottom - 20,
+      14,
+      const ui.Color(0x8800FF66),
+    );
   }
 
   void _renderDetail(ui.Canvas canvas, NarrativeFragment fragment) {
@@ -225,30 +262,56 @@ class JournalOverlay extends PositionComponent
 
     // Clip for scrolling
     canvas.save();
-    canvas.clipRect(ui.Rect.fromLTWH(0, _panelTop, size.x, _panelBottom - _panelTop - 50));
+    canvas.clipRect(
+      ui.Rect.fromLTWH(0, _panelTop, size.x, _panelBottom - _panelTop - 50),
+    );
 
     double y = _panelTop + 30 - _detailScroll;
 
     // "MEMORY FRAGMENT" header
-    PanelRenderer.drawTextCentered(canvas, 'MEMORY FRAGMENT', cx, y, 28,
-        const ui.Color(0xFF00FF66), weight: FontWeight.bold, glow: true);
+    PanelRenderer.drawTextCentered(
+      canvas,
+      'MEMORY FRAGMENT',
+      cx,
+      y,
+      28,
+      const ui.Color(0xFF00FF66),
+      weight: FontWeight.bold,
+      glow: true,
+    );
     y += 50;
 
     // Title in cyan
-    PanelRenderer.drawTextCentered(canvas, fragment.title, cx, y, 24,
-        const ui.Color(0xFF00FFFF), weight: FontWeight.bold, glow: true);
+    PanelRenderer.drawTextCentered(
+      canvas,
+      fragment.title,
+      cx,
+      y,
+      24,
+      const ui.Color(0xFF00FFFF),
+      weight: FontWeight.bold,
+      glow: true,
+    );
     y += 20;
 
     // Wave subtitle
-    PanelRenderer.drawTextCentered(canvas, 'WAVE ${fragment.waveRequired}', cx, y, 16,
-        const ui.Color(0x8800FFFF));
+    PanelRenderer.drawTextCentered(
+      canvas,
+      'WAVE ${fragment.waveRequired}',
+      cx,
+      y,
+      16,
+      const ui.Color(0x8800FFFF),
+    );
     y += 40;
 
     // Separator line
     canvas.drawLine(
       ui.Offset(size.x * 0.2, y),
       ui.Offset(size.x * 0.8, y),
-      ui.Paint()..color = const ui.Color(0x4400FF66)..strokeWidth = 1.0,
+      ui.Paint()
+        ..color = const ui.Color(0x4400FF66)
+        ..strokeWidth = 1.0,
     );
     y += 30;
 
@@ -258,8 +321,14 @@ class JournalOverlay extends PositionComponent
       if (line.isEmpty) {
         y += 14; // Empty line gap
       } else {
-        PanelRenderer.drawTextCentered(canvas, line, cx, y, 18,
-            const ui.Color(0xFF00FF66));
+        PanelRenderer.drawTextCentered(
+          canvas,
+          line,
+          cx,
+          y,
+          18,
+          const ui.Color(0xFF00FF66),
+        );
         y += 28;
       }
     }
@@ -267,16 +336,25 @@ class JournalOverlay extends PositionComponent
     canvas.restore();
 
     // Separator line above footer
-    PanelRenderer.drawSeparator(canvas, size.x * 0.3, size.x * 0.7, _panelBottom - 40);
+    PanelRenderer.drawSeparator(
+      canvas,
+      size.x * 0.3,
+      size.x * 0.7,
+      _panelBottom - 40,
+    );
 
     // Pulsing footer
     final ms = DateTime.now().millisecondsSinceEpoch;
     final pulse = 0.5 + sin(ms / 300.0) * 0.5;
-    final pulseColor = ui.Color.fromARGB(
-      (pulse * 255).toInt(), 0, 255, 102,
+    final pulseColor = ui.Color.fromARGB((pulse * 255).toInt(), 0, 255, 102);
+    PanelRenderer.drawTextCentered(
+      canvas,
+      'TAP TO GO BACK',
+      cx,
+      _panelBottom - 20,
+      18,
+      pulseColor,
     );
-    PanelRenderer.drawTextCentered(canvas, 'TAP TO GO BACK', cx, _panelBottom - 20, 18,
-        pulseColor);
   }
 }
 

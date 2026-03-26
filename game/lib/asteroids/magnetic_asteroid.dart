@@ -34,10 +34,8 @@ class MagneticAsteroid extends PositionComponent
 
   static final Random _random = Random();
 
-  MagneticAsteroid({
-    required this.asteroidSize,
-    Vector2? velocity,
-  }) : _rotationSpeed = (_random.nextDouble() - 0.5) * 2.0 {
+  MagneticAsteroid({required this.asteroidSize, Vector2? velocity})
+    : _rotationSpeed = (_random.nextDouble() - 0.5) * 2.0 {
     final r = asteroidSize.radius;
     size = Vector2.all(r * 2);
     anchor = Anchor.center;
@@ -135,11 +133,9 @@ class MagneticAsteroid extends PositionComponent
 
   /// Destroy this asteroid, emitting event.
   void destroy({bool byDash = false}) {
-    eventBus.emit(AsteroidDestroyedEvent(
-      position.clone(),
-      asteroidSize,
-      byDash: byDash,
-    ));
+    eventBus.emit(
+      AsteroidDestroyedEvent(position.clone(), asteroidSize, byDash: byDash),
+    );
     removeFromParent();
   }
 
@@ -151,8 +147,9 @@ class MagneticAsteroid extends PositionComponent
     // Pulsing magnetic field ring
     final pulse = (sin(_elapsed * 3.0) + 1.0) / 2.0; // 0..1
     final ringOpacity = 0.05 + pulse * 0.1;
-    _fieldRingPaint.color =
-        GameConfig.magneticAsteroidColor.withValues(alpha: ringOpacity);
+    _fieldRingPaint.color = GameConfig.magneticAsteroidColor.withValues(
+      alpha: ringOpacity,
+    );
     canvas.drawCircle(
       Offset.zero,
       GameConfig.magneticPullRadius,

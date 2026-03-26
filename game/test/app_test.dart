@@ -18,14 +18,8 @@ void main() {
       'loads BackgroundLayer and TitleScreen on start',
       AsteroidsNeonGame.new,
       (game) async {
-        expect(
-          game.children.whereType<BackgroundLayer>().length,
-          1,
-        );
-        expect(
-          game.children.whereType<TitleScreen>().length,
-          1,
-        );
+        expect(game.children.whereType<BackgroundLayer>().length, 1);
+        expect(game.children.whereType<TitleScreen>().length, 1);
       },
     );
   });

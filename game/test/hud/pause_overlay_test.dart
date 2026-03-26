@@ -95,17 +95,15 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'intercepts touches when visible',
-      FlameGame.new,
-      (game) async {
-        final button = MenuButton();
-        await game.ensureAdd(button);
+    testWithGame<FlameGame>('intercepts touches when visible', FlameGame.new, (
+      game,
+    ) async {
+      final button = MenuButton();
+      await game.ensureAdd(button);
 
-        eventBus.emit(GameOverEvent());
+      eventBus.emit(GameOverEvent());
 
-        expect(button.containsLocalPoint(Vector2(10, 10)), true);
-      },
-    );
+      expect(button.containsLocalPoint(Vector2(10, 10)), true);
+    });
   });
 }

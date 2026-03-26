@@ -41,8 +41,7 @@ void main() {
 
       // Fill the leaderboard
       for (int i = 0; i < GameConfig.leaderboardMaxEntries; i++) {
-        await lb.addEntry('P${i.toString().padLeft(2, '0')}',
-            (i + 1) * 1000);
+        await lb.addEntry('P${i.toString().padLeft(2, '0')}', (i + 1) * 1000);
       }
 
       // The lowest score is 1000; score below should not qualify
@@ -54,8 +53,7 @@ void main() {
       await lb.init();
 
       for (int i = 0; i < GameConfig.leaderboardMaxEntries; i++) {
-        await lb.addEntry('P${i.toString().padLeft(2, '0')}',
-            (i + 1) * 1000);
+        await lb.addEntry('P${i.toString().padLeft(2, '0')}', (i + 1) * 1000);
       }
 
       // The lowest score is 1000; score above should qualify
@@ -94,8 +92,7 @@ void main() {
 
       // Add more entries than the max
       for (int i = 0; i < GameConfig.leaderboardMaxEntries + 3; i++) {
-        await lb.addEntry('P${i.toString().padLeft(2, '0')}',
-            (i + 1) * 100);
+        await lb.addEntry('P${i.toString().padLeft(2, '0')}', (i + 1) * 100);
       }
 
       expect(lb.entries.length, GameConfig.leaderboardMaxEntries);
@@ -106,8 +103,7 @@ void main() {
       await lb.init();
 
       for (int i = 0; i < GameConfig.leaderboardMaxEntries; i++) {
-        await lb.addEntry('P${i.toString().padLeft(2, '0')}',
-            (i + 1) * 1000);
+        await lb.addEntry('P${i.toString().padLeft(2, '0')}', (i + 1) * 1000);
       }
 
       // Add a high score; lowest entry (1000) should be evicted

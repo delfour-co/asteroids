@@ -14,34 +14,28 @@ void main() {
   });
 
   group('WaveRingEffect', () {
-    testWithGame<FlameGame>(
-      'mounts with correct priority',
-      FlameGame.new,
-      (game) async {
-        final ring = WaveRingEffect();
-        await game.ensureAdd(ring);
+    testWithGame<FlameGame>('mounts with correct priority', FlameGame.new, (
+      game,
+    ) async {
+      final ring = WaveRingEffect();
+      await game.ensureAdd(ring);
 
-        expect(ring.isMounted, true);
-        expect(ring.priority, 150);
-      },
-    );
+      expect(ring.isMounted, true);
+      expect(ring.priority, 150);
+    });
 
-    testWithGame<FlameGame>(
-      'ignores wave 1',
-      FlameGame.new,
-      (game) async {
-        final ring = WaveRingEffect();
-        await game.ensureAdd(ring);
+    testWithGame<FlameGame>('ignores wave 1', FlameGame.new, (game) async {
+      final ring = WaveRingEffect();
+      await game.ensureAdd(ring);
 
-        // Track if screen shake was emitted
-        bool shakeEmitted = false;
-        eventBus.on<ScreenShakeEvent>((_) => shakeEmitted = true);
+      // Track if screen shake was emitted
+      bool shakeEmitted = false;
+      eventBus.on<ScreenShakeEvent>((_) => shakeEmitted = true);
 
-        eventBus.emit(WaveStartedEvent(1));
+      eventBus.emit(WaveStartedEvent(1));
 
-        expect(shakeEmitted, false);
-      },
-    );
+      expect(shakeEmitted, false);
+    });
 
     testWithGame<FlameGame>(
       'activates on wave 2+ and emits screen shake',
@@ -59,40 +53,36 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'deactivates after duration',
-      FlameGame.new,
-      (game) async {
-        final ring = WaveRingEffect();
-        await game.ensureAdd(ring);
+    testWithGame<FlameGame>('deactivates after duration', FlameGame.new, (
+      game,
+    ) async {
+      final ring = WaveRingEffect();
+      await game.ensureAdd(ring);
 
-        eventBus.emit(WaveStartedEvent(3));
+      eventBus.emit(WaveStartedEvent(3));
 
-        // Advance past duration
-        game.update(GameConfig.waveRingDuration + 0.1);
+      // Advance past duration
+      game.update(GameConfig.waveRingDuration + 0.1);
 
-        // Should still be mounted (persistent component)
-        expect(ring.isMounted, true);
-      },
-    );
+      // Should still be mounted (persistent component)
+      expect(ring.isMounted, true);
+    });
 
-    testWithGame<FlameGame>(
-      'can be triggered multiple times',
-      FlameGame.new,
-      (game) async {
-        final ring = WaveRingEffect();
-        await game.ensureAdd(ring);
+    testWithGame<FlameGame>('can be triggered multiple times', FlameGame.new, (
+      game,
+    ) async {
+      final ring = WaveRingEffect();
+      await game.ensureAdd(ring);
 
-        int shakeCount = 0;
-        eventBus.on<ScreenShakeEvent>((_) => shakeCount++);
+      int shakeCount = 0;
+      eventBus.on<ScreenShakeEvent>((_) => shakeCount++);
 
-        eventBus.emit(WaveStartedEvent(2));
-        game.update(GameConfig.waveRingDuration + 0.1);
+      eventBus.emit(WaveStartedEvent(2));
+      game.update(GameConfig.waveRingDuration + 0.1);
 
-        eventBus.emit(WaveStartedEvent(3));
+      eventBus.emit(WaveStartedEvent(3));
 
-        expect(shakeCount, 2);
-      },
-    );
+      expect(shakeCount, 2);
+    });
   });
 }

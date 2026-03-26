@@ -20,10 +20,7 @@ class EmberEffect extends PositionComponent {
   late final Paint _corePaint;
   late final Paint _glowPaint;
 
-  EmberEffect({
-    required this.color,
-    required this.particleCount,
-  });
+  EmberEffect({required this.color, required this.particleCount});
 
   @override
   Future<void> onLoad() async {
@@ -40,12 +37,18 @@ class EmberEffect extends PositionComponent {
 
     _particles = List.generate(particleCount, (_) {
       final angle = _random.nextDouble() * 2 * pi;
-      final speed = GameConfig.emberMinSpeed +
-          _random.nextDouble() * (GameConfig.emberMaxSpeed - GameConfig.emberMinSpeed);
-      final size = GameConfig.emberMinSize +
-          _random.nextDouble() * (GameConfig.emberMaxSize - GameConfig.emberMinSize);
-      final lifetime = GameConfig.emberMinLifetime +
-          _random.nextDouble() * (GameConfig.emberMaxLifetime - GameConfig.emberMinLifetime);
+      final speed =
+          GameConfig.emberMinSpeed +
+          _random.nextDouble() *
+              (GameConfig.emberMaxSpeed - GameConfig.emberMinSpeed);
+      final size =
+          GameConfig.emberMinSize +
+          _random.nextDouble() *
+              (GameConfig.emberMaxSize - GameConfig.emberMinSize);
+      final lifetime =
+          GameConfig.emberMinLifetime +
+          _random.nextDouble() *
+              (GameConfig.emberMaxLifetime - GameConfig.emberMinLifetime);
       return _EmberParticle(
         dx: cos(angle) * speed,
         dy: sin(angle) * speed,
@@ -90,11 +93,19 @@ class EmberEffect extends PositionComponent {
 
       final offset = Offset(p.x, p.y);
       _glowPaint.color = _corePaint.color.withValues(alpha: opacity * 0.4);
-      final glowRect = Rect.fromCenter(center: offset, width: p.size * 3, height: p.size * 2);
+      final glowRect = Rect.fromCenter(
+        center: offset,
+        width: p.size * 3,
+        height: p.size * 2,
+      );
       canvas.drawRect(glowRect, _glowPaint);
 
       _corePaint.color = _corePaint.color.withValues(alpha: opacity);
-      final rect = Rect.fromCenter(center: offset, width: p.size * 2, height: p.size);
+      final rect = Rect.fromCenter(
+        center: offset,
+        width: p.size * 2,
+        height: p.size,
+      );
       canvas.drawRect(rect, _corePaint);
     }
   }

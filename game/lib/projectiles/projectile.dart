@@ -69,7 +69,9 @@ class Projectile extends PositionComponent
 
   @override
   void onCollisionStart(
-      Set<Vector2> intersectionPoints, PositionComponent other) {
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is Asteroid) {
       eventBus.emit(ProjectileHitEvent(position.clone()));

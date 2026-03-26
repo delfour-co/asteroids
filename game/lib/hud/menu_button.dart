@@ -2,7 +2,8 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flutter/painting.dart' show TextPainter, TextDirection, TextStyle, TextSpan, FontWeight, Shadow;
+import 'package:flutter/painting.dart'
+    show TextPainter, TextDirection, TextStyle, TextSpan, FontWeight, Shadow;
 
 import '../core/arcade_events.dart';
 import '../core/event_bus.dart';
@@ -57,28 +58,36 @@ class MenuButton extends PositionComponent
     final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(6));
 
     // Wide outer glow
-    canvas.drawRRect(rrect, Paint()
-      ..color = const Color(0x3000FFFF)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 6.0
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20));
+    canvas.drawRRect(
+      rrect,
+      Paint()
+        ..color = const Color(0x3000FFFF)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+    );
 
     // Medium glow
-    canvas.drawRRect(rrect, Paint()
-      ..color = const Color(0x4000FFFF)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+    canvas.drawRRect(
+      rrect,
+      Paint()
+        ..color = const Color(0x4000FFFF)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+    );
 
     // Fill
-    canvas.drawRRect(rrect, Paint()
-      ..color = const Color(0x1800FFFF));
+    canvas.drawRRect(rrect, Paint()..color = const Color(0x1800FFFF));
 
     // Solid border
-    canvas.drawRRect(rrect, Paint()
-      ..color = const Color(0xAA00FFFF)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5);
+    canvas.drawRRect(
+      rrect,
+      Paint()
+        ..color = const Color(0xAA00FFFF)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5,
+    );
 
     // Text with glow
     final tp = TextPainter(
@@ -91,13 +100,22 @@ class MenuButton extends PositionComponent
           fontFamily: 'JetBrainsMono',
           letterSpacing: 1.5,
           shadows: [
-            Shadow(color: GameConfig.arcadeYellow.withValues(alpha: 0.6), blurRadius: 8),
-            Shadow(color: GameConfig.arcadeYellow.withValues(alpha: 0.3), blurRadius: 16),
+            Shadow(
+              color: GameConfig.arcadeYellow.withValues(alpha: 0.6),
+              blurRadius: 8,
+            ),
+            Shadow(
+              color: GameConfig.arcadeYellow.withValues(alpha: 0.3),
+              blurRadius: 16,
+            ),
           ],
         ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
-    tp.paint(canvas, Offset(size.x / 2 - tp.width / 2, size.y / 2 - tp.height / 2));
+    tp.paint(
+      canvas,
+      Offset(size.x / 2 - tp.width / 2, size.y / 2 - tp.height / 2),
+    );
   }
 }

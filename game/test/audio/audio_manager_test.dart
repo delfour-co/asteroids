@@ -42,40 +42,36 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'toggles mute on MuteToggleEvent',
-      FlameGame.new,
-      (game) async {
-        final manager = AudioManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('toggles mute on MuteToggleEvent', FlameGame.new, (
+      game,
+    ) async {
+      final manager = AudioManager();
+      await game.ensureAdd(manager);
 
-        expect(manager.isMuted, false);
+      expect(manager.isMuted, false);
 
-        eventBus.emit(MuteToggleEvent());
-        expect(manager.isMuted, true);
+      eventBus.emit(MuteToggleEvent());
+      expect(manager.isMuted, true);
 
-        eventBus.emit(MuteToggleEvent());
-        expect(manager.isMuted, false);
-      },
-    );
+      eventBus.emit(MuteToggleEvent());
+      expect(manager.isMuted, false);
+    });
 
-    testWithGame<FlameGame>(
-      'emits MuteChangedEvent on toggle',
-      FlameGame.new,
-      (game) async {
-        final manager = AudioManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('emits MuteChangedEvent on toggle', FlameGame.new, (
+      game,
+    ) async {
+      final manager = AudioManager();
+      await game.ensureAdd(manager);
 
-        bool? received;
-        eventBus.on<MuteChangedEvent>((e) => received = e.isMuted);
+      bool? received;
+      eventBus.on<MuteChangedEvent>((e) => received = e.isMuted);
 
-        eventBus.emit(MuteToggleEvent());
-        expect(received, true);
+      eventBus.emit(MuteToggleEvent());
+      expect(received, true);
 
-        eventBus.emit(MuteToggleEvent());
-        expect(received, false);
-      },
-    );
+      eventBus.emit(MuteToggleEvent());
+      expect(received, false);
+    });
 
     testWithGame<FlameGame>(
       'persists mute state to SharedPreferences',
@@ -127,23 +123,21 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'cleans up listeners on remove',
-      FlameGame.new,
-      (game) async {
-        final manager = AudioManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('cleans up listeners on remove', FlameGame.new, (
+      game,
+    ) async {
+      final manager = AudioManager();
+      await game.ensureAdd(manager);
 
-        manager.removeFromParent();
-        game.update(0); // process removal
+      manager.removeFromParent();
+      game.update(0); // process removal
 
-        // After removal, emitting events should not crash
-        eventBus.emit(MuteToggleEvent());
-        eventBus.emit(FireEvent(true));
+      // After removal, emitting events should not crash
+      eventBus.emit(MuteToggleEvent());
+      eventBus.emit(FireEvent(true));
 
-        // Mute state should not have changed since listener was removed
-        expect(manager.isMuted, false);
-      },
-    );
+      // Mute state should not have changed since listener was removed
+      expect(manager.isMuted, false);
+    });
   });
 }

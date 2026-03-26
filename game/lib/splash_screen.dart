@@ -20,14 +20,15 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2500),
-    )..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          _finish();
-        }
-      });
+    _controller =
+        AnimationController(
+          vsync: this,
+          duration: const Duration(milliseconds: 2500),
+        )..addStatusListener((status) {
+          if (status == AnimationStatus.completed) {
+            _finish();
+          }
+        });
     _controller.forward();
   }
 
@@ -82,12 +83,12 @@ class _NeonLogoPainter extends CustomPainter {
     // Phase 3: 0.60–1.0  (1.5–2.5s) hold then fade out
 
     final double d4DrawProgress = (progress / 0.32).clamp(0.0, 1.0);
-    final double gamesFadeIn =
-        ((progress - 0.32) / 0.28).clamp(0.0, 1.0);
+    final double gamesFadeIn = ((progress - 0.32) / 0.28).clamp(0.0, 1.0);
 
     // Fade out in the last 0.6s (progress 0.76–1.0)
-    final double fadeOut =
-        progress > 0.76 ? ((progress - 0.76) / 0.24).clamp(0.0, 1.0) : 0.0;
+    final double fadeOut = progress > 0.76
+        ? ((progress - 0.76) / 0.24).clamp(0.0, 1.0)
+        : 0.0;
     final double masterAlpha = 1.0 - fadeOut;
 
     if (masterAlpha <= 0) return;
@@ -168,16 +169,18 @@ class _NeonLogoPainter extends CustomPainter {
       arcPath.lineTo(x + w * 0.3, y);
       // Single smooth cubic for the entire right-side arc
       arcPath.cubicTo(
-        x + w * 1.15, y,       // control 1 — far right at top
-        x + w * 1.15, y + h,   // control 2 — far right at bottom
-        x + w * 0.3, y + h,    // end — bottom horizontal start
+        x + w * 1.15,
+        y, // control 1 — far right at top
+        x + w * 1.15,
+        y + h, // control 2 — far right at bottom
+        x + w * 0.3,
+        y + h, // end — bottom horizontal start
       );
       arcPath.lineTo(x, y + h);
 
       // Extract partial arc based on progress
       final metrics = arcPath.computeMetrics().first;
-      final partialArc =
-          metrics.extractPath(0, metrics.length * arcP);
+      final partialArc = metrics.extractPath(0, metrics.length * arcP);
       path.addPath(partialArc, Offset.zero);
     }
 
@@ -208,10 +211,7 @@ class _NeonLogoPainter extends CustomPainter {
     final stemX = x + w * 0.7; // vertical stem X position
     if (diagP > 0) {
       path.moveTo(stemX, y);
-      path.lineTo(
-        stemX + (x - stemX) * diagP,
-        y + (crossY - y) * diagP,
-      );
+      path.lineTo(stemX + (x - stemX) * diagP, y + (crossY - y) * diagP);
     }
 
     // Horizontal crossbar
@@ -252,14 +252,15 @@ class _NeonLogoPainter extends CustomPainter {
       letterSpacing: fontSize * 0.3,
     );
 
-    final paragraphBuilder = ui.ParagraphBuilder(
-      ui.ParagraphStyle(
-        textAlign: TextAlign.left,
-        fontFamily: 'JetBrainsMono',
-      ),
-    )
-      ..pushStyle(textStyle)
-      ..addText('Games');
+    final paragraphBuilder =
+        ui.ParagraphBuilder(
+            ui.ParagraphStyle(
+              textAlign: TextAlign.left,
+              fontFamily: 'JetBrainsMono',
+            ),
+          )
+          ..pushStyle(textStyle)
+          ..addText('Games');
 
     final paragraph = paragraphBuilder.build()
       ..layout(const ui.ParagraphConstraints(width: double.infinity));
@@ -278,7 +279,10 @@ class _NeonLogoPainter extends CustomPainter {
       const Offset(0, -1),
       const Offset(0, 1),
     ]) {
-      canvas.drawParagraph(paragraph, Offset(textX + offset.dx, textY + offset.dy));
+      canvas.drawParagraph(
+        paragraph,
+        Offset(textX + offset.dx, textY + offset.dy),
+      );
     }
 
     canvas.restore();
@@ -301,14 +305,15 @@ class _NeonLogoPainter extends CustomPainter {
       ],
     );
 
-    final solidBuilder = ui.ParagraphBuilder(
-      ui.ParagraphStyle(
-        textAlign: TextAlign.left,
-        fontFamily: 'JetBrainsMono',
-      ),
-    )
-      ..pushStyle(solidStyle)
-      ..addText('Games');
+    final solidBuilder =
+        ui.ParagraphBuilder(
+            ui.ParagraphStyle(
+              textAlign: TextAlign.left,
+              fontFamily: 'JetBrainsMono',
+            ),
+          )
+          ..pushStyle(solidStyle)
+          ..addText('Games');
 
     final solidParagraph = solidBuilder.build()
       ..layout(const ui.ParagraphConstraints(width: double.infinity));

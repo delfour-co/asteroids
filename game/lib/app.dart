@@ -124,7 +124,9 @@ class GameLayer extends Component with HasGameReference<AsteroidsNeonGame> {
 
   void _onGameOver(GameOverEvent event) {
     _gameOver = true;
-    children.whereType<Projectile>().toList().forEach((p) => p.removeFromParent());
+    children.whereType<Projectile>().toList().forEach(
+      (p) => p.removeFromParent(),
+    );
     for (final mgr in children.whereType<UfoManager>()) {
       mgr.clearAll();
     }
@@ -140,14 +142,30 @@ class GameLayer extends Component with HasGameReference<AsteroidsNeonGame> {
 
     // Remove all gameplay entities
     children.whereType<Ship>().toList().forEach((s) => s.removeFromParent());
-    children.whereType<Projectile>().toList().forEach((p) => p.removeFromParent());
-    children.whereType<ProjectileManager>().toList().forEach((m) => m.removeFromParent());
-    children.whereType<AsteroidManager>().toList().forEach((m) => m.removeFromParent());
-    children.whereType<UfoManager>().toList().forEach((m) => m.removeFromParent());
-    children.whereType<PowerUpManager>().toList().forEach((m) => m.removeFromParent());
-    children.whereType<EffectsManager>().toList().forEach((m) => m.removeFromParent());
-    children.whereType<ComboManager>().toList().forEach((m) => m.removeFromParent());
-    children.whereType<SpaceDebrisManager>().toList().forEach((m) => m.removeFromParent());
+    children.whereType<Projectile>().toList().forEach(
+      (p) => p.removeFromParent(),
+    );
+    children.whereType<ProjectileManager>().toList().forEach(
+      (m) => m.removeFromParent(),
+    );
+    children.whereType<AsteroidManager>().toList().forEach(
+      (m) => m.removeFromParent(),
+    );
+    children.whereType<UfoManager>().toList().forEach(
+      (m) => m.removeFromParent(),
+    );
+    children.whereType<PowerUpManager>().toList().forEach(
+      (m) => m.removeFromParent(),
+    );
+    children.whereType<EffectsManager>().toList().forEach(
+      (m) => m.removeFromParent(),
+    );
+    children.whereType<ComboManager>().toList().forEach(
+      (m) => m.removeFromParent(),
+    );
+    children.whereType<SpaceDebrisManager>().toList().forEach(
+      (m) => m.removeFromParent(),
+    );
 
     // Respawn everything
     _spawnGameplay();
@@ -276,10 +294,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
   void _onFragmentUnlocked(FragmentUnlockedEvent event) {
     // Show fragment overlay
     final fragment = FragmentData.fragments[event.fragmentIndex];
-    add(FragmentOverlay(
-      fragment: fragment,
-      onDismiss: () {},
-    ));
+    add(FragmentOverlay(fragment: fragment, onDismiss: () {}));
   }
 
   Future<void> _startGame() async {
@@ -316,14 +331,16 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     final tutorialSeen = prefs.getBool(GameConfig.tutorialSeenKey) ?? false;
 
     if (!tutorialSeen) {
-      add(TutorialOverlay(
-        onDismiss: () async {
-          await prefs.setBool(GameConfig.tutorialSeenKey, true);
-          if (isMounted) {
-            add(CountdownOverlay());
-          }
-        },
-      ));
+      add(
+        TutorialOverlay(
+          onDismiss: () async {
+            await prefs.setBool(GameConfig.tutorialSeenKey, true);
+            if (isMounted) {
+              add(CountdownOverlay());
+            }
+          },
+        ),
+      );
     } else {
       add(CountdownOverlay());
     }
@@ -344,14 +361,30 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     _menuButton?.removeFromParent();
 
     // Also remove any active overlays
-    children.whereType<CountdownOverlay>().toList().forEach((c) => c.removeFromParent());
-    children.whereType<InitialEntryOverlay>().toList().forEach((c) => c.removeFromParent());
-    children.whereType<LeaderboardOverlay>().toList().forEach((c) => c.removeFromParent());
-    children.whereType<CreditsOverlay>().toList().forEach((c) => c.removeFromParent());
-    children.whereType<TutorialOverlay>().toList().forEach((c) => c.removeFromParent());
-    children.whereType<FragmentOverlay>().toList().forEach((c) => c.removeFromParent());
-    children.whereType<JournalOverlay>().toList().forEach((c) => c.removeFromParent());
-    children.whereType<CosmeticsOverlay>().toList().forEach((c) => c.removeFromParent());
+    children.whereType<CountdownOverlay>().toList().forEach(
+      (c) => c.removeFromParent(),
+    );
+    children.whereType<InitialEntryOverlay>().toList().forEach(
+      (c) => c.removeFromParent(),
+    );
+    children.whereType<LeaderboardOverlay>().toList().forEach(
+      (c) => c.removeFromParent(),
+    );
+    children.whereType<CreditsOverlay>().toList().forEach(
+      (c) => c.removeFromParent(),
+    );
+    children.whereType<TutorialOverlay>().toList().forEach(
+      (c) => c.removeFromParent(),
+    );
+    children.whereType<FragmentOverlay>().toList().forEach(
+      (c) => c.removeFromParent(),
+    );
+    children.whereType<JournalOverlay>().toList().forEach(
+      (c) => c.removeFromParent(),
+    );
+    children.whereType<CosmeticsOverlay>().toList().forEach(
+      (c) => c.removeFromParent(),
+    );
 
     _restartOverlay = null;
     _gameLayer = null;

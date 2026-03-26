@@ -17,37 +17,41 @@ class ScorePopup extends TextComponent {
     required this.multiplier,
     String? label,
     Color? color,
-  })  : _baseColor = color ??
-            (multiplier > 1 ? GameConfig.comboColor : GameConfig.arcadeWhite),
-        super(
-          text: label ??
-              (multiplier > 1
-                  ? '+${points * multiplier} x$multiplier'
-                  : '+$points'),
-          textRenderer: TextPaint(
-            style: TextStyle(
-              color: color ??
-                  (multiplier > 1
-                      ? GameConfig.comboColor
-                      : GameConfig.arcadeWhite),
-              fontSize: GameConfig.scorePopupFontSize,
-              fontFamily: 'JetBrainsMono',
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.5,
-              shadows: [
-                Shadow(
-                  color: (color ??
-                          (multiplier > 1
-                              ? GameConfig.comboColor
-                              : GameConfig.arcadeWhite))
-                      .withValues(alpha: 0.6),
-                  blurRadius: 6,
-                ),
-              ],
-            ),
-          ),
-          anchor: Anchor.center,
-        );
+  }) : _baseColor =
+           color ??
+           (multiplier > 1 ? GameConfig.comboColor : GameConfig.arcadeWhite),
+       super(
+         text:
+             label ??
+             (multiplier > 1
+                 ? '+${points * multiplier} x$multiplier'
+                 : '+$points'),
+         textRenderer: TextPaint(
+           style: TextStyle(
+             color:
+                 color ??
+                 (multiplier > 1
+                     ? GameConfig.comboColor
+                     : GameConfig.arcadeWhite),
+             fontSize: GameConfig.scorePopupFontSize,
+             fontFamily: 'JetBrainsMono',
+             fontWeight: FontWeight.bold,
+             letterSpacing: 1.5,
+             shadows: [
+               Shadow(
+                 color:
+                     (color ??
+                             (multiplier > 1
+                                 ? GameConfig.comboColor
+                                 : GameConfig.arcadeWhite))
+                         .withValues(alpha: 0.6),
+                 blurRadius: 6,
+               ),
+             ],
+           ),
+         ),
+         anchor: Anchor.center,
+       );
 
   @override
   void update(double dt) {

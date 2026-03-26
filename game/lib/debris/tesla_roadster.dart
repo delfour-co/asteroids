@@ -88,7 +88,9 @@ class TeslaRoadster extends PositionComponent
 
   @override
   void onCollisionStart(
-      Set<Vector2> intersectionPoints, PositionComponent other) {
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is Projectile) {
       other.removeFromParent();
@@ -97,11 +99,13 @@ class TeslaRoadster extends PositionComponent
   }
 
   void _destroy() {
-    eventBus.emit(SpaceDebrisDestroyedEvent(
-      position.clone(),
-      GameConfig.teslaPoints,
-      'tesla',
-    ));
+    eventBus.emit(
+      SpaceDebrisDestroyedEvent(
+        position.clone(),
+        GameConfig.teslaPoints,
+        'tesla',
+      ),
+    );
     removeFromParent();
   }
 

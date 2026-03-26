@@ -18,16 +18,14 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'shows correct text for wave 1',
-      FlameGame.new,
-      (game) async {
-        final announcement = WaveAnnouncement(wave: 1);
-        await game.ensureAdd(announcement);
+    testWithGame<FlameGame>('shows correct text for wave 1', FlameGame.new, (
+      game,
+    ) async {
+      final announcement = WaveAnnouncement(wave: 1);
+      await game.ensureAdd(announcement);
 
-        expect(announcement.text, 'WAVE 1');
-      },
-    );
+      expect(announcement.text, 'WAVE 1');
+    });
 
     testWithGame<FlameGame>(
       'stays mounted during total duration',
@@ -36,7 +34,8 @@ void main() {
         final announcement = WaveAnnouncement(wave: 3);
         await game.ensureAdd(announcement);
 
-        final totalDuration = GameConfig.waveAnnounceFadeIn +
+        final totalDuration =
+            GameConfig.waveAnnounceFadeIn +
             GameConfig.waveAnnounceHold +
             GameConfig.waveAnnounceFadeOut;
 
@@ -54,7 +53,8 @@ void main() {
         final announcement = WaveAnnouncement(wave: 2);
         await game.ensureAdd(announcement);
 
-        final totalDuration = GameConfig.waveAnnounceFadeIn +
+        final totalDuration =
+            GameConfig.waveAnnounceFadeIn +
             GameConfig.waveAnnounceHold +
             GameConfig.waveAnnounceFadeOut;
 

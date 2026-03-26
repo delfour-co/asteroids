@@ -44,10 +44,7 @@ class WaveOverlay extends PositionComponent with HasGameReference<FlameGame> {
   @override
   void render(Canvas canvas) {
     if (_waveIntensity > 0) {
-      canvas.drawRect(
-        Rect.fromLTWH(0, 0, size.x, size.y),
-        _waveOverlayPaint,
-      );
+      canvas.drawRect(Rect.fromLTWH(0, 0, size.x, size.y), _waveOverlayPaint);
     }
   }
 }

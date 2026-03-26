@@ -72,7 +72,9 @@ class UfoHunter extends PositionComponent
 
   @override
   void onCollisionStart(
-      Set<Vector2> intersectionPoints, PositionComponent other) {
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is Projectile) {
       _destroy();
@@ -184,8 +186,7 @@ class UfoHunter extends PositionComponent
     );
 
     final projectile = EnemyProjectile();
-    projectile.init(
-        pos: position.clone(), target: position + rotatedDir * 100);
+    projectile.init(pos: position.clone(), target: position + rotatedDir * 100);
     parent?.add(projectile);
   }
 

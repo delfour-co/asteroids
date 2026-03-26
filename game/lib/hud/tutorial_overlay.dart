@@ -48,59 +48,108 @@ class TutorialOverlay extends PositionComponent
     );
 
     // "CONTROLS" title
-    _drawText(canvas, 'CONTROLS', w / 2, 80, 48,
-        GameConfig.shipColor, FontWeight.bold, shadows: const [
-          Shadow(color: ui.Color(0x9900FFFF), blurRadius: 8),
-          Shadow(color: ui.Color(0x4400FFFF), blurRadius: 16),
-        ]);
+    _drawText(
+      canvas,
+      'CONTROLS',
+      w / 2,
+      80,
+      48,
+      GameConfig.shipColor,
+      FontWeight.bold,
+      shadows: const [
+        Shadow(color: ui.Color(0x9900FFFF), blurRadius: 8),
+        Shadow(color: ui.Color(0x4400FFFF), blurRadius: 16),
+      ],
+    );
 
     // Control positions (same formulas as actual buttons)
     // Joystick: left:40, bottom:40, radius 75
     final joystickX = 40.0 + 75.0;
     final joystickY = h - 40.0 - 75.0;
     _drawGlowCircle(canvas, joystickX, joystickY, 80);
-    _drawText(canvas, 'STEER', joystickX, joystickY - 100, 22,
-        GameConfig.arcadeWhite, FontWeight.bold);
+    _drawText(
+      canvas,
+      'STEER',
+      joystickX,
+      joystickY - 100,
+      22,
+      GameConfig.arcadeWhite,
+      FontWeight.bold,
+    );
 
     // Thrust button: x - 60, y - 80
     final thrustX = w - 60;
     final thrustY = h - 80;
     _drawGlowCircle(canvas, thrustX, thrustY, 48);
-    _drawText(canvas, 'THRUST', thrustX, thrustY + 55, 20,
-        GameConfig.arcadeWhite, FontWeight.bold);
+    _drawText(
+      canvas,
+      'THRUST',
+      thrustX,
+      thrustY + 55,
+      20,
+      GameConfig.arcadeWhite,
+      FontWeight.bold,
+    );
 
     // Fire button: x - 160, y - 80
     final fireX = w - 160;
     final fireY = h - 80;
     _drawGlowCircle(canvas, fireX, fireY, 48);
-    _drawText(canvas, 'SHOOT', fireX, fireY + 55, 20,
-        GameConfig.arcadeWhite, FontWeight.bold);
+    _drawText(
+      canvas,
+      'SHOOT',
+      fireX,
+      fireY + 55,
+      20,
+      GameConfig.arcadeWhite,
+      FontWeight.bold,
+    );
 
     // Dash button: x - 110, y - 160
     final dashX = w - 110;
     final dashY = h - 160;
     _drawGlowCircle(canvas, dashX, dashY, 38);
-    _drawText(canvas, 'DASH', dashX, dashY - 50, 20,
-        GameConfig.arcadeWhite, FontWeight.bold);
+    _drawText(
+      canvas,
+      'DASH',
+      dashX,
+      dashY - 50,
+      20,
+      GameConfig.arcadeWhite,
+      FontWeight.bold,
+    );
 
     // Pause button: x - 60, 40
     final pauseX = w - 60;
     const pauseY = 40.0 + 22.0;
     _drawGlowCircle(canvas, pauseX, pauseY, 28);
-    _drawText(canvas, 'PAUSE', pauseX, pauseY + 40, 18,
-        GameConfig.arcadeWhite, FontWeight.bold);
+    _drawText(
+      canvas,
+      'PAUSE',
+      pauseX,
+      pauseY + 40,
+      18,
+      GameConfig.arcadeWhite,
+      FontWeight.bold,
+    );
 
     // Pulsing "TAP TO PLAY"
     final ms = DateTime.now().millisecondsSinceEpoch;
     final pulse = 0.5 + sin(ms / 300.0) * 0.5;
-    final tapColor = ui.Color.fromARGB(
-      (pulse * 255).toInt(), 255, 255, 255,
+    final tapColor = ui.Color.fromARGB((pulse * 255).toInt(), 255, 255, 255);
+    _drawText(
+      canvas,
+      'TAP TO PLAY',
+      w / 2,
+      h / 2 + 40,
+      28,
+      tapColor,
+      FontWeight.normal,
+      shadows: const [
+        Shadow(color: ui.Color(0x9900FFFF), blurRadius: 8),
+        Shadow(color: ui.Color(0x4400FFFF), blurRadius: 16),
+      ],
     );
-    _drawText(canvas, 'TAP TO PLAY', w / 2, h / 2 + 40, 28,
-        tapColor, FontWeight.normal, shadows: const [
-          Shadow(color: ui.Color(0x9900FFFF), blurRadius: 8),
-          Shadow(color: ui.Color(0x4400FFFF), blurRadius: 16),
-        ]);
   }
 
   void _drawGlowCircle(ui.Canvas canvas, double x, double y, double radius) {
@@ -131,9 +180,16 @@ class TutorialOverlay extends PositionComponent
     );
   }
 
-  void _drawText(ui.Canvas canvas, String text, double x, double y,
-      double fontSize, ui.Color color, FontWeight weight,
-      {List<Shadow>? shadows}) {
+  void _drawText(
+    ui.Canvas canvas,
+    String text,
+    double x,
+    double y,
+    double fontSize,
+    ui.Color color,
+    FontWeight weight, {
+    List<Shadow>? shadows,
+  }) {
     final tp = TextPainter(
       text: TextSpan(
         text: text,

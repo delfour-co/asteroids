@@ -1,7 +1,8 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flutter/painting.dart' show TextStyle, FontWeight, Shadow, TextPainter, TextSpan, TextDirection;
+import 'package:flutter/painting.dart'
+    show TextStyle, FontWeight, Shadow, TextPainter, TextSpan, TextDirection;
 
 import '../app.dart';
 import '../core/arcade_events.dart';
@@ -14,7 +15,8 @@ import 'panel_renderer.dart';
 import 'wave_announcement.dart';
 
 /// HUD displaying score and remaining lives with neon styling.
-class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame> {
+class HudLayer extends PositionComponent
+    with HasGameReference<AsteroidsNeonGame> {
   late final TextComponent _scoreText;
   late final TextComponent _highScoreText;
   late final TextComponent _waveText;
@@ -76,9 +78,7 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
           fontSize: 14,
           fontFamily: 'JetBrainsMono',
           letterSpacing: 1.5,
-          shadows: [
-            Shadow(color: Color(0x3300FFFF), blurRadius: 6),
-          ],
+          shadows: [Shadow(color: Color(0x3300FFFF), blurRadius: 6)],
         ),
       ),
       anchor: Anchor.topCenter,
@@ -87,19 +87,21 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
     await add(_highScoreText);
 
     // Version — top right, dimmer
-    await add(TextComponent(
-      text: 'v1.8.0',
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Color(0x6600FFFF),
-          fontSize: 11,
-          fontFamily: 'JetBrainsMono',
-          letterSpacing: 1.0,
+    await add(
+      TextComponent(
+        text: 'v1.8.0',
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            color: Color(0x6600FFFF),
+            fontSize: 11,
+            fontFamily: 'JetBrainsMono',
+            letterSpacing: 1.0,
+          ),
         ),
+        anchor: Anchor.topRight,
+        position: Vector2(gameSize.x - 16, 12),
       ),
-      anchor: Anchor.topRight,
-      position: Vector2(gameSize.x - 16, 12),
-    ));
+    );
 
     // Wave text — below high score, cyan with glow
     _waveText = TextComponent(
@@ -110,9 +112,7 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
           fontSize: 14,
           fontFamily: 'JetBrainsMono',
           letterSpacing: 1.5,
-          shadows: [
-            Shadow(color: Color(0x4400FFFF), blurRadius: 6),
-          ],
+          shadows: [Shadow(color: Color(0x4400FFFF), blurRadius: 6)],
         ),
       ),
       anchor: Anchor.topCenter,
@@ -194,8 +194,7 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
 
     // Add new icons
     for (int i = 0; i < count; i++) {
-      final icon = _LifeIcon()
-        ..position = Vector2(24 + i * 36.0, 24);
+      final icon = _LifeIcon()..position = Vector2(24 + i * 36.0, 24);
       add(icon);
       _lifeIcons.add(icon);
     }
@@ -233,10 +232,12 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
       // Delay to let game over settle, then show initials entry
       Future.delayed(const Duration(milliseconds: 500), () {
         if (isMounted) {
-          game.add(InitialEntryOverlay(
-            score: gs.score,
-            leaderboard: game.leaderboardManager,
-          ));
+          game.add(
+            InitialEntryOverlay(
+              score: gs.score,
+              leaderboard: game.leaderboardManager,
+            ),
+          );
         }
       });
     }
@@ -280,7 +281,8 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
     final statPaint = TextPaint(style: statStyle);
 
     _statsLeftText = TextComponent(
-      text: 'ASTEROIDS  ${stats.asteroidsDestroyed}\n'
+      text:
+          'ASTEROIDS  ${stats.asteroidsDestroyed}\n'
           'UFOS       ${stats.ufosDestroyed}\n'
           'ACCURACY   ${stats.accuracy.toStringAsFixed(0)}%\n'
           'BEST COMBO x${stats.bestCombo}',
@@ -291,7 +293,8 @@ class HudLayer extends PositionComponent with HasGameReference<AsteroidsNeonGame
     add(_statsLeftText!);
 
     _statsRightText = TextComponent(
-      text: 'WAVE       ${stats.waveReached}\n'
+      text:
+          'WAVE       ${stats.waveReached}\n'
           'DURATION   ${stats.durationFormatted}\n'
           'PERFECT    ${stats.perfectKills}\n'
           'DASH KILLS ${stats.dashKills}',
@@ -394,25 +397,39 @@ class _TronTextComponent extends PositionComponent {
     final cy = size.y / 2;
 
     // Layer 1: Wide glow
-    _draw(canvas, cx, cy, Paint()
-      ..color = const Color.fromARGB(50, 0, 255, 255)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4.0
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16));
+    _draw(
+      canvas,
+      cx,
+      cy,
+      Paint()
+        ..color = const Color.fromARGB(50, 0, 255, 255)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 4.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16),
+    );
     // Layer 2: Medium glow
-    _draw(canvas, cx, cy, Paint()
-      ..color = const Color.fromARGB(100, 0, 255, 255)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6));
+    _draw(
+      canvas,
+      cx,
+      cy,
+      Paint()
+        ..color = const Color.fromARGB(100, 0, 255, 255)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
     // Layer 3: Dark fill
-    _draw(canvas, cx, cy, Paint()
-      ..color = const Color(0xFF003844));
+    _draw(canvas, cx, cy, Paint()..color = const Color(0xFF003844));
     // Layer 4: Bright outline
-    _draw(canvas, cx, cy, Paint()
-      ..color = const Color(0xDD00FFFF)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0);
+    _draw(
+      canvas,
+      cx,
+      cy,
+      Paint()
+        ..color = const Color(0xDD00FFFF)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0,
+    );
   }
 
   void _draw(Canvas canvas, double cx, double cy, Paint paint) {
@@ -557,17 +574,37 @@ class _StatsVisualBars extends PositionComponent {
     // Background arc (full)
     canvas.drawArc(
       Rect.fromCircle(center: arcCenter, radius: arcRadius),
-      -2.35, 4.71, false, arcBgPaint,
+      -2.35,
+      4.71,
+      false,
+      arcBgPaint,
     );
     // Filled arc (accuracy proportion)
     canvas.drawArc(
       Rect.fromCircle(center: arcCenter, radius: arcRadius),
-      -2.35, 4.71 * (accuracy / 100.0).clamp(0.0, 1.0), false, arcPaint,
+      -2.35,
+      4.71 * (accuracy / 100.0).clamp(0.0, 1.0),
+      false,
+      arcPaint,
     );
     // Accuracy % text in center
-    _drawCenteredText(canvas, '${accuracy.toStringAsFixed(0)}%', arcCenter.dx, arcCenter.dy, 14, const Color(0xFF00FFFF));
+    _drawCenteredText(
+      canvas,
+      '${accuracy.toStringAsFixed(0)}%',
+      arcCenter.dx,
+      arcCenter.dy,
+      14,
+      const Color(0xFF00FFFF),
+    );
     // Label below
-    _drawCenteredText(canvas, 'ACCURACY', arcCenter.dx, arcCenter.dy + arcRadius + 14, 11, const Color(0x8800FFFF));
+    _drawCenteredText(
+      canvas,
+      'ACCURACY',
+      arcCenter.dx,
+      arcCenter.dy + arcRadius + 14,
+      11,
+      const Color(0x8800FFFF),
+    );
 
     // Combo segmented bar
     final barLeft = cx + 30;
@@ -581,16 +618,29 @@ class _StatsVisualBars extends PositionComponent {
       final filled = i < bestCombo;
       canvas.drawRect(
         Rect.fromLTWH(x, barY - segH / 2, segW, segH),
-        Paint()..color = filled
-          ? const Color(0xFFCC00FF)
-          : const Color(0x22CC00FF),
+        Paint()
+          ..color = filled ? const Color(0xFFCC00FF) : const Color(0x22CC00FF),
       );
     }
     // Label below
-    _drawCenteredText(canvas, 'BEST COMBO', barLeft + maxCombo * (segW + segGap) / 2, barY + segH / 2 + 14, 11, const Color(0x88CC00FF));
+    _drawCenteredText(
+      canvas,
+      'BEST COMBO',
+      barLeft + maxCombo * (segW + segGap) / 2,
+      barY + segH / 2 + 14,
+      11,
+      const Color(0x88CC00FF),
+    );
   }
 
-  void _drawCenteredText(Canvas canvas, String text, double x, double y, double fontSize, Color color) {
+  void _drawCenteredText(
+    Canvas canvas,
+    String text,
+    double x,
+    double y,
+    double fontSize,
+    Color color,
+  ) {
     final tp = TextPainter(
       text: TextSpan(
         text: text,

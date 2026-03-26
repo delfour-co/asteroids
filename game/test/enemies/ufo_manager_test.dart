@@ -59,37 +59,33 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'spawns boss on wave 5',
-      FlameGame.new,
-      (game) async {
-        final manager = UfoManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('spawns boss on wave 5', FlameGame.new, (
+      game,
+    ) async {
+      final manager = UfoManager();
+      await game.ensureAdd(manager);
 
-        eventBus.emit(WaveStartedEvent(5));
+      eventBus.emit(WaveStartedEvent(5));
 
-        await _flushAsync(game, frames: 5);
+      await _flushAsync(game, frames: 5);
 
-        final bosses = manager.children.whereType<UfoBoss>().length;
-        expect(bosses, 1);
-      },
-    );
+      final bosses = manager.children.whereType<UfoBoss>().length;
+      expect(bosses, 1);
+    });
 
-    testWithGame<FlameGame>(
-      'spawns boss on wave 10',
-      FlameGame.new,
-      (game) async {
-        final manager = UfoManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('spawns boss on wave 10', FlameGame.new, (
+      game,
+    ) async {
+      final manager = UfoManager();
+      await game.ensureAdd(manager);
 
-        eventBus.emit(WaveStartedEvent(10));
+      eventBus.emit(WaveStartedEvent(10));
 
-        await _flushAsync(game, frames: 5);
+      await _flushAsync(game, frames: 5);
 
-        final bosses = manager.children.whereType<UfoBoss>().length;
-        expect(bosses, 1);
-      },
-    );
+      final bosses = manager.children.whereType<UfoBoss>().length;
+      expect(bosses, 1);
+    });
 
     testWithGame<FlameGame>(
       'does not spawn boss on non-multiple-of-5 wave',
@@ -107,41 +103,37 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'clearAll removes all UFOs',
-      FlameGame.new,
-      (game) async {
-        final manager = UfoManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('clearAll removes all UFOs', FlameGame.new, (
+      game,
+    ) async {
+      final manager = UfoManager();
+      await game.ensureAdd(manager);
 
-        eventBus.emit(WaveStartedEvent(5));
-        await _flushAsync(game, frames: 5);
+      eventBus.emit(WaveStartedEvent(5));
+      await _flushAsync(game, frames: 5);
 
-        manager.clearAll();
-        game.update(0);
+      manager.clearAll();
+      game.update(0);
 
-        expect(manager.children.whereType<UfoBoss>().length, 0);
-      },
-    );
+      expect(manager.children.whereType<UfoBoss>().length, 0);
+    });
 
-    testWithGame<FlameGame>(
-      'stops spawning after game over',
-      FlameGame.new,
-      (game) async {
-        final manager = UfoManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('stops spawning after game over', FlameGame.new, (
+      game,
+    ) async {
+      final manager = UfoManager();
+      await game.ensureAdd(manager);
 
-        eventBus.emit(WaveStartedEvent(4));
-        eventBus.emit(GameOverEvent());
+      eventBus.emit(WaveStartedEvent(4));
+      eventBus.emit(GameOverEvent());
 
-        for (int i = 0; i < 60; i++) {
-          await Future<void>.delayed(Duration.zero);
-          game.update(0.5);
-        }
+      for (int i = 0; i < 60; i++) {
+        await Future<void>.delayed(Duration.zero);
+        game.update(0.5);
+      }
 
-        final scouts = manager.children.whereType<UfoScout>().length;
-        expect(scouts, 0);
-      },
-    );
+      final scouts = manager.children.whereType<UfoScout>().length;
+      expect(scouts, 0);
+    });
   });
 }

@@ -85,7 +85,9 @@ class WaveRingEffect extends PositionComponent
 
     final center = Offset(cx, cy);
 
-    _glowPaint.color = GameConfig.waveRingColor.withValues(alpha: opacity * 0.4);
+    _glowPaint.color = GameConfig.waveRingColor.withValues(
+      alpha: opacity * 0.4,
+    );
     canvas.drawCircle(center, radius, _glowPaint);
 
     _ringPaint.color = GameConfig.waveRingColor.withValues(alpha: opacity);

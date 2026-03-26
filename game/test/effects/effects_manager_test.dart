@@ -30,10 +30,9 @@ void main() {
         final manager = EffectsManager();
         await game.ensureAdd(manager);
 
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2(100, 100),
-          AsteroidSize.large,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2(100, 100), AsteroidSize.large),
+        );
 
         await _flushAsync(game);
 
@@ -97,14 +96,12 @@ void main() {
         final manager = EffectsManager();
         await game.ensureAdd(manager);
 
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2(100, 100),
-          AsteroidSize.small,
-        ));
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2(200, 200),
-          AsteroidSize.medium,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2(100, 100), AsteroidSize.small),
+        );
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2(200, 200), AsteroidSize.medium),
+        );
 
         await _flushAsync(game);
 

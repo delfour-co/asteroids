@@ -81,8 +81,11 @@ class DashButton extends PositionComponent
     final opacity = ready ? 1.0 : 0.3;
 
     // Glow fill
-    canvas.drawCircle(center, radius,
-      Paint()..color = _color.withValues(alpha: 0.12 * opacity));
+    canvas.drawCircle(
+      center,
+      radius,
+      Paint()..color = _color.withValues(alpha: 0.12 * opacity),
+    );
 
     // Outer segmented ring — 3 segments with gaps
     final ringPaint = Paint()
@@ -138,7 +141,10 @@ class DashButton extends PositionComponent
           ..strokeCap = StrokeCap.butt;
         canvas.drawArc(
           Rect.fromCircle(center: center, radius: radius - 5),
-          segStart, segSweep, false, segPaint,
+          segStart,
+          segSweep,
+          false,
+          segPaint,
         );
       }
     }
@@ -157,5 +163,4 @@ class DashButton extends PositionComponent
       ..close();
     canvas.drawPath(bolt, boltPaint);
   }
-
 }

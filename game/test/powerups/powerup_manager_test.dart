@@ -15,24 +15,22 @@ void main() {
   });
 
   group('PowerUpManager', () {
-    testWithGame<FlameGame>(
-      'activates shield on collection',
-      FlameGame.new,
-      (game) async {
-        final manager = PowerUpManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('activates shield on collection', FlameGame.new, (
+      game,
+    ) async {
+      final manager = PowerUpManager();
+      await game.ensureAdd(manager);
 
-        PowerUpActiveEvent? event;
-        eventBus.on<PowerUpActiveEvent>((e) => event = e);
+      PowerUpActiveEvent? event;
+      eventBus.on<PowerUpActiveEvent>((e) => event = e);
 
-        eventBus.emit(PowerUpCollectedEvent(PowerUpType.shield));
+      eventBus.emit(PowerUpCollectedEvent(PowerUpType.shield));
 
-        expect(event, isNotNull);
-        expect(event!.type, PowerUpType.shield);
-        expect(event!.active, true);
-        expect(manager.isActive(PowerUpType.shield), true);
-      },
-    );
+      expect(event, isNotNull);
+      expect(event!.type, PowerUpType.shield);
+      expect(event!.active, true);
+      expect(manager.isActive(PowerUpType.shield), true);
+    });
 
     testWithGame<FlameGame>(
       'activates slow-mo and changes speed multiplier',
@@ -86,23 +84,21 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'clears all effects on game over',
-      FlameGame.new,
-      (game) async {
-        final manager = PowerUpManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('clears all effects on game over', FlameGame.new, (
+      game,
+    ) async {
+      final manager = PowerUpManager();
+      await game.ensureAdd(manager);
 
-        eventBus.emit(PowerUpCollectedEvent(PowerUpType.shield));
-        eventBus.emit(PowerUpCollectedEvent(PowerUpType.slowMo));
+      eventBus.emit(PowerUpCollectedEvent(PowerUpType.shield));
+      eventBus.emit(PowerUpCollectedEvent(PowerUpType.slowMo));
 
-        eventBus.emit(GameOverEvent());
+      eventBus.emit(GameOverEvent());
 
-        expect(manager.isActive(PowerUpType.shield), false);
-        expect(manager.isActive(PowerUpType.slowMo), false);
-        expect(GameConfig.enemySpeedMultiplier, 1.0);
-      },
-    );
+      expect(manager.isActive(PowerUpType.shield), false);
+      expect(manager.isActive(PowerUpType.slowMo), false);
+      expect(GameConfig.enemySpeedMultiplier, 1.0);
+    });
 
     testWithGame<FlameGame>(
       'emits deactivation events on game over',

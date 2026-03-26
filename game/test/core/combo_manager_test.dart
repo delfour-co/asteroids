@@ -15,16 +15,14 @@ void main() {
   });
 
   group('ComboManager', () {
-    testWithGame<FlameGame>(
-      'multiplier starts at 1',
-      FlameGame.new,
-      (game) async {
-        final combo = ComboManager();
-        await game.ensureAdd(combo);
+    testWithGame<FlameGame>('multiplier starts at 1', FlameGame.new, (
+      game,
+    ) async {
+      final combo = ComboManager();
+      await game.ensureAdd(combo);
 
-        expect(combo.multiplier, 1);
-      },
-    );
+      expect(combo.multiplier, 1);
+    });
 
     testWithGame<FlameGame>(
       'multiplier increases on asteroid destroyed',
@@ -34,17 +32,15 @@ void main() {
         await game.ensureAdd(combo);
 
         // First kill -> killCount=1, multiplier stays 1 (clamp(1,8)=1)
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.large,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.large),
+        );
         expect(combo.multiplier, 1);
 
         // Second kill -> killCount=2, multiplier=2
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.medium,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.medium),
+        );
         expect(combo.multiplier, 2);
       },
     );
@@ -69,15 +65,13 @@ void main() {
         final combo = ComboManager();
         await game.ensureAdd(combo);
 
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.small,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.small),
+        );
         eventBus.emit(UfoDestroyedEvent(Vector2.zero(), 500));
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.large,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.large),
+        );
         expect(combo.multiplier, 3);
       },
     );
@@ -91,10 +85,9 @@ void main() {
 
         // Send more kills than max multiplier
         for (int i = 0; i < GameConfig.comboMaxMultiplier + 5; i++) {
-          eventBus.emit(AsteroidDestroyedEvent(
-            Vector2.zero(),
-            AsteroidSize.small,
-          ));
+          eventBus.emit(
+            AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.small),
+          );
         }
         expect(combo.multiplier, GameConfig.comboMaxMultiplier);
       },
@@ -108,14 +101,12 @@ void main() {
         await game.ensureAdd(combo);
 
         // Build up combo
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.small,
-        ));
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.small,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.small),
+        );
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.small),
+        );
         expect(combo.multiplier, 2);
 
         // Advance past the combo timeout
@@ -132,14 +123,12 @@ void main() {
         final combo = ComboManager();
         await game.ensureAdd(combo);
 
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.small,
-        ));
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.small,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.small),
+        );
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.small),
+        );
         expect(combo.multiplier, 2);
 
         // Advance time but NOT past timeout
@@ -160,24 +149,21 @@ void main() {
         eventBus.on<ComboChangedEvent>((e) => events.add(e.multiplier));
 
         // First kill: killCount=1, multiplier stays 1 -> no event (no change)
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.small,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.small),
+        );
         expect(events, isEmpty);
 
         // Second kill: multiplier changes to 2 -> event emitted
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.small,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.small),
+        );
         expect(events, [2]);
 
         // Third kill: multiplier changes to 3 -> event emitted
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.small,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.small),
+        );
         expect(events, [2, 3]);
       },
     );
@@ -190,14 +176,12 @@ void main() {
         await game.ensureAdd(combo);
 
         // Build combo
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.small,
-        ));
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2.zero(),
-          AsteroidSize.small,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.small),
+        );
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2.zero(), AsteroidSize.small),
+        );
 
         final events = <int>[];
         eventBus.on<ComboChangedEvent>((e) => events.add(e.multiplier));

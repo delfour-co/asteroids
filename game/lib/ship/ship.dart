@@ -31,8 +31,7 @@ class ShipDestroyedEvent {
 /// Listens to ThrustEvent for acceleration.
 /// Listens to DashEvent for dash boost.
 /// Applies space inertia (drift) and screen wrap-around.
-class Ship extends PositionComponent
-    with HasGameReference, CollisionCallbacks {
+class Ship extends PositionComponent with HasGameReference, CollisionCallbacks {
   // Ship dimensions
   static const double _shipHeight = 30.0;
   static const double _shipHalfWidth = 10.0;
@@ -112,11 +111,13 @@ class Ship extends PositionComponent
     _solidPaint = paints.solid;
 
     // Add hitbox for collision detection
-    await add(PolygonHitbox([
-      Vector2(0, -_shipHeight / 2),
-      Vector2(-_shipHalfWidth, _shipHeight / 2),
-      Vector2(_shipHalfWidth, _shipHeight / 2),
-    ]));
+    await add(
+      PolygonHitbox([
+        Vector2(0, -_shipHeight / 2),
+        Vector2(-_shipHalfWidth, _shipHeight / 2),
+        Vector2(_shipHalfWidth, _shipHeight / 2),
+      ]),
+    );
 
     // Subscribe to events
     _joystickListener = _onJoystickDirection;
@@ -178,7 +179,9 @@ class Ship extends PositionComponent
 
   @override
   void onCollisionStart(
-      Set<Vector2> intersectionPoints, PositionComponent other) {
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is Asteroid && !_invulnerable) {
       eventBus.emit(ShipDestroyedEvent(position.clone()));
@@ -347,8 +350,7 @@ class Ship extends PositionComponent
 
     // Blink when invulnerable (but not during dash or shield)
     if (_invulnerable && !_isDashing && !_shieldActive) {
-      final show =
-          ((_invulnerableTimer * 8).toInt() % 2 == 0); // 8Hz blink
+      final show = ((_invulnerableTimer * 8).toInt() % 2 == 0); // 8Hz blink
       if (!show) {
         canvas.restore();
         return;
@@ -360,9 +362,7 @@ class Ship extends PositionComponent
       final flicker = (sin(_thrustFlicker) * 0.3 + 0.7);
       final flameLen = 8.0 + flicker * 10.0;
       final flamePaint = Paint()
-        ..color = Color.fromARGB(
-          (180 * flicker).toInt(), 255, 140, 0,
-        )
+        ..color = Color.fromARGB((180 * flicker).toInt(), 255, 140, 0)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
       final flamePath = Path()
         ..moveTo(-4, _shipHeight / 2)
@@ -371,9 +371,7 @@ class Ship extends PositionComponent
       canvas.drawPath(flamePath, flamePaint);
       // Inner white core
       final corePaint = Paint()
-        ..color = Color.fromARGB(
-          (200 * flicker).toInt(), 255, 255, 200,
-        );
+        ..color = Color.fromARGB((200 * flicker).toInt(), 255, 255, 200);
       final corePath = Path()
         ..moveTo(-2, _shipHeight / 2)
         ..lineTo(0, _shipHeight / 2 + flameLen * 0.6)

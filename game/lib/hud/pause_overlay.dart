@@ -4,7 +4,8 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/painting.dart' show TextPainter, TextDirection, TextStyle, TextSpan;
+import 'package:flutter/painting.dart'
+    show TextPainter, TextDirection, TextStyle, TextSpan;
 
 import '../audio/audio_events.dart';
 import '../core/arcade_events.dart';
@@ -46,9 +47,7 @@ class PauseOverlay extends PositionComponent
     );
 
     // Sound toggle — exact same position as pause button (replaces it visually)
-    _soundRect = ui.Rect.fromLTWH(
-      size.x - 60, 40, 44, 44,
-    );
+    _soundRect = ui.Rect.fromLTWH(size.x - 60, 40, 44, 44);
 
     _pauseListener = (_) => _pause();
     _resumeListener = (_) => _resume();
@@ -119,11 +118,22 @@ class PauseOverlay extends PositionComponent
 
     final ms = DateTime.now().millisecondsSinceEpoch;
     final pulse = 0.5 + sin(ms / 300.0) * 0.5;
-    PanelRenderer.drawTextCentered(canvas, 'TAP TO RESUME', cx, cy + 10, 18,
-        ui.Color.fromARGB((pulse * 200).toInt(), 0, 255, 255),
-        letterSpacing: 1.5);
+    PanelRenderer.drawTextCentered(
+      canvas,
+      'TAP TO RESUME',
+      cx,
+      cy + 10,
+      18,
+      ui.Color.fromARGB((pulse * 200).toInt(), 0, 255, 255),
+      letterSpacing: 1.5,
+    );
 
-    PanelRenderer.drawGlowButton(canvas, _menuBtnRect, 'MENU', GameConfig.arcadeYellow);
+    PanelRenderer.drawGlowButton(
+      canvas,
+      _menuBtnRect,
+      'MENU',
+      GameConfig.arcadeYellow,
+    );
 
     // version label stays as-is (it's custom positioning)
     final vtp = TextPainter(
@@ -177,8 +187,14 @@ class PauseOverlay extends PositionComponent
     for (int i = 0; i < 4; i++) {
       final a = i * pi / 2;
       canvas.drawLine(
-        ui.Offset(cx + cos(a) * (ringRadius + 1), cy + sin(a) * (ringRadius + 1)),
-        ui.Offset(cx + cos(a) * (ringRadius + 4), cy + sin(a) * (ringRadius + 4)),
+        ui.Offset(
+          cx + cos(a) * (ringRadius + 1),
+          cy + sin(a) * (ringRadius + 1),
+        ),
+        ui.Offset(
+          cx + cos(a) * (ringRadius + 4),
+          cy + sin(a) * (ringRadius + 4),
+        ),
         tickPaint,
       );
     }
@@ -189,10 +205,7 @@ class PauseOverlay extends PositionComponent
 
     // Speaker body — centered and fits inside ring (radius 20)
     final sx = cx - 2; // shift left slightly to center visually
-    canvas.drawRect(
-      ui.Rect.fromLTWH(sx - 6, cy - 3, 5, 6),
-      paint,
-    );
+    canvas.drawRect(ui.Rect.fromLTWH(sx - 6, cy - 3, 5, 6), paint);
     final conePath = ui.Path()
       ..moveTo(sx - 1, cy - 3)
       ..lineTo(sx + 4, cy - 7)
@@ -209,11 +222,21 @@ class PauseOverlay extends PositionComponent
         ..strokeCap = ui.StrokeCap.round;
       canvas.drawArc(
         ui.Rect.fromCenter(center: ui.Offset(sx + 6, cy), width: 7, height: 10),
-        -0.8, 1.6, false, wavePaint,
+        -0.8,
+        1.6,
+        false,
+        wavePaint,
       );
       canvas.drawArc(
-        ui.Rect.fromCenter(center: ui.Offset(sx + 6, cy), width: 14, height: 18),
-        -0.8, 1.6, false, wavePaint,
+        ui.Rect.fromCenter(
+          center: ui.Offset(sx + 6, cy),
+          width: 14,
+          height: 18,
+        ),
+        -0.8,
+        1.6,
+        false,
+        wavePaint,
       );
     } else {
       final slashPaint = ui.Paint()

@@ -14,19 +14,14 @@ class ScanlinesOverlay extends PositionComponent
   Future<void> onLoad() async {
     size = game.size;
     priority = 150; // Above game, below UI
-    _linePaint = Paint()
-      ..color = const Color.fromARGB(8, 0, 0, 0);
+    _linePaint = Paint()..color = const Color.fromARGB(8, 0, 0, 0);
   }
 
   @override
   void render(Canvas canvas) {
     // Draw subtle dark scanlines every 2 pixels
     for (double y = 0; y < size.y; y += 2) {
-      canvas.drawLine(
-        Offset(0, y),
-        Offset(size.x, y),
-        _linePaint,
-      );
+      canvas.drawLine(Offset(0, y), Offset(size.x, y), _linePaint);
     }
   }
 }

@@ -47,7 +47,8 @@ class _AnimLine {
 
   Offset lerpStart(double t) => Offset.lerp(perspStart, flatStart, t)!;
   Offset lerpEnd(double t) => Offset.lerp(perspEnd, flatEnd, t)!;
-  double lerpOpacity(double t) => perspOpacity + (flatOpacity - perspOpacity) * t;
+  double lerpOpacity(double t) =>
+      perspOpacity + (flatOpacity - perspOpacity) * t;
 }
 
 /// Tron-style grid background with animated transition between:
@@ -129,14 +130,16 @@ class TronGrid extends PositionComponent with HasGameReference<FlameGame> {
       final flatY = (i + 1) * flatSpacing;
       const flatOpacity = 0.10;
 
-      _hLines.add(_AnimLine(
-        perspStart: Offset(0, perspY),
-        perspEnd: Offset(w, perspY),
-        perspOpacity: perspOpacity,
-        flatStart: Offset(0, flatY),
-        flatEnd: Offset(w, flatY),
-        flatOpacity: flatOpacity,
-      ));
+      _hLines.add(
+        _AnimLine(
+          perspStart: Offset(0, perspY),
+          perspEnd: Offset(w, perspY),
+          perspOpacity: perspOpacity,
+          flatStart: Offset(0, flatY),
+          flatEnd: Offset(w, flatY),
+          flatOpacity: flatOpacity,
+        ),
+      );
     }
   }
 
@@ -163,14 +166,16 @@ class TronGrid extends PositionComponent with HasGameReference<FlameGame> {
       final flatX = cx + i * flatSpacing;
       const flatOpacity = 0.10;
 
-      _vLines.add(_AnimLine(
-        perspStart: Offset(horizonX, _horizonY),
-        perspEnd: Offset(bottomX, h),
-        perspOpacity: perspOpacity,
-        flatStart: Offset(flatX, 0),
-        flatEnd: Offset(flatX, h),
-        flatOpacity: flatOpacity,
-      ));
+      _vLines.add(
+        _AnimLine(
+          perspStart: Offset(horizonX, _horizonY),
+          perspEnd: Offset(bottomX, h),
+          perspOpacity: perspOpacity,
+          flatStart: Offset(flatX, 0),
+          flatEnd: Offset(flatX, h),
+          flatOpacity: flatOpacity,
+        ),
+      );
     }
   }
 
@@ -178,12 +183,20 @@ class TronGrid extends PositionComponent with HasGameReference<FlameGame> {
 
   void _buildStars(double w, double h, Random rng) {
     for (int i = 0; i < 30; i++) {
-      _stars.add(_StarDot(
-        x: rng.nextDouble() * w,
-        y: rng.nextDouble() * h,
-        radius: 0.5 + rng.nextDouble() * 1.0,
-        paint: Paint()..color = Color.fromRGBO(255, 255, 255, 0.1 + rng.nextDouble() * 0.2),
-      ));
+      _stars.add(
+        _StarDot(
+          x: rng.nextDouble() * w,
+          y: rng.nextDouble() * h,
+          radius: 0.5 + rng.nextDouble() * 1.0,
+          paint: Paint()
+            ..color = Color.fromRGBO(
+              255,
+              255,
+              255,
+              0.1 + rng.nextDouble() * 0.2,
+            ),
+        ),
+      );
     }
   }
 
@@ -237,13 +250,23 @@ class TronGrid extends PositionComponent with HasGameReference<FlameGame> {
     // Horizon (fade out during transition)
     final horizonAlpha = 1.0 - t;
     if (horizonAlpha > 0.01) {
-      _horizonGlowPaint.color = Color.fromRGBO(0, 255, 255, 0.10 * horizonAlpha);
+      _horizonGlowPaint.color = Color.fromRGBO(
+        0,
+        255,
+        255,
+        0.10 * horizonAlpha,
+      );
       canvas.drawLine(
         Offset(0, _horizonY),
         Offset(size.x, _horizonY),
         _horizonGlowPaint,
       );
-      _horizonLinePaint.color = Color.fromRGBO(0, 255, 255, 0.25 * horizonAlpha);
+      _horizonLinePaint.color = Color.fromRGBO(
+        0,
+        255,
+        255,
+        0.25 * horizonAlpha,
+      );
       canvas.drawLine(
         Offset(0, _horizonY),
         Offset(size.x, _horizonY),
@@ -254,8 +277,6 @@ class TronGrid extends PositionComponent with HasGameReference<FlameGame> {
 
   /// Smooth ease-in-out curve.
   double _easeInOut(double t) {
-    return t < 0.5
-        ? 2 * t * t
-        : 1 - (-2 * t + 2) * (-2 * t + 2) / 2;
+    return t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) * (-2 * t + 2) / 2;
   }
 }

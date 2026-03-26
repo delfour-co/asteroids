@@ -53,9 +53,6 @@ class FlashEffect extends PositionComponent with HasGameReference<FlameGame> {
     final opacity = (_timer / GameConfig.flashDuration).clamp(0.0, 1.0);
     final paint = Paint()
       ..color = Color.fromARGB((opacity * 200).toInt(), 255, 255, 255);
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, game.size.x, game.size.y),
-      paint,
-    );
+    canvas.drawRect(Rect.fromLTWH(0, 0, game.size.x, game.size.y), paint);
   }
 }

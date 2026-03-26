@@ -27,20 +27,18 @@ void main() {
       expect(asteroid.anchor, Anchor.center);
     });
 
-    testWithGame<FlameGame>(
-      'moves according to velocity',
-      FlameGame.new,
-      (game) async {
-        final asteroid = MagneticAsteroid(asteroidSize: AsteroidSize.large)
-          ..position = Vector2(200, 200);
-        await game.ensureAdd(asteroid);
-        asteroid.setVelocity(Vector2(100, 0));
+    testWithGame<FlameGame>('moves according to velocity', FlameGame.new, (
+      game,
+    ) async {
+      final asteroid = MagneticAsteroid(asteroidSize: AsteroidSize.large)
+        ..position = Vector2(200, 200);
+      await game.ensureAdd(asteroid);
+      asteroid.setVelocity(Vector2(100, 0));
 
-        game.update(1.0);
+      game.update(1.0);
 
-        expect(asteroid.position.x, greaterThan(200));
-      },
-    );
+      expect(asteroid.position.x, greaterThan(200));
+    });
 
     testWithGame<FlameGame>(
       'destroy emits AsteroidDestroyedEvent',
@@ -60,22 +58,20 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'destroy with byDash flag',
-      FlameGame.new,
-      (game) async {
-        final asteroid = MagneticAsteroid(asteroidSize: AsteroidSize.medium)
-          ..position = Vector2(100, 100);
-        await game.ensureAdd(asteroid);
+    testWithGame<FlameGame>('destroy with byDash flag', FlameGame.new, (
+      game,
+    ) async {
+      final asteroid = MagneticAsteroid(asteroidSize: AsteroidSize.medium)
+        ..position = Vector2(100, 100);
+      await game.ensureAdd(asteroid);
 
-        AsteroidDestroyedEvent? event;
-        eventBus.on<AsteroidDestroyedEvent>((e) => event = e);
+      AsteroidDestroyedEvent? event;
+      eventBus.on<AsteroidDestroyedEvent>((e) => event = e);
 
-        asteroid.destroy(byDash: true);
+      asteroid.destroy(byDash: true);
 
-        expect(event!.byDash, true);
-      },
-    );
+      expect(event!.byDash, true);
+    });
 
     testWithGame<FlameGame>(
       'destroy does not emit KnockbackEvent (only explosive does)',

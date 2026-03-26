@@ -53,16 +53,15 @@ void main() {
         final manager = AsteroidManager();
         await game.ensureAdd(manager);
 
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2(100, 100),
-          AsteroidSize.large,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2(100, 100), AsteroidSize.large),
+        );
 
         await _flushAsync(game);
 
-        final mediums = manager.children
-            .whereType<Asteroid>()
-            .where((a) => a.asteroidSize == AsteroidSize.medium);
+        final mediums = manager.children.whereType<Asteroid>().where(
+          (a) => a.asteroidSize == AsteroidSize.medium,
+        );
         expect(mediums.length, 2);
       },
     );
@@ -74,39 +73,35 @@ void main() {
         final manager = AsteroidManager();
         await game.ensureAdd(manager);
 
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2(100, 100),
-          AsteroidSize.medium,
-        ));
+        eventBus.emit(
+          AsteroidDestroyedEvent(Vector2(100, 100), AsteroidSize.medium),
+        );
 
         await _flushAsync(game);
 
-        final smalls = manager.children
-            .whereType<Asteroid>()
-            .where((a) => a.asteroidSize == AsteroidSize.small);
+        final smalls = manager.children.whereType<Asteroid>().where(
+          (a) => a.asteroidSize == AsteroidSize.small,
+        );
         expect(smalls.length, 2);
       },
     );
 
-    testWithGame<FlameGame>(
-      'does not split small asteroids',
-      FlameGame.new,
-      (game) async {
-        final manager = AsteroidManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('does not split small asteroids', FlameGame.new, (
+      game,
+    ) async {
+      final manager = AsteroidManager();
+      await game.ensureAdd(manager);
 
-        final countBefore = manager.children.whereType<Asteroid>().length;
+      final countBefore = manager.children.whereType<Asteroid>().length;
 
-        eventBus.emit(AsteroidDestroyedEvent(
-          Vector2(100, 100),
-          AsteroidSize.small,
-        ));
+      eventBus.emit(
+        AsteroidDestroyedEvent(Vector2(100, 100), AsteroidSize.small),
+      );
 
-        await _flushAsync(game);
+      await _flushAsync(game);
 
-        final countAfter = manager.children.whereType<Asteroid>().length;
-        expect(countAfter, countBefore);
-      },
-    );
+      final countAfter = manager.children.whereType<Asteroid>().length;
+      expect(countAfter, countBefore);
+    });
   });
 }

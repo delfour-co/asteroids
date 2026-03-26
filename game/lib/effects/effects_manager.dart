@@ -78,11 +78,13 @@ class EffectsManager extends Component {
         shakeIntensity = GameConfig.shakeIntensitySmall;
     }
 
-    add(Explosion(
-      color: const Color(0xFFFF00FF), // Magenta like asteroids
-      particleCount: count,
-      maxSpeed: speed,
-    )..position = event.position);
+    add(
+      Explosion(
+        color: const Color(0xFFFF00FF), // Magenta like asteroids
+        particleCount: count,
+        maxSpeed: speed,
+      )..position = event.position,
+    );
 
     // Embers for medium and large asteroids
     final int emberCount;
@@ -95,10 +97,10 @@ class EffectsManager extends Component {
         emberCount = GameConfig.emberCountSmall;
     }
     if (emberCount > 0) {
-      add(EmberEffect(
-        color: const Color(0xFFFF00FF),
-        particleCount: emberCount,
-      )..position = event.position.clone());
+      add(
+        EmberEffect(color: const Color(0xFFFF00FF), particleCount: emberCount)
+          ..position = event.position.clone(),
+      );
     }
 
     eventBus.emit(ScreenShakeEvent(shakeIntensity));
@@ -113,48 +115,60 @@ class EffectsManager extends Component {
     final shipPos = ships.first.position;
     final dist = destroyPos.distanceTo(shipPos);
     if (dist <= GameConfig.perfectKillRange) {
-      eventBus.emit(PerfectKillEvent(
-        destroyPos,
-        basePoints * GameConfig.perfectKillMultiplier,
-      ));
+      eventBus.emit(
+        PerfectKillEvent(
+          destroyPos,
+          basePoints * GameConfig.perfectKillMultiplier,
+        ),
+      );
     }
   }
 
   void _onUfoDestroyed(UfoDestroyedEvent event) {
-    add(Explosion(
-      color: const Color(0xFF00FF44),
-      particleCount: 16,
-      maxSpeed: 130.0,
-    )..position = event.position);
+    add(
+      Explosion(
+        color: const Color(0xFF00FF44),
+        particleCount: 16,
+        maxSpeed: 130.0,
+      )..position = event.position,
+    );
 
-    add(EmberEffect(
-      color: const Color(0xFF00FF44),
-      particleCount: GameConfig.emberCountUfo,
-    )..position = event.position.clone());
+    add(
+      EmberEffect(
+        color: const Color(0xFF00FF44),
+        particleCount: GameConfig.emberCountUfo,
+      )..position = event.position.clone(),
+    );
 
     eventBus.emit(ScreenShakeEvent(GameConfig.shakeIntensityMedium));
   }
 
   void _onBossDefeated(BossDefeatedEvent event) {
     // Massive red explosion for boss
-    add(Explosion(
-      color: const Color(0xFFFF0044),
-      particleCount: 40,
-      maxSpeed: 250.0,
-      duration: 1.2,
-    )..position = event.position);
+    add(
+      Explosion(
+        color: const Color(0xFFFF0044),
+        particleCount: 40,
+        maxSpeed: 250.0,
+        duration: 1.2,
+      )..position = event.position,
+    );
     // Secondary orange ring
-    add(Explosion(
-      color: const Color(0xFFFF8800),
-      particleCount: 20,
-      maxSpeed: 180.0,
-      duration: 0.8,
-    )..position = event.position);
+    add(
+      Explosion(
+        color: const Color(0xFFFF8800),
+        particleCount: 20,
+        maxSpeed: 180.0,
+        duration: 0.8,
+      )..position = event.position,
+    );
 
-    add(EmberEffect(
-      color: const Color(0xFFFF0044),
-      particleCount: GameConfig.emberCountBoss,
-    )..position = event.position.clone());
+    add(
+      EmberEffect(
+        color: const Color(0xFFFF0044),
+        particleCount: GameConfig.emberCountBoss,
+      )..position = event.position.clone(),
+    );
 
     eventBus.emit(ScreenShakeEvent(GameConfig.shakeIntensityBoss));
     eventBus.emit(BossFlashEvent());
@@ -162,17 +176,21 @@ class EffectsManager extends Component {
 
   void _onShipDestroyed(ShipDestroyedEvent event) {
     // Bigger cyan explosion for ship
-    add(Explosion(
-      color: GameConfig.shipColor,
-      particleCount: 24,
-      maxSpeed: 180.0,
-      duration: 0.8,
-    )..position = event.position);
+    add(
+      Explosion(
+        color: GameConfig.shipColor,
+        particleCount: 24,
+        maxSpeed: 180.0,
+        duration: 0.8,
+      )..position = event.position,
+    );
 
-    add(EmberEffect(
-      color: GameConfig.shipColor,
-      particleCount: GameConfig.emberCountShip,
-    )..position = event.position.clone());
+    add(
+      EmberEffect(
+        color: GameConfig.shipColor,
+        particleCount: GameConfig.emberCountShip,
+      )..position = event.position.clone(),
+    );
 
     eventBus.emit(ScreenShakeEvent(GameConfig.shakeIntensityLarge));
   }
@@ -190,35 +208,37 @@ class EffectsManager extends Component {
         color = const Color(0xFFFFFFFF);
     }
 
-    add(Explosion(
-      color: color,
-      particleCount: 12,
-      maxSpeed: 100.0,
-    )..position = event.position);
+    add(
+      Explosion(color: color, particleCount: 12, maxSpeed: 100.0)
+        ..position = event.position,
+    );
 
     eventBus.emit(ScreenShakeEvent(GameConfig.shakeIntensitySmall));
   }
 
   void _onScorePopup(ScorePopupEvent event) {
-    add(ScorePopup(
-      points: event.points,
-      multiplier: event.multiplier,
-    )..position = event.position.clone());
+    add(
+      ScorePopup(points: event.points, multiplier: event.multiplier)
+        ..position = event.position.clone(),
+    );
   }
 
   void _onPerfectKill(PerfectKillEvent event) {
     // Golden "PERFECT" popup
-    add(ScorePopup(
-      points: event.points,
-      multiplier: 1,
-      label: 'PERFECT',
-      color: const Color(0xFFFFCC00),
-    )..position = event.position.clone());
+    add(
+      ScorePopup(
+        points: event.points,
+        multiplier: 1,
+        label: 'PERFECT',
+        color: const Color(0xFFFFCC00),
+      )..position = event.position.clone(),
+    );
   }
 
   void _onProjectileHit(ProjectileHitEvent event) {
-    add(ImpactEffect(
-      color: GameConfig.shipColor,
-    )..position = event.position.clone());
+    add(
+      ImpactEffect(color: GameConfig.shipColor)
+        ..position = event.position.clone(),
+    );
   }
 }

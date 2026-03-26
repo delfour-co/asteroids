@@ -65,22 +65,30 @@ class AudioManager extends Component {
     _fireListener = _onFire;
     _dashListener = (_) => _playSfx(AudioConfig.sfxDash, AudioConfig.volDash);
     _asteroidListener = _onAsteroidDestroyed;
-    _ufoListener = (_) => _playSfx(AudioConfig.sfxUfoDestroy, AudioConfig.volUfoDestroy);
-    _bossListener = (_) => _playSfx(AudioConfig.sfxBossDefeat, AudioConfig.volBossDefeat);
-    _shipDestroyedListener = (_) => _playSfx(AudioConfig.sfxShipDestroyed, AudioConfig.volShipDestroyed);
-    _powerupListener = (_) => _playSfx(AudioConfig.sfxPowerup, AudioConfig.volPowerup);
-    _extraLifeListener = (_) => _playSfx(AudioConfig.sfxExtraLife, AudioConfig.volExtraLife);
+    _ufoListener = (_) =>
+        _playSfx(AudioConfig.sfxUfoDestroy, AudioConfig.volUfoDestroy);
+    _bossListener = (_) =>
+        _playSfx(AudioConfig.sfxBossDefeat, AudioConfig.volBossDefeat);
+    _shipDestroyedListener = (_) =>
+        _playSfx(AudioConfig.sfxShipDestroyed, AudioConfig.volShipDestroyed);
+    _powerupListener = (_) =>
+        _playSfx(AudioConfig.sfxPowerup, AudioConfig.volPowerup);
+    _extraLifeListener = (_) =>
+        _playSfx(AudioConfig.sfxExtraLife, AudioConfig.volExtraLife);
     _gameOverListener = (_) => _onGameOver();
     _waveListener = _onWaveStarted;
-    _comboListener = (_) => _playSfx(AudioConfig.sfxCombo, AudioConfig.volCombo);
-    _uiNavListener = (_) => _playSfx(AudioConfig.sfxUiSelect, AudioConfig.volUiSelect);
+    _comboListener = (_) =>
+        _playSfx(AudioConfig.sfxCombo, AudioConfig.volCombo);
+    _uiNavListener = (_) =>
+        _playSfx(AudioConfig.sfxUiSelect, AudioConfig.volUiSelect);
     _muteToggleListener = (_) => _toggleMute();
     _pauseListener = (_) => _onPause();
     _resumeListener = (_) => _onResume();
     _restartListener = (_) => _onRestart();
     _menuListener = (_) => _onReturnToMenu();
     _startGameListener = (_) => _onStartGame();
-    _debrisListener = (_) => _playSfx(AudioConfig.sfxExplosionSmall, AudioConfig.volExplosion);
+    _debrisListener = (_) =>
+        _playSfx(AudioConfig.sfxExplosionSmall, AudioConfig.volExplosion);
 
     // Subscribe
     eventBus.on<FireEvent>(_fireListener);
@@ -159,27 +167,29 @@ class AudioManager extends Component {
     if (_sfxCooldowns.containsKey(file)) return;
     _sfxCooldowns[file] = cooldown;
     try {
-      FlameAudio.play(file, volume: volume).then((player) {
-        // Dispose player after playback to free Android audio stream
-        // Use listen instead of .first to avoid "Bad state: No element"
-        // if the player is disposed before the stream emits.
-        var disposed = false;
-        player.onPlayerComplete.listen((_) {
-          if (!disposed) {
-            disposed = true;
-            player.dispose();
-          }
-        });
-        // Safety: dispose after 3s even if onPlayerComplete doesn't fire
-        Future.delayed(const Duration(seconds: 3), () {
-          if (!disposed) {
-            disposed = true;
-            player.dispose();
-          }
-        });
-      }).catchError((e) {
-        debugPrint('[Audio] SFX play error ($file): $e');
-      });
+      FlameAudio.play(file, volume: volume)
+          .then((player) {
+            // Dispose player after playback to free Android audio stream
+            // Use listen instead of .first to avoid "Bad state: No element"
+            // if the player is disposed before the stream emits.
+            var disposed = false;
+            player.onPlayerComplete.listen((_) {
+              if (!disposed) {
+                disposed = true;
+                player.dispose();
+              }
+            });
+            // Safety: dispose after 3s even if onPlayerComplete doesn't fire
+            Future.delayed(const Duration(seconds: 3), () {
+              if (!disposed) {
+                disposed = true;
+                player.dispose();
+              }
+            });
+          })
+          .catchError((e) {
+            debugPrint('[Audio] SFX play error ($file): $e');
+          });
     } catch (e) {
       debugPrint('[Audio] SFX error ($file): $e');
     }
@@ -189,7 +199,11 @@ class AudioManager extends Component {
     if (!event.isFiring) return;
     if (_fireCooldownTimer > 0) return;
     _fireCooldownTimer = AudioConfig.fireCooldown;
-    _playSfx(AudioConfig.sfxFire, AudioConfig.volFire, cooldown: AudioConfig.fireCooldown);
+    _playSfx(
+      AudioConfig.sfxFire,
+      AudioConfig.volFire,
+      cooldown: AudioConfig.fireCooldown,
+    );
   }
 
   void _onAsteroidDestroyed(AsteroidDestroyedEvent event) {
@@ -208,13 +222,16 @@ class AudioManager extends Component {
 
   void _startBgm(double volume) {
     if (_isMuted || !_audioAvailable) return;
-    FlameAudio.bgm.play(AudioConfig.musicAmbient, volume: volume).then((_) {
-      _bgmPlaying = true;
-      debugPrint('[Audio] BGM started (volume: $volume)');
-    }).catchError((e) {
-      debugPrint('[Audio] BGM start failed: $e');
-      _audioAvailable = false;
-    });
+    FlameAudio.bgm
+        .play(AudioConfig.musicAmbient, volume: volume)
+        .then((_) {
+          _bgmPlaying = true;
+          debugPrint('[Audio] BGM started (volume: $volume)');
+        })
+        .catchError((e) {
+          debugPrint('[Audio] BGM start failed: $e');
+          _audioAvailable = false;
+        });
   }
 
   void _stopBgm() {
@@ -321,7 +338,9 @@ class AudioManager extends Component {
     if (_isMuted) {
       _stopBgm();
     } else {
-      final volume = _inGame ? AudioConfig.musicVolume : AudioConfig.musicVolumeMenu;
+      final volume = _inGame
+          ? AudioConfig.musicVolume
+          : AudioConfig.musicVolumeMenu;
       _startBgm(volume);
     }
 

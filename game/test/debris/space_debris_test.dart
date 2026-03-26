@@ -26,23 +26,23 @@ void main() {
   });
 
   group('SpaceDebrisManager', () {
-    testWithGame<FlameGame>(
-      'spawns debris on even wave >= 2',
-      FlameGame.new,
-      (game) async {
-        final manager = SpaceDebrisManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('spawns debris on even wave >= 2', FlameGame.new, (
+      game,
+    ) async {
+      final manager = SpaceDebrisManager();
+      await game.ensureAdd(manager);
 
-        eventBus.emit(WaveStartedEvent(2));
-        await _flushAsync(game, frames: 5);
+      eventBus.emit(WaveStartedEvent(2));
+      await _flushAsync(game, frames: 5);
 
-        final debrisCount = manager.children
-            .where((c) =>
-                c is StarlinkTrain || c is SpaceStation || c is TeslaRoadster)
-            .length;
-        expect(debrisCount, 1);
-      },
-    );
+      final debrisCount = manager.children
+          .where(
+            (c) =>
+                c is StarlinkTrain || c is SpaceStation || c is TeslaRoadster,
+          )
+          .length;
+      expect(debrisCount, 1);
+    });
 
     testWithGame<FlameGame>(
       'does not spawn debris on odd wave',
@@ -55,74 +55,76 @@ void main() {
         await _flushAsync(game, frames: 5);
 
         final debrisCount = manager.children
-            .where((c) =>
-                c is StarlinkTrain || c is SpaceStation || c is TeslaRoadster)
+            .where(
+              (c) =>
+                  c is StarlinkTrain || c is SpaceStation || c is TeslaRoadster,
+            )
             .length;
         expect(debrisCount, 0);
       },
     );
 
-    testWithGame<FlameGame>(
-      'does not spawn debris on wave 1',
-      FlameGame.new,
-      (game) async {
-        final manager = SpaceDebrisManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('does not spawn debris on wave 1', FlameGame.new, (
+      game,
+    ) async {
+      final manager = SpaceDebrisManager();
+      await game.ensureAdd(manager);
 
-        eventBus.emit(WaveStartedEvent(1));
-        await _flushAsync(game, frames: 5);
+      eventBus.emit(WaveStartedEvent(1));
+      await _flushAsync(game, frames: 5);
 
-        final debrisCount = manager.children
-            .where((c) =>
-                c is StarlinkTrain || c is SpaceStation || c is TeslaRoadster)
-            .length;
-        expect(debrisCount, 0);
-      },
-    );
+      final debrisCount = manager.children
+          .where(
+            (c) =>
+                c is StarlinkTrain || c is SpaceStation || c is TeslaRoadster,
+          )
+          .length;
+      expect(debrisCount, 0);
+    });
 
-    testWithGame<FlameGame>(
-      'stops spawning after game over',
-      FlameGame.new,
-      (game) async {
-        final manager = SpaceDebrisManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('stops spawning after game over', FlameGame.new, (
+      game,
+    ) async {
+      final manager = SpaceDebrisManager();
+      await game.ensureAdd(manager);
 
-        eventBus.emit(GameOverEvent());
+      eventBus.emit(GameOverEvent());
 
-        // Advance past random timer
-        for (int i = 0; i < 300; i++) {
-          await Future<void>.delayed(Duration.zero);
-          game.update(0.5);
-        }
+      // Advance past random timer
+      for (int i = 0; i < 300; i++) {
+        await Future<void>.delayed(Duration.zero);
+        game.update(0.5);
+      }
 
-        final debrisCount = manager.children
-            .where((c) =>
-                c is StarlinkTrain || c is SpaceStation || c is TeslaRoadster)
-            .length;
-        expect(debrisCount, 0);
-      },
-    );
+      final debrisCount = manager.children
+          .where(
+            (c) =>
+                c is StarlinkTrain || c is SpaceStation || c is TeslaRoadster,
+          )
+          .length;
+      expect(debrisCount, 0);
+    });
 
-    testWithGame<FlameGame>(
-      'clearAll removes all debris',
-      FlameGame.new,
-      (game) async {
-        final manager = SpaceDebrisManager();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('clearAll removes all debris', FlameGame.new, (
+      game,
+    ) async {
+      final manager = SpaceDebrisManager();
+      await game.ensureAdd(manager);
 
-        eventBus.emit(WaveStartedEvent(2));
-        await _flushAsync(game, frames: 5);
+      eventBus.emit(WaveStartedEvent(2));
+      await _flushAsync(game, frames: 5);
 
-        manager.clearAll();
-        game.update(0);
+      manager.clearAll();
+      game.update(0);
 
-        final debrisCount = manager.children
-            .where((c) =>
-                c is StarlinkTrain || c is SpaceStation || c is TeslaRoadster)
-            .length;
-        expect(debrisCount, 0);
-      },
-    );
+      final debrisCount = manager.children
+          .where(
+            (c) =>
+                c is StarlinkTrain || c is SpaceStation || c is TeslaRoadster,
+          )
+          .length;
+      expect(debrisCount, 0);
+    });
 
     testWithGame<FlameGame>(
       'random timer spawns debris between 20-40s',
@@ -138,8 +140,10 @@ void main() {
         }
 
         final debrisCount = manager.children
-            .where((c) =>
-                c is StarlinkTrain || c is SpaceStation || c is TeslaRoadster)
+            .where(
+              (c) =>
+                  c is StarlinkTrain || c is SpaceStation || c is TeslaRoadster,
+            )
             .length;
         expect(debrisCount, greaterThan(0));
       },
@@ -147,18 +151,16 @@ void main() {
   });
 
   group('StarlinkTrain', () {
-    testWithGame<FlameGame>(
-      'has 7 satellite children',
-      FlameGame.new,
-      (game) async {
-        final train =
-            StarlinkTrain(velocity: Vector2(20, 0))..position = Vector2(100, 100);
-        await game.ensureAdd(train);
-        await _flushAsync(game, frames: 3);
+    testWithGame<FlameGame>('has 7 satellite children', FlameGame.new, (
+      game,
+    ) async {
+      final train = StarlinkTrain(velocity: Vector2(20, 0))
+        ..position = Vector2(100, 100);
+      await game.ensureAdd(train);
+      await _flushAsync(game, frames: 3);
 
-        expect(train.children.length, 7);
-      },
-    );
+      expect(train.children.length, 7);
+    });
   });
 
   group('SpaceStation', () {
@@ -166,8 +168,8 @@ void main() {
       'starts with 3 HP and survives 2 hits',
       FlameGame.new,
       (game) async {
-        final station =
-            SpaceStation(velocity: Vector2(20, 0))..position = Vector2(100, 100);
+        final station = SpaceStation(velocity: Vector2(20, 0))
+          ..position = Vector2(100, 100);
         await game.ensureAdd(station);
         await _flushAsync(game, frames: 3);
 
@@ -190,11 +192,9 @@ void main() {
       int? lastScore;
       eventBus.on<ScoreChangedEvent>((e) => lastScore = e.score);
 
-      eventBus.emit(SpaceDebrisDestroyedEvent(
-        Vector2(100, 100),
-        150,
-        'starlink',
-      ));
+      eventBus.emit(
+        SpaceDebrisDestroyedEvent(Vector2(100, 100), 150, 'starlink'),
+      );
 
       expect(lastScore, 300); // 150 * 2
 
@@ -207,8 +207,8 @@ void main() {
       'is mounted and positioned correctly',
       FlameGame.new,
       (game) async {
-        final tesla =
-            TeslaRoadster(velocity: Vector2(20, 0))..position = Vector2(200, 200);
+        final tesla = TeslaRoadster(velocity: Vector2(20, 0))
+          ..position = Vector2(200, 200);
         await game.ensureAdd(tesla);
         await _flushAsync(game, frames: 3);
 

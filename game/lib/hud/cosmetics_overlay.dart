@@ -74,8 +74,16 @@ class CosmeticsOverlay extends PositionComponent
     final spacing = size.x / (count + 1);
 
     // Title
-    PanelRenderer.drawTextCentered(canvas, 'SHIP COLOR', cx, cy - 140, 36,
-        GameConfig.shipColor, weight: FontWeight.bold, glow: true);
+    PanelRenderer.drawTextCentered(
+      canvas,
+      'SHIP COLOR',
+      cx,
+      cy - 140,
+      36,
+      GameConfig.shipColor,
+      weight: FontWeight.bold,
+      glow: true,
+    );
 
     // Rebuild circle rects each frame
     _circleRects.clear();
@@ -88,10 +96,9 @@ class CosmeticsOverlay extends PositionComponent
       final selected = cosmetics.selectedIndex == i;
 
       // Store hit-test rect
-      _circleRects.add(ui.Rect.fromCircle(
-        center: ui.Offset(x, y),
-        radius: _circleRadius + 8,
-      ));
+      _circleRects.add(
+        ui.Rect.fromCircle(center: ui.Offset(x, y), radius: _circleRadius + 8),
+      );
 
       // Selected: outer ring
       if (selected) {
@@ -116,23 +123,47 @@ class CosmeticsOverlay extends PositionComponent
       );
 
       // Color name
-      PanelRenderer.drawTextCentered(canvas, names[i], x, y + _circleRadius + 20, 14,
-          color.withValues(alpha: opacity), weight: FontWeight.bold);
+      PanelRenderer.drawTextCentered(
+        canvas,
+        names[i],
+        x,
+        y + _circleRadius + 20,
+        14,
+        color.withValues(alpha: opacity),
+        weight: FontWeight.bold,
+      );
 
       // Locked label
       if (!unlocked && i - 1 < GameConfig.cosmeticUnlockWaves.length) {
         final wave = GameConfig.cosmeticUnlockWaves[i - 1];
-        PanelRenderer.drawTextCentered(canvas, 'WAVE $wave', x, y + _circleRadius + 42, 12,
-            const ui.Color(0x88FFFFFF));
+        PanelRenderer.drawTextCentered(
+          canvas,
+          'WAVE $wave',
+          x,
+          y + _circleRadius + 42,
+          12,
+          const ui.Color(0x88FFFFFF),
+        );
       }
     }
 
     // Separator line above footer
     final panelBottom = panelRect.bottom;
-    PanelRenderer.drawSeparator(canvas, size.x * 0.3, size.x * 0.7, panelBottom - 40);
+    PanelRenderer.drawSeparator(
+      canvas,
+      size.x * 0.3,
+      size.x * 0.7,
+      panelBottom - 40,
+    );
 
     // Footer
-    PanelRenderer.drawTextCentered(canvas, 'TAP TO CLOSE', cx, panelBottom - 20, 18,
-        const ui.Color(0x88FFFFFF));
+    PanelRenderer.drawTextCentered(
+      canvas,
+      'TAP TO CLOSE',
+      cx,
+      panelBottom - 20,
+      18,
+      const ui.Color(0x88FFFFFF),
+    );
   }
 }

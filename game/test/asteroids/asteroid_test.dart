@@ -35,34 +35,30 @@ void main() {
       expect(asteroid.anchor, Anchor.center);
     });
 
-    testWithGame<FlameGame>(
-      'moves according to velocity',
-      FlameGame.new,
-      (game) async {
-        final asteroid = Asteroid(asteroidSize: AsteroidSize.large)
-          ..position = Vector2(200, 200);
-        await game.ensureAdd(asteroid);
-        asteroid.setVelocity(Vector2(100, 0));
+    testWithGame<FlameGame>('moves according to velocity', FlameGame.new, (
+      game,
+    ) async {
+      final asteroid = Asteroid(asteroidSize: AsteroidSize.large)
+        ..position = Vector2(200, 200);
+      await game.ensureAdd(asteroid);
+      asteroid.setVelocity(Vector2(100, 0));
 
-        game.update(1.0);
+      game.update(1.0);
 
-        expect(asteroid.position.x, greaterThan(200));
-      },
-    );
+      expect(asteroid.position.x, greaterThan(200));
+    });
 
-    testWithGame<FlameGame>(
-      'wraps around screen edges',
-      FlameGame.new,
-      (game) async {
-        final asteroid = Asteroid(asteroidSize: AsteroidSize.large)
-          ..position = Vector2(game.size.x + 50, 200);
-        await game.ensureAdd(asteroid);
+    testWithGame<FlameGame>('wraps around screen edges', FlameGame.new, (
+      game,
+    ) async {
+      final asteroid = Asteroid(asteroidSize: AsteroidSize.large)
+        ..position = Vector2(game.size.x + 50, 200);
+      await game.ensureAdd(asteroid);
 
-        game.update(1 / 60);
+      game.update(1 / 60);
 
-        expect(asteroid.position.x, lessThan(0));
-      },
-    );
+      expect(asteroid.position.x, lessThan(0));
+    });
 
     testWithGame<FlameGame>(
       'destroy emits AsteroidDestroyedEvent',
@@ -82,22 +78,20 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'destroy with byDash flag',
-      FlameGame.new,
-      (game) async {
-        final asteroid = Asteroid(asteroidSize: AsteroidSize.small)
-          ..position = Vector2(100, 100);
-        await game.ensureAdd(asteroid);
+    testWithGame<FlameGame>('destroy with byDash flag', FlameGame.new, (
+      game,
+    ) async {
+      final asteroid = Asteroid(asteroidSize: AsteroidSize.small)
+        ..position = Vector2(100, 100);
+      await game.ensureAdd(asteroid);
 
-        AsteroidDestroyedEvent? event;
-        eventBus.on<AsteroidDestroyedEvent>((e) => event = e);
+      AsteroidDestroyedEvent? event;
+      eventBus.on<AsteroidDestroyedEvent>((e) => event = e);
 
-        asteroid.destroy(byDash: true);
+      asteroid.destroy(byDash: true);
 
-        expect(event!.byDash, true);
-      },
-    );
+      expect(event!.byDash, true);
+    });
 
     testWithGame<FlameGame>(
       'speed affected by enemySpeedMultiplier',
@@ -142,8 +136,14 @@ void main() {
     });
 
     test('sizes are ordered large > medium > small', () {
-      expect(AsteroidSize.large.radius, greaterThan(AsteroidSize.medium.radius));
-      expect(AsteroidSize.medium.radius, greaterThan(AsteroidSize.small.radius));
+      expect(
+        AsteroidSize.large.radius,
+        greaterThan(AsteroidSize.medium.radius),
+      );
+      expect(
+        AsteroidSize.medium.radius,
+        greaterThan(AsteroidSize.small.radius),
+      );
     });
   });
 }

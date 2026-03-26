@@ -72,8 +72,14 @@ class ShootingStarManager extends Component with HasGameReference<FlameGame> {
 
   void _onWaveStarted(WaveStartedEvent event) {
     // Decrease interval by 10% per wave, minimum 3 seconds
-    _currentMinInterval = (_currentMinInterval * 0.9).clamp(3.0, double.infinity);
-    _currentMaxInterval = (_currentMaxInterval * 0.9).clamp(3.0, double.infinity);
+    _currentMinInterval = (_currentMinInterval * 0.9).clamp(
+      3.0,
+      double.infinity,
+    );
+    _currentMaxInterval = (_currentMaxInterval * 0.9).clamp(
+      3.0,
+      double.infinity,
+    );
     // Ensure max >= min
     if (_currentMaxInterval < _currentMinInterval) {
       _currentMaxInterval = _currentMinInterval;
@@ -145,13 +151,15 @@ class ShootingStarManager extends Component with HasGameReference<FlameGame> {
     final dist = sqrt(dx * dx + dy * dy);
     final speed = GameConfig.shootingStarSpeed;
 
-    _stars.add(_ShootingStar(
-      x: startX,
-      y: startY,
-      vx: (dx / dist) * speed,
-      vy: (dy / dist) * speed,
-      lifetime: 1.5,
-    ));
+    _stars.add(
+      _ShootingStar(
+        x: startX,
+        y: startY,
+        vx: (dx / dist) * speed,
+        vy: (dy / dist) * speed,
+        lifetime: 1.5,
+      ),
+    );
   }
 
   @override

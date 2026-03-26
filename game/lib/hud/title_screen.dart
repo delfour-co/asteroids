@@ -3,7 +3,8 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flutter/painting.dart' show TextStyle, FontWeight, TextPainter, TextDirection, TextSpan;
+import 'package:flutter/painting.dart'
+    show TextStyle, FontWeight, TextPainter, TextDirection, TextSpan;
 
 import '../app.dart';
 import '../audio/audio_events.dart';
@@ -39,11 +40,23 @@ class _MenuButton {
 
   void render(Canvas canvas) {
     if (outline) {
-      PanelRenderer.drawOutlineButton(canvas, rect, label, textColor,
-          fontSize: fontSize, letterSpacing: 1.5);
+      PanelRenderer.drawOutlineButton(
+        canvas,
+        rect,
+        label,
+        textColor,
+        fontSize: fontSize,
+        letterSpacing: 1.5,
+      );
     } else {
-      PanelRenderer.drawGlowButton(canvas, rect, label, textColor,
-          fontSize: fontSize, letterSpacing: 1.5);
+      PanelRenderer.drawGlowButton(
+        canvas,
+        rect,
+        label,
+        textColor,
+        fontSize: fontSize,
+        letterSpacing: 1.5,
+      );
     }
   }
 }
@@ -178,7 +191,8 @@ class TitleScreen extends PositionComponent
     // ── Controls legend ──
     _controlsPainter = TextPainter(
       text: const TextSpan(
-        text: 'JOYSTICK: Steer  |  THRUST: Accelerate  |  FIRE: Shoot  |  DASH: Phase through',
+        text:
+            'JOYSTICK: Steer  |  THRUST: Accelerate  |  FIRE: Shoot  |  DASH: Phase through',
         style: TextStyle(
           color: Color(0x88FFFFFF),
           fontSize: 11,
@@ -199,24 +213,36 @@ class TitleScreen extends PositionComponent
 
     // ── Title: Tron Legacy style (outline + multi-layer glow) ──
     // Layer 1: Wide glow halo
-    _drawTitle(canvas, _titleOffset, Paint()
-      ..color = const Color(0x3000FFFF)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 6.0
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20));
+    _drawTitle(
+      canvas,
+      _titleOffset,
+      Paint()
+        ..color = const Color(0x3000FFFF)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+    );
     // Layer 2: Medium glow
-    _drawTitle(canvas, _titleOffset, Paint()
-      ..color = const Color(0x6000FFFF)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+    _drawTitle(
+      canvas,
+      _titleOffset,
+      Paint()
+        ..color = const Color(0x6000FFFF)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+    );
     // Layer 3: Solid filled text (slightly dimmed interior)
     _titlePainter.paint(canvas, _titleOffset);
     // Layer 4: Bright outline on top
-    _drawTitle(canvas, _titleOffset, Paint()
-      ..color = const Color(0xDD00FFFF)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2);
+    _drawTitle(
+      canvas,
+      _titleOffset,
+      Paint()
+        ..color = const Color(0xDD00FFFF)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2,
+    );
 
     // ── "D4 Games" ──
     _subtitlePainter.paint(canvas, _subtitleOffset);
@@ -229,28 +255,56 @@ class TitleScreen extends PositionComponent
     const icLetterSpacing = 3.0;
 
     // Layer 1: Wide violet glow halo
-    _drawCenteredTextWithPaint(canvas, icText, icFontSize, icFont, icLetterSpacing, _insertCoinY,
+    _drawCenteredTextWithPaint(
+      canvas,
+      icText,
+      icFontSize,
+      icFont,
+      icLetterSpacing,
+      _insertCoinY,
       Paint()
         ..color = Color.fromARGB((opacity * 40).toInt(), 200, 0, 255)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 4.0
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16));
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16),
+    );
     // Layer 2: Medium violet glow
-    _drawCenteredTextWithPaint(canvas, icText, icFontSize, icFont, icLetterSpacing, _insertCoinY,
+    _drawCenteredTextWithPaint(
+      canvas,
+      icText,
+      icFontSize,
+      icFont,
+      icLetterSpacing,
+      _insertCoinY,
       Paint()
         ..color = Color.fromARGB((opacity * 90).toInt(), 200, 0, 255)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.0
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6));
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
     // Layer 3: Dark fill
-    _drawCenteredTextWithPaint(canvas, icText, icFontSize, icFont, icLetterSpacing, _insertCoinY,
-      Paint()..color = Color.fromARGB((opacity * 70).toInt(), 40, 0, 50));
+    _drawCenteredTextWithPaint(
+      canvas,
+      icText,
+      icFontSize,
+      icFont,
+      icLetterSpacing,
+      _insertCoinY,
+      Paint()..color = Color.fromARGB((opacity * 70).toInt(), 40, 0, 50),
+    );
     // Layer 4: Bright violet outline
-    _drawCenteredTextWithPaint(canvas, icText, icFontSize, icFont, icLetterSpacing, _insertCoinY,
+    _drawCenteredTextWithPaint(
+      canvas,
+      icText,
+      icFontSize,
+      icFont,
+      icLetterSpacing,
+      _insertCoinY,
       Paint()
         ..color = Color.fromARGB((opacity * 220).toInt(), 200, 0, 255)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0);
+        ..strokeWidth = 1.0,
+    );
 
     // ── Menu Buttons ──
     _leaderboardBtn.render(canvas);
@@ -307,8 +361,15 @@ class TitleScreen extends PositionComponent
   }
 
   /// Draw text centered at a given Y position with a custom foreground paint.
-  void _drawCenteredTextWithPaint(Canvas canvas, String text, double fontSize,
-      String fontFamily, double letterSpacing, double centerY, Paint paint) {
+  void _drawCenteredTextWithPaint(
+    Canvas canvas,
+    String text,
+    double fontSize,
+    String fontFamily,
+    double letterSpacing,
+    double centerY,
+    Paint paint,
+  ) {
     final tp = TextPainter(
       text: TextSpan(
         text: text,
@@ -322,7 +383,10 @@ class TitleScreen extends PositionComponent
       ),
       textDirection: TextDirection.ltr,
     )..layout();
-    tp.paint(canvas, Offset(_gameWidth / 2 - tp.width / 2, centerY - tp.height / 2));
+    tp.paint(
+      canvas,
+      Offset(_gameWidth / 2 - tp.width / 2, centerY - tp.height / 2),
+    );
   }
 
   /// Draw title text with a custom foreground paint (for stroke/glow layers).
@@ -343,35 +407,34 @@ class TitleScreen extends PositionComponent
   }
 
   void _showLeaderboard() {
-    game.add(LeaderboardOverlay(
-      leaderboard: game.leaderboardManager,
-      onDismiss: () {},
-    ));
+    game.add(
+      LeaderboardOverlay(
+        leaderboard: game.leaderboardManager,
+        onDismiss: () {},
+      ),
+    );
   }
 
   void _showCredits() {
-    game.add(CreditsOverlay(
-      onDismiss: () {},
-    ));
+    game.add(CreditsOverlay(onDismiss: () {}));
   }
 
   void _showChangelog() {
-    game.add(ChangelogOverlay(
-      onDismiss: () {},
-    ));
+    game.add(ChangelogOverlay(onDismiss: () {}));
   }
 
   void _showJournal() {
-    game.add(JournalOverlay(
-      unlockedIds: game.fragmentManager.unlockedIds,
-      onDismiss: () {},
-    ));
+    game.add(
+      JournalOverlay(
+        unlockedIds: game.fragmentManager.unlockedIds,
+        onDismiss: () {},
+      ),
+    );
   }
 
   void _showCosmetics() {
-    game.add(CosmeticsOverlay(
-      cosmetics: game.cosmeticsManager,
-      onDismiss: () {},
-    ));
+    game.add(
+      CosmeticsOverlay(cosmetics: game.cosmeticsManager, onDismiss: () {}),
+    );
   }
 }

@@ -34,39 +34,35 @@ void main() {
       expect(asteroid.asteroidSize, AsteroidSize.large);
     });
 
-    testWithGame<FlameGame>(
-      'moves according to velocity',
-      FlameGame.new,
-      (game) async {
-        final asteroid = ExplosiveAsteroid(asteroidSize: AsteroidSize.large)
-          ..position = Vector2(200, 200);
-        await game.ensureAdd(asteroid);
-        asteroid.setVelocity(Vector2(100, 0));
+    testWithGame<FlameGame>('moves according to velocity', FlameGame.new, (
+      game,
+    ) async {
+      final asteroid = ExplosiveAsteroid(asteroidSize: AsteroidSize.large)
+        ..position = Vector2(200, 200);
+      await game.ensureAdd(asteroid);
+      asteroid.setVelocity(Vector2(100, 0));
 
-        game.update(1.0);
+      game.update(1.0);
 
-        expect(asteroid.position.x, greaterThan(200));
-      },
-    );
+      expect(asteroid.position.x, greaterThan(200));
+    });
 
-    testWithGame<FlameGame>(
-      'destroy emits KnockbackEvent',
-      FlameGame.new,
-      (game) async {
-        final asteroid = ExplosiveAsteroid(asteroidSize: AsteroidSize.large)
-          ..position = Vector2(100, 100);
-        await game.ensureAdd(asteroid);
+    testWithGame<FlameGame>('destroy emits KnockbackEvent', FlameGame.new, (
+      game,
+    ) async {
+      final asteroid = ExplosiveAsteroid(asteroidSize: AsteroidSize.large)
+        ..position = Vector2(100, 100);
+      await game.ensureAdd(asteroid);
 
-        KnockbackEvent? event;
-        eventBus.on<KnockbackEvent>((e) => event = e);
+      KnockbackEvent? event;
+      eventBus.on<KnockbackEvent>((e) => event = e);
 
-        asteroid.destroy();
+      asteroid.destroy();
 
-        expect(event, isNotNull);
-        expect(event!.radius, GameConfig.explosiveBlastRadius);
-        expect(event!.force, GameConfig.knockbackForce);
-      },
-    );
+      expect(event, isNotNull);
+      expect(event!.radius, GameConfig.explosiveBlastRadius);
+      expect(event!.force, GameConfig.knockbackForce);
+    });
 
     testWithGame<FlameGame>(
       'destroy emits AsteroidDestroyedEvent',
@@ -86,40 +82,36 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'destroy emits ScreenShakeEvent',
-      FlameGame.new,
-      (game) async {
-        final asteroid = ExplosiveAsteroid(asteroidSize: AsteroidSize.large)
-          ..position = Vector2(100, 100);
-        await game.ensureAdd(asteroid);
+    testWithGame<FlameGame>('destroy emits ScreenShakeEvent', FlameGame.new, (
+      game,
+    ) async {
+      final asteroid = ExplosiveAsteroid(asteroidSize: AsteroidSize.large)
+        ..position = Vector2(100, 100);
+      await game.ensureAdd(asteroid);
 
-        ScreenShakeEvent? event;
-        eventBus.on<ScreenShakeEvent>((e) => event = e);
+      ScreenShakeEvent? event;
+      eventBus.on<ScreenShakeEvent>((e) => event = e);
 
-        asteroid.destroy();
+      asteroid.destroy();
 
-        expect(event, isNotNull);
-        expect(event!.intensity, GameConfig.shakeIntensityLarge);
-      },
-    );
+      expect(event, isNotNull);
+      expect(event!.intensity, GameConfig.shakeIntensityLarge);
+    });
 
-    testWithGame<FlameGame>(
-      'destroy with byDash flag',
-      FlameGame.new,
-      (game) async {
-        final asteroid = ExplosiveAsteroid(asteroidSize: AsteroidSize.large)
-          ..position = Vector2(100, 100);
-        await game.ensureAdd(asteroid);
+    testWithGame<FlameGame>('destroy with byDash flag', FlameGame.new, (
+      game,
+    ) async {
+      final asteroid = ExplosiveAsteroid(asteroidSize: AsteroidSize.large)
+        ..position = Vector2(100, 100);
+      await game.ensureAdd(asteroid);
 
-        AsteroidDestroyedEvent? event;
-        eventBus.on<AsteroidDestroyedEvent>((e) => event = e);
+      AsteroidDestroyedEvent? event;
+      eventBus.on<AsteroidDestroyedEvent>((e) => event = e);
 
-        asteroid.destroy(byDash: true);
+      asteroid.destroy(byDash: true);
 
-        expect(event!.byDash, true);
-      },
-    );
+      expect(event!.byDash, true);
+    });
 
     testWithGame<FlameGame>(
       'speed affected by enemySpeedMultiplier',

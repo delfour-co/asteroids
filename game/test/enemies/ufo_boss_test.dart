@@ -30,31 +30,25 @@ void main() {
       expect(GameConfig.bossPoints, 2000);
     });
 
-    testWithGame<FlameGame>(
-      'wraps around screen edges',
-      FlameGame.new,
-      (game) async {
-        final boss = UfoBoss()
-          ..position = Vector2(game.size.x + 50, 200);
-        await game.ensureAdd(boss);
+    testWithGame<FlameGame>('wraps around screen edges', FlameGame.new, (
+      game,
+    ) async {
+      final boss = UfoBoss()..position = Vector2(game.size.x + 50, 200);
+      await game.ensureAdd(boss);
 
-        game.update(1 / 60);
+      game.update(1 / 60);
 
-        expect(boss.position.x, lessThan(0));
-      },
-    );
+      expect(boss.position.x, lessThan(0));
+    });
 
-    testWithGame<FlameGame>(
-      'renders without error',
-      FlameGame.new,
-      (game) async {
-        final boss = UfoBoss()
-          ..position = Vector2(200, 200);
-        await game.ensureAdd(boss);
+    testWithGame<FlameGame>('renders without error', FlameGame.new, (
+      game,
+    ) async {
+      final boss = UfoBoss()..position = Vector2(200, 200);
+      await game.ensureAdd(boss);
 
-        // Just verify it doesn't throw during render
-        game.update(1 / 60);
-      },
-    );
+      // Just verify it doesn't throw during render
+      game.update(1 / 60);
+    });
   });
 }

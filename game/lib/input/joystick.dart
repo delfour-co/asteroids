@@ -30,10 +30,8 @@ class JoystickDirectionEvent {
 class _JoystickRingBackground extends CircleComponent {
   bool hidden = false;
 
-  _JoystickRingBackground() : super(
-    radius: 75,
-    paint: Paint()..color = const Color(0x00000000),
-  );
+  _JoystickRingBackground()
+    : super(radius: 75, paint: Paint()..color = const Color(0x00000000));
 
   @override
   void render(Canvas canvas) {
@@ -44,8 +42,7 @@ class _JoystickRingBackground extends CircleComponent {
     const radius = 75.0;
 
     // Very subtle fill
-    canvas.drawCircle(center, radius,
-      Paint()..color = const Color(0x0D00FFFF));
+    canvas.drawCircle(center, radius, Paint()..color = const Color(0x0D00FFFF));
 
     // Outer segmented ring — 4 arcs
     final ringPaint = Paint()
@@ -106,25 +103,29 @@ class _JoystickRingBackground extends CircleComponent {
 class _JoystickKnob extends CircleComponent {
   bool hidden = false;
 
-  _JoystickKnob() : super(
-    radius: 30,
-    paint: Paint()..color = const Color(0x00000000),
-  );
+  _JoystickKnob()
+    : super(radius: 30, paint: Paint()..color = const Color(0x00000000));
 
   @override
   void render(Canvas canvas) {
     if (hidden) return;
     final center = Offset(size.x / 2, size.y / 2);
     // Glow
-    canvas.drawCircle(center, 22,
+    canvas.drawCircle(
+      center,
+      22,
       Paint()
         ..color = const Color(0x3300FFFF)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+    );
     // Solid knob
     canvas.drawCircle(center, 14, Paint()..color = GameConfig.shipColor);
     // Inner highlight
-    canvas.drawCircle(Offset(center.dx - 3, center.dy - 3), 5,
-      Paint()..color = const Color(0x44FFFFFF));
+    canvas.drawCircle(
+      Offset(center.dx - 3, center.dy - 3),
+      5,
+      Paint()..color = const Color(0x44FFFFFF),
+    );
   }
 }
 
@@ -136,11 +137,11 @@ class ShipJoystick extends JoystickComponent {
   late final void Function(ResumeEvent) _resumeListener;
 
   ShipJoystick()
-      : super(
-          knob: _JoystickKnob(),
-          background: _JoystickRingBackground(),
-          margin: const EdgeInsets.only(left: 40, bottom: 40),
-        );
+    : super(
+        knob: _JoystickKnob(),
+        background: _JoystickRingBackground(),
+        margin: const EdgeInsets.only(left: 40, bottom: 40),
+      );
 
   void _setHidden(bool value) {
     (knob as _JoystickKnob?)?.hidden = value;
@@ -179,17 +180,17 @@ class ShipJoystick extends JoystickComponent {
       // Flame joystick: delta is relative (x right, y down)
       // Convert to angle where 0 = up, clockwise
       final angle = atan2(delta.x, -delta.y);
-      eventBus.emit(JoystickDirectionEvent(
-        angle: angle,
-        isActive: true,
-        intensity: delta.length.clamp(0.0, 1.0),
-      ));
+      eventBus.emit(
+        JoystickDirectionEvent(
+          angle: angle,
+          isActive: true,
+          intensity: delta.length.clamp(0.0, 1.0),
+        ),
+      );
     } else {
-      eventBus.emit(JoystickDirectionEvent(
-        angle: 0,
-        isActive: false,
-        intensity: 0,
-      ));
+      eventBus.emit(
+        JoystickDirectionEvent(angle: 0, isActive: false, intensity: 0),
+      );
     }
   }
 }

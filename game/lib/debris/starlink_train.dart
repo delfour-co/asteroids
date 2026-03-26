@@ -25,10 +25,7 @@ class StarlinkTrain extends PositionComponent with HasGameReference {
   @override
   Future<void> onLoad() async {
     for (int i = 0; i < _satCount; i++) {
-      await add(_StarlinkSat(
-        offset: Vector2(i * _satSpacing, 0),
-        train: this,
-      ));
+      await add(_StarlinkSat(offset: Vector2(i * _satSpacing, 0), train: this));
     }
   }
 
@@ -50,11 +47,13 @@ class StarlinkTrain extends PositionComponent with HasGameReference {
   }
 
   void destroy() {
-    eventBus.emit(SpaceDebrisDestroyedEvent(
-      position.clone(),
-      GameConfig.starlinkPoints,
-      'starlink',
-    ));
+    eventBus.emit(
+      SpaceDebrisDestroyedEvent(
+        position.clone(),
+        GameConfig.starlinkPoints,
+        'starlink',
+      ),
+    );
     removeFromParent();
   }
 }
@@ -108,7 +107,9 @@ class _StarlinkSat extends PositionComponent with CollisionCallbacks {
 
   @override
   void onCollisionStart(
-      Set<Vector2> intersectionPoints, PositionComponent other) {
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is Projectile) {
       other.removeFromParent();

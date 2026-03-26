@@ -65,16 +65,20 @@ class SpaceStation extends PositionComponent
     _hpBarPaint = Paint()..color = _color;
     _hpBarBgPaint = Paint()..color = _color.withValues(alpha: 0.25);
 
-    await add(RectangleHitbox(
-      size: Vector2(62, 28),
-      position: Vector2(1, 1),
-      anchor: Anchor.center,
-    ));
+    await add(
+      RectangleHitbox(
+        size: Vector2(62, 28),
+        position: Vector2(1, 1),
+        anchor: Anchor.center,
+      ),
+    );
   }
 
   @override
   void onCollisionStart(
-      Set<Vector2> intersectionPoints, PositionComponent other) {
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is Projectile) {
       other.removeFromParent();
@@ -91,11 +95,13 @@ class SpaceStation extends PositionComponent
   }
 
   void _destroy() {
-    eventBus.emit(SpaceDebrisDestroyedEvent(
-      position.clone(),
-      GameConfig.stationPoints,
-      'station',
-    ));
+    eventBus.emit(
+      SpaceDebrisDestroyedEvent(
+        position.clone(),
+        GameConfig.stationPoints,
+        'station',
+      ),
+    );
     removeFromParent();
   }
 

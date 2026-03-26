@@ -61,7 +61,9 @@ class PowerUp extends PositionComponent
 
   @override
   void onCollisionStart(
-      Set<Vector2> intersectionPoints, PositionComponent other) {
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is Ship) {
       eventBus.emit(PowerUpCollectedEvent(type));

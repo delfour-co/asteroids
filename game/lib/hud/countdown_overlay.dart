@@ -71,14 +71,8 @@ class CountdownOverlay extends PositionComponent with HasGameReference {
         fontWeight: FontWeight.bold,
         letterSpacing: 2.0,
         shadows: [
-          Shadow(
-            color: color.withValues(alpha: opacity * 0.6),
-            blurRadius: 12,
-          ),
-          Shadow(
-            color: color.withValues(alpha: opacity * 0.3),
-            blurRadius: 24,
-          ),
+          Shadow(color: color.withValues(alpha: opacity * 0.6), blurRadius: 12),
+          Shadow(color: color.withValues(alpha: opacity * 0.3), blurRadius: 24),
         ],
       ),
     ).render(

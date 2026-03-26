@@ -49,42 +49,38 @@ void main() {
       expect(manager.unlockedIds, [0, 1, 2]);
     });
 
-    testWithGame<FlameGame>(
-      'unlocks fragment at wave 10',
-      FlameGame.new,
-      (game) async {
-        final manager = FragmentManager();
-        await manager.init();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('unlocks fragment at wave 10', FlameGame.new, (
+      game,
+    ) async {
+      final manager = FragmentManager();
+      await manager.init();
+      await game.ensureAdd(manager);
 
-        FragmentUnlockedEvent? event;
-        eventBus.on<FragmentUnlockedEvent>((e) => event = e);
+      FragmentUnlockedEvent? event;
+      eventBus.on<FragmentUnlockedEvent>((e) => event = e);
 
-        eventBus.emit(WaveStartedEvent(10));
+      eventBus.emit(WaveStartedEvent(10));
 
-        expect(event, isNotNull);
-        expect(event!.fragmentIndex, 0); // wave 10 / 10 - 1 = 0
-        expect(manager.isUnlocked(0), true);
-      },
-    );
+      expect(event, isNotNull);
+      expect(event!.fragmentIndex, 0); // wave 10 / 10 - 1 = 0
+      expect(manager.isUnlocked(0), true);
+    });
 
-    testWithGame<FlameGame>(
-      'unlocks fragment at wave 20',
-      FlameGame.new,
-      (game) async {
-        final manager = FragmentManager();
-        await manager.init();
-        await game.ensureAdd(manager);
+    testWithGame<FlameGame>('unlocks fragment at wave 20', FlameGame.new, (
+      game,
+    ) async {
+      final manager = FragmentManager();
+      await manager.init();
+      await game.ensureAdd(manager);
 
-        FragmentUnlockedEvent? event;
-        eventBus.on<FragmentUnlockedEvent>((e) => event = e);
+      FragmentUnlockedEvent? event;
+      eventBus.on<FragmentUnlockedEvent>((e) => event = e);
 
-        eventBus.emit(WaveStartedEvent(20));
+      eventBus.emit(WaveStartedEvent(20));
 
-        expect(event, isNotNull);
-        expect(event!.fragmentIndex, 1); // wave 20 / 10 - 1 = 1
-      },
-    );
+      expect(event, isNotNull);
+      expect(event!.fragmentIndex, 1); // wave 20 / 10 - 1 = 1
+    });
 
     testWithGame<FlameGame>(
       'does not unlock on non-interval waves',
@@ -109,9 +105,7 @@ void main() {
       'does not re-unlock already unlocked fragment',
       FlameGame.new,
       (game) async {
-        SharedPreferences.setMockInitialValues({
-          GameConfig.fragmentsKey: '0',
-        });
+        SharedPreferences.setMockInitialValues({GameConfig.fragmentsKey: '0'});
 
         final manager = FragmentManager();
         await manager.init();

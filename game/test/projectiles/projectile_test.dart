@@ -19,34 +19,30 @@ void main() {
       expect(projectile.anchor, Anchor.center);
     });
 
-    testWithGame<FlameGame>(
-      'moves in initialized direction',
-      FlameGame.new,
-      (game) async {
-        final projectile = Projectile();
-        await game.ensureAdd(projectile);
-        projectile.init(pos: Vector2(400, 300), shipAngle: 0);
+    testWithGame<FlameGame>('moves in initialized direction', FlameGame.new, (
+      game,
+    ) async {
+      final projectile = Projectile();
+      await game.ensureAdd(projectile);
+      projectile.init(pos: Vector2(400, 300), shipAngle: 0);
 
-        game.update(1 / 60);
+      game.update(1 / 60);
 
-        // Angle 0 = facing up, should move in negative y
-        expect(projectile.position.y, lessThan(300));
-      },
-    );
+      // Angle 0 = facing up, should move in negative y
+      expect(projectile.position.y, lessThan(300));
+    });
 
-    testWithGame<FlameGame>(
-      'moves right when angled pi/2',
-      FlameGame.new,
-      (game) async {
-        final projectile = Projectile();
-        await game.ensureAdd(projectile);
-        projectile.init(pos: Vector2(400, 300), shipAngle: pi / 2);
+    testWithGame<FlameGame>('moves right when angled pi/2', FlameGame.new, (
+      game,
+    ) async {
+      final projectile = Projectile();
+      await game.ensureAdd(projectile);
+      projectile.init(pos: Vector2(400, 300), shipAngle: pi / 2);
 
-        game.update(1 / 60);
+      game.update(1 / 60);
 
-        expect(projectile.position.x, greaterThan(400));
-      },
-    );
+      expect(projectile.position.x, greaterThan(400));
+    });
 
     testWithGame<FlameGame>(
       'removes itself after max lifetime',
@@ -65,22 +61,20 @@ void main() {
       },
     );
 
-    testWithGame<FlameGame>(
-      'removes itself when off-screen',
-      FlameGame.new,
-      (game) async {
-        final projectile = Projectile();
-        await game.ensureAdd(projectile);
-        projectile.init(
-          pos: Vector2(game.size.x + 20, 300),
-          shipAngle: pi / 2, // Moving right
-        );
+    testWithGame<FlameGame>('removes itself when off-screen', FlameGame.new, (
+      game,
+    ) async {
+      final projectile = Projectile();
+      await game.ensureAdd(projectile);
+      projectile.init(
+        pos: Vector2(game.size.x + 20, 300),
+        shipAngle: pi / 2, // Moving right
+      );
 
-        game.update(1 / 60);
-        game.update(0); // process removal
+      game.update(1 / 60);
+      game.update(0); // process removal
 
-        expect(projectile.isMounted, false);
-      },
-    );
+      expect(projectile.isMounted, false);
+    });
   });
 }
