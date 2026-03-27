@@ -624,8 +624,7 @@ class _StatsVisualBars extends PositionComponent {
       final filled = i < bestCombo;
       canvas.drawRect(
         Rect.fromLTWH(x, barY - segH / 2, segW, segH),
-        Paint()
-          ..color = filled ? D4DsColors.cyan : const Color(0x2200FFFF),
+        Paint()..color = filled ? D4DsColors.cyan : const Color(0x2200FFFF),
       );
     }
     // Label below
@@ -698,29 +697,50 @@ class _TronPulsingText extends PositionComponent {
     final b = (color.b * 255).round().clamp(0, 255);
 
     // Layer 1: Wide glow
-    _draw(canvas, cx, cy,
+    _draw(
+      canvas,
+      cx,
+      cy,
       Paint()
         ..color = Color.fromARGB((opacity * 40).toInt(), r, g, b)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 4.0
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16));
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16),
+    );
     // Layer 2: Medium glow
-    _draw(canvas, cx, cy,
+    _draw(
+      canvas,
+      cx,
+      cy,
       Paint()
         ..color = Color.fromARGB((opacity * 90).toInt(), r, g, b)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.0
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6));
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
     // Layer 3: Dark fill
-    _draw(canvas, cx, cy,
-      Paint()..color = Color.fromARGB(
-        (opacity * 70).toInt(), r ~/ 6, g ~/ 6, b ~/ 6));
+    _draw(
+      canvas,
+      cx,
+      cy,
+      Paint()
+        ..color = Color.fromARGB(
+          (opacity * 70).toInt(),
+          r ~/ 6,
+          g ~/ 6,
+          b ~/ 6,
+        ),
+    );
     // Layer 4: Bright outline
-    _draw(canvas, cx, cy,
+    _draw(
+      canvas,
+      cx,
+      cy,
       Paint()
         ..color = Color.fromARGB((opacity * 220).toInt(), r, g, b)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0);
+        ..strokeWidth = 1.0,
+    );
   }
 
   void _draw(Canvas canvas, double cx, double cy, Paint paint) {

@@ -5,7 +5,8 @@ import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/painting.dart' show FontWeight, TextStyle, TextSpan, TextPainter, TextDirection;
+import 'package:flutter/painting.dart'
+    show FontWeight, TextStyle, TextSpan, TextPainter, TextDirection;
 
 import '../hud/panel_renderer.dart';
 import '../narration/fragment_data.dart';
@@ -350,12 +351,7 @@ class JournalOverlay extends PositionComponent
     // Pulsing footer
     final ms = DateTime.now().millisecondsSinceEpoch;
     final pulse = 0.5 + sin(ms / 300.0) * 0.5;
-    final pulseColor = ui.Color.fromARGB(
-      (pulse * 255).toInt(),
-      0,
-      255,
-      255,
-    );
+    final pulseColor = ui.Color.fromARGB((pulse * 255).toInt(), 0, 255, 255);
     PanelRenderer.drawTextCentered(
       canvas,
       'TAP TO GO BACK',

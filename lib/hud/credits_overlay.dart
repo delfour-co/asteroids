@@ -29,12 +29,7 @@ class CreditsOverlay extends PositionComponent
   }
 
   /// Draws a small uppercase section label in dimmed cyan.
-  static void _drawLabel(
-    ui.Canvas canvas,
-    double x,
-    double y,
-    String text,
-  ) {
+  static void _drawLabel(ui.Canvas canvas, double x, double y, String text) {
     PanelRenderer.drawTextLeft(
       canvas,
       text,

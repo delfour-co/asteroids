@@ -242,19 +242,31 @@ class TitleScreen extends PositionComponent
     ]) {
       final (offset, text, fontSize, letterSpacing) = entry;
       // Layer 1: Wide glow halo
-      _drawTitleLine(canvas, text, fontSize, letterSpacing, offset,
+      _drawTitleLine(
+        canvas,
+        text,
+        fontSize,
+        letterSpacing,
+        offset,
         Paint()
           ..color = const Color(0x3000FFFF)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 6.0
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20));
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+      );
       // Layer 2: Medium glow
-      _drawTitleLine(canvas, text, fontSize, letterSpacing, offset,
+      _drawTitleLine(
+        canvas,
+        text,
+        fontSize,
+        letterSpacing,
+        offset,
         Paint()
           ..color = const Color(0x6000FFFF)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 3.0
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+      );
     }
     // Layer 3: Solid filled text
     _neonPainter.paint(canvas, _neonOffset);
@@ -265,11 +277,17 @@ class TitleScreen extends PositionComponent
       (_asteroidsOffset, 'ASTEROIDS', 36.0, 6.0),
     ]) {
       final (offset, text, fontSize, letterSpacing) = entry;
-      _drawTitleLine(canvas, text, fontSize, letterSpacing, offset,
+      _drawTitleLine(
+        canvas,
+        text,
+        fontSize,
+        letterSpacing,
+        offset,
         Paint()
           ..color = const Color(0xDD00FFFF)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.2);
+          ..strokeWidth = 1.2,
+      );
     }
 
     // ── "D4 Games" ──
