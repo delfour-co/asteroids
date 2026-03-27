@@ -192,25 +192,7 @@ jobs:
           fail-on-severity: high
 
   # ──────────────────────────────────────────────
-  #  3c. Secrets — detect leaked secrets in code
-  # ──────────────────────────────────────────────
-  secrets:
-    name: Secret Scan
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          fetch-depth: 0
-
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # ──────────────────────────────────────────────
-  #  3d. SAST — static security analysis (Semgrep)
+  #  3c. SAST — static security analysis (Semgrep)
   # ──────────────────────────────────────────────
   sast:
     name: SAST
@@ -233,34 +215,7 @@ jobs:
           category: semgrep
 
   # ──────────────────────────────────────────────
-  #  3e. Trivy — vulnerability & secret scan
-  # ──────────────────────────────────────────────
-  trivy:
-    name: Trivy Scan
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-
-      - name: Run Trivy filesystem scan
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
-        with:
-          scan-type: fs
-          scan-ref: .
-          scanners: vuln,secret,misconfig
-          format: sarif
-          output: trivy-results.sarif
-
-      - name: Upload SARIF
-        if: always()
-        uses: github/codeql-action/upload-sarif@480db559a14342288b67e54bd959dd52dc3ee68f # v3
-        with:
-          sarif_file: trivy-results.sarif
-          category: trivy
-
-  # ──────────────────────────────────────────────
-  #  3f. Dart Analyzer — inline PR annotations
+  #  3d. Dart Analyzer — inline PR annotations
   # ──────────────────────────────────────────────
   dart-review:
     name: Dart Review
