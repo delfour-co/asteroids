@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -197,7 +198,7 @@ class TutorialOverlay extends PositionComponent
           color: color,
           fontSize: fontSize,
           fontWeight: weight,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
           letterSpacing: 1.5,
           shadows: shadows,
         ),

@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/painting.dart' show FontWeight;
@@ -18,8 +19,8 @@ class ChangelogOverlay extends PositionComponent
   double _dragTotal = 0;
   static const _dragThreshold = 8.0;
 
-  static const _lineHeight = 26.0;
-  static const _versionGap = 16.0;
+  static const _lineHeight = 16.0;
+  static const _versionGap = 20.0;
 
   // Panel-relative layout values (computed in onLoad)
   late double _panelTop;
@@ -27,7 +28,6 @@ class ChangelogOverlay extends PositionComponent
   late double _titleY;
   late double _contentTop;
   late double _footerHeight;
-  late double _leftMargin;
 
   static const List<_ChangelogVersion> _versions = [
     _ChangelogVersion('v1.8.0', 'Design System Alignment', [
@@ -122,8 +122,6 @@ class ChangelogOverlay extends PositionComponent
     _titleY = _panelTop + 40;
     _contentTop = _panelTop + 80;
     _footerHeight = size.y - _panelBottom + 40;
-    _leftMargin = size.x * 0.15 + 20;
-
     // Calculate total content height
     double totalHeight = 0;
     for (final version in _versions) {
@@ -171,16 +169,28 @@ class ChangelogOverlay extends PositionComponent
     PanelRenderer.drawPanel(canvas, panelRect, title: 'CHANGELOG');
     PanelRenderer.drawScanlines(canvas, panelRect);
 
-    // Fixed title (centered)
-    PanelRenderer.drawTextCentered(
+    final contentLeft = panelRect.left + 32;
+    final contentRight = panelRect.right - 32;
+
+    // Fixed title
+    PanelRenderer.drawTextLeft(
       canvas,
       'CHANGELOG',
-      size.x / 2,
+      contentLeft,
       _titleY,
-      36,
-      const ui.Color(0xFFAAFFFF),
+      20,
+      D4DsColors.cyan,
       weight: FontWeight.bold,
       glow: true,
+      letterSpacing: 1.5,
+    );
+
+    // Separator below title
+    PanelRenderer.drawSeparator(
+      canvas,
+      contentLeft,
+      contentRight,
+      _titleY + 22,
     );
 
     // Clip scrollable area
@@ -193,29 +203,41 @@ class ChangelogOverlay extends PositionComponent
     canvas.save();
     canvas.clipRect(clipRect);
 
-    double y = _contentTop + 14 - _scrollOffset;
+    double y = _contentTop + 6 - _scrollOffset;
     for (final version in _versions) {
-      // Version header (left-aligned)
+      // Version tag — dimmed label
       PanelRenderer.drawTextLeft(
         canvas,
-        '${version.tag} — ${version.name}',
-        _leftMargin,
+        version.tag,
+        contentLeft,
         y,
-        20,
-        const ui.Color(0xFF00FFFF),
+        10,
+        D4DsColors.textDimmed,
+        letterSpacing: 1.0,
+      );
+      y += 16;
+
+      // Version name — primary bold
+      PanelRenderer.drawTextLeft(
+        canvas,
+        version.name,
+        contentLeft,
+        y,
+        15,
+        D4DsColors.textPrimary,
         weight: FontWeight.bold,
       );
-      y += _lineHeight;
+      y += 22;
 
-      // Description lines (left-aligned, indented)
+      // Description lines — secondary, indented
       for (final line in version.lines) {
         PanelRenderer.drawTextLeft(
           canvas,
-          '  $line',
-          _leftMargin,
+          line,
+          contentLeft + 12,
           y,
-          16,
-          const ui.Color(0xFFFFFFFF),
+          11,
+          D4DsColors.textSecondary,
         );
         y += _lineHeight;
       }
@@ -232,14 +254,14 @@ class ChangelogOverlay extends PositionComponent
       _panelBottom - 40,
     );
 
-    // Footer (centered)
+    // Footer
     PanelRenderer.drawTextCentered(
       canvas,
       'TAP TO CLOSE',
       size.x / 2,
       _panelBottom - 20,
-      18,
-      const ui.Color(0x88FFFFFF),
+      12,
+      D4DsColors.textDimmed,
     );
   }
 }

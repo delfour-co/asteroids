@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flutter/material.dart';
 
 /// Full-screen animated neon "D4 Games" splash (skippable on tap).
@@ -68,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen>
 class _NeonLogoPainter extends CustomPainter {
   final double progress;
 
-  static const _cyan = Color(0xFF00FFFF);
+  static const _cyan = D4DsColors.cyan;
 
   _NeonLogoPainter({required this.progress});
 
@@ -248,7 +249,7 @@ class _NeonLogoPainter extends CustomPainter {
     final textStyle = ui.TextStyle(
       color: _cyan.withValues(alpha: alpha * 0.85),
       fontSize: fontSize,
-      fontFamily: 'JetBrainsMono',
+      fontFamily: D4DsTypography.monoFont,
       letterSpacing: fontSize * 0.3,
     );
 
@@ -256,7 +257,7 @@ class _NeonLogoPainter extends CustomPainter {
         ui.ParagraphBuilder(
             ui.ParagraphStyle(
               textAlign: TextAlign.left,
-              fontFamily: 'JetBrainsMono',
+              fontFamily: D4DsTypography.monoFont,
             ),
           )
           ..pushStyle(textStyle)
@@ -291,7 +292,7 @@ class _NeonLogoPainter extends CustomPainter {
     final solidStyle = ui.TextStyle(
       color: _cyan.withValues(alpha: alpha),
       fontSize: fontSize,
-      fontFamily: 'JetBrainsMono',
+      fontFamily: D4DsTypography.monoFont,
       letterSpacing: fontSize * 0.3,
       shadows: [
         Shadow(
@@ -309,7 +310,7 @@ class _NeonLogoPainter extends CustomPainter {
         ui.ParagraphBuilder(
             ui.ParagraphStyle(
               textAlign: TextAlign.left,
-              fontFamily: 'JetBrainsMono',
+              fontFamily: D4DsTypography.monoFont,
             ),
           )
           ..pushStyle(solidStyle)

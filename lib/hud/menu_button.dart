@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/painting.dart'
@@ -20,9 +21,11 @@ class MenuButton extends PositionComponent
 
   @override
   Future<void> onLoad() async {
-    size = Vector2(200, 42);
+    size = Vector2(110, 32);
     final gameSize = game.size;
-    position = Vector2(gameSize.x / 2 - 100, gameSize.y / 2 + 155);
+    final panelRight = gameSize.x * 0.925;
+    final panelTop = gameSize.y * 0.075;
+    position = Vector2(panelRight - 110 - 16, panelTop + 12);
     priority = 100;
 
     _gameOverListener = (_) => _visible = true;
@@ -97,7 +100,7 @@ class MenuButton extends PositionComponent
           color: GameConfig.arcadeYellow,
           fontSize: 15,
           fontWeight: FontWeight.bold,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
           letterSpacing: 1.5,
           shadows: [
             Shadow(

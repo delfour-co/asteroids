@@ -1,3 +1,4 @@
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flame/components.dart';
 import 'dart:ui' show Color;
 
@@ -22,7 +23,7 @@ class WaveAnnouncement extends TextComponent with HasGameReference {
           style: TextStyle(
             color: GameConfig.shipColor,
             fontSize: GameConfig.waveAnnounceSize,
-            fontFamily: 'JetBrainsMono',
+            fontFamily: D4DsTypography.monoFont,
             fontWeight: FontWeight.bold,
             letterSpacing: 2.0,
             shadows: [
@@ -63,7 +64,7 @@ class WaveAnnouncement extends TextComponent with HasGameReference {
       style: TextStyle(
         color: GameConfig.shipColor.withValues(alpha: opacity),
         fontSize: GameConfig.waveAnnounceSize,
-        fontFamily: 'JetBrainsMono',
+        fontFamily: D4DsTypography.monoFont,
         fontWeight: FontWeight.bold,
         letterSpacing: 4.0,
         shadows: [

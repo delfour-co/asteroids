@@ -1,10 +1,11 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/painting.dart' show FontWeight, Shadow;
+import 'package:flutter/painting.dart' show FontWeight, Shadow, TextStyle, TextSpan, TextPainter, TextDirection;
 
 import '../hud/panel_renderer.dart';
 import 'fragment_data.dart';
@@ -20,10 +21,6 @@ class FragmentOverlay extends PositionComponent
 
   FragmentOverlay({required this.fragment, required this.onDismiss});
 
-  static const _titleY = 80.0;
-  static const _fragmentTitleY = 130.0;
-  static const _contentTop = 180.0;
-  static const _lineHeight = 28.0;
   static const _footerOffset = 50.0;
 
   @override
@@ -48,12 +45,11 @@ class FragmentOverlay extends PositionComponent
     final w = size.x;
     final h = size.y;
 
-    // Tron black background
     PanelRenderer.drawOverlayBackground(canvas, w, h);
 
     final cx = w / 2;
 
-    // Panel dimensions
+    // Panel
     final panelW = w * 0.7;
     final panelH = h * 0.75;
     final panelRect = ui.Rect.fromCenter(
@@ -61,63 +57,60 @@ class FragmentOverlay extends PositionComponent
       width: panelW,
       height: panelH,
     );
-    PanelRenderer.drawPanel(canvas, panelRect, title: 'MEMORY FRAGMENT');
-
-    // Scanlines over the panel
+    PanelRenderer.drawPanel(canvas, panelRect, title: 'SHIP LOG');
     PanelRenderer.drawScanlines(canvas, panelRect);
 
-    // "MEMORY FRAGMENT" title in cyan with glow
-    PanelRenderer.drawTextCentered(
+    final contentLeft = panelRect.left + 32;
+    final contentRight = panelRect.right - 32;
+    final contentWidth = contentRight - contentLeft;
+
+    // ── Fragment title — left-aligned, cyan, bold ──
+    double y = panelRect.top + 36;
+    PanelRenderer.drawTextLeft(
       canvas,
-      'MEMORY FRAGMENT',
-      cx,
-      _titleY,
-      32,
-      const ui.Color(0xFF00FFFF),
+      fragment.title.toUpperCase(),
+      contentLeft,
+      y,
+      20,
+      D4DsColors.cyan,
       weight: FontWeight.bold,
-      letterSpacing: 2.0,
-      shadows: const [
-        Shadow(color: ui.Color(0x9900FFFF), blurRadius: 8),
-        Shadow(color: ui.Color(0x4400FFFF), blurRadius: 16),
-      ],
+      glow: true,
+      letterSpacing: 1.5,
     );
 
-    // Separator line in cyan
-    PanelRenderer.drawSeparator(canvas, cx - 120, cx + 120, _titleY + 22);
-
-    // Fragment title in cyan with glow
-    PanelRenderer.drawTextCentered(
+    // ── Wave label — left-aligned, dimmed ──
+    y += 28;
+    PanelRenderer.drawTextLeft(
       canvas,
-      fragment.title,
-      cx,
-      _fragmentTitleY,
-      24,
-      const ui.Color(0xFF00FFFF),
-      weight: FontWeight.bold,
-      letterSpacing: 2.0,
-      shadows: const [
-        Shadow(color: ui.Color(0x9900FFFF), blurRadius: 8),
-        Shadow(color: ui.Color(0x4400FFFF), blurRadius: 16),
-      ],
+      'WAVE ${fragment.waveRequired}',
+      contentLeft,
+      y,
+      12,
+      D4DsColors.textDimmed,
+      letterSpacing: 1.0,
     );
 
-    // Fragment text line by line in cyan monospace
-    final lines = fragment.text.split('\n');
-    double y = _contentTop;
-    for (final line in lines) {
-      PanelRenderer.drawTextCentered(
-        canvas,
-        line,
-        cx,
-        y,
-        18,
-        const ui.Color(0xFF00FFFF),
-        letterSpacing: 2.0,
-      );
-      y += _lineHeight;
-    }
+    // ── Separator ──
+    y += 18;
+    PanelRenderer.drawSeparator(canvas, contentLeft, contentRight, y);
 
-    // Pulsing "TAP TO CONTINUE" at bottom with glow
+    // ── Narrative text — left-aligned, white, wrapped ──
+    y += 20;
+    final tp = TextPainter(
+      text: TextSpan(
+        text: fragment.text,
+        style: TextStyle(
+          color: D4DsColors.textSecondary,
+          fontSize: 15,
+          fontFamily: D4DsTypography.monoFont,
+          height: 1.6,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: contentWidth);
+    tp.paint(canvas, ui.Offset(contentLeft, y));
+
+    // ── Pulsing "TAP TO CONTINUE" ──
     final ms = DateTime.now().millisecondsSinceEpoch;
     final pulse = 0.5 + sin(ms / 300.0) * 0.5;
     final pulseColor = ui.Color.fromARGB((pulse * 255).toInt(), 0, 255, 255);
@@ -126,17 +119,13 @@ class FragmentOverlay extends PositionComponent
       'TAP TO CONTINUE',
       cx,
       h - _footerOffset,
-      18,
+      14,
       pulseColor,
-      letterSpacing: 2.0,
+      letterSpacing: 1.5,
       shadows: [
         Shadow(
           color: ui.Color.fromARGB((pulse * 153).toInt(), 0, 255, 255),
           blurRadius: 8,
-        ),
-        Shadow(
-          color: ui.Color.fromARGB((pulse * 68).toInt(), 0, 255, 255),
-          blurRadius: 16,
         ),
       ],
     );

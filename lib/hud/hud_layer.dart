@@ -1,5 +1,7 @@
+import 'dart:math';
 import 'dart:ui';
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart'
     show TextStyle, FontWeight, Shadow, TextPainter, TextSpan, TextDirection;
@@ -33,10 +35,10 @@ class HudLayer extends PositionComponent
 
   // Game over overlay
   _TronTextComponent? _gameOverText;
-  TextComponent? _restartText;
+  _TronPulsingText? _restartText;
   TextComponent? _highScoreGameOverText;
-  TextComponent? _statsLeftText;
-  TextComponent? _statsRightText;
+  _DualColorStats? _statsLeftText;
+  _DualColorStats? _statsRightText;
 
   // Game over panel component
   _GameOverPanel? _gameOverPanel;
@@ -55,7 +57,7 @@ class HudLayer extends PositionComponent
         style: const TextStyle(
           color: GameConfig.shipColor,
           fontSize: 40,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.5,
           shadows: [
@@ -76,7 +78,7 @@ class HudLayer extends PositionComponent
         style: const TextStyle(
           color: Color(0x8800FFFF),
           fontSize: 14,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
           letterSpacing: 1.5,
           shadows: [Shadow(color: Color(0x3300FFFF), blurRadius: 6)],
         ),
@@ -94,7 +96,7 @@ class HudLayer extends PositionComponent
           style: const TextStyle(
             color: Color(0x6600FFFF),
             fontSize: 11,
-            fontFamily: 'JetBrainsMono',
+            fontFamily: D4DsTypography.monoFont,
             letterSpacing: 1.0,
           ),
         ),
@@ -110,7 +112,7 @@ class HudLayer extends PositionComponent
         style: const TextStyle(
           color: Color(0xAA00FFFF),
           fontSize: 14,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
           letterSpacing: 1.5,
           shadows: [Shadow(color: Color(0x4400FFFF), blurRadius: 6)],
         ),
@@ -127,7 +129,7 @@ class HudLayer extends PositionComponent
         style: const TextStyle(
           color: GameConfig.comboColor,
           fontSize: 18,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
           letterSpacing: 1.5,
           shadows: [
             Shadow(color: Color(0x99CC00FF), blurRadius: 8),
@@ -246,61 +248,68 @@ class HudLayer extends PositionComponent
     _gameOverPanel = _GameOverPanel(gameSize: gameSize);
     add(_gameOverPanel!);
 
-    final cy = gameSize.y / 2;
     final cx = gameSize.x / 2;
+    final panelTop = gameSize.y * 0.075;
+    final panelBottom = gameSize.y * 0.925;
+    final panelH = panelBottom - panelTop;
 
+    final titleY = panelTop + panelH * 0.12;
+    final scoreY = panelTop + panelH * 0.25;
+    final statsY = panelTop + panelH * 0.33;
+    final visualsY = panelTop + panelH * 0.58;
+    final restartY = panelTop + panelH * 0.82;
+
+    // "SIGNAL PERDU"
     _gameOverText = _TronTextComponent(
       text: 'SIGNAL PERDU',
-      fontSize: 48,
-      position: Vector2(cx, cy - 120),
+      fontSize: 42,
+      position: Vector2(cx, titleY),
       gameWidth: gameSize.x,
     );
     add(_gameOverText!);
 
+    // Score line
     _highScoreGameOverText = TextComponent(
       text: 'SCORE ${gs.score}  |  BEST ${gs.highScore}',
       textRenderer: TextPaint(
         style: const TextStyle(
           color: Color(0xAA00FFFF),
-          fontSize: 22,
-          fontFamily: 'JetBrainsMono',
+          fontSize: 20,
+          fontFamily: D4DsTypography.monoFont,
           letterSpacing: 1.5,
         ),
       ),
       anchor: Anchor.center,
-      position: Vector2(cx, cy - 70),
+      position: Vector2(cx, scoreY),
     );
     add(_highScoreGameOverText!);
 
-    // Session stats — two columns
-    const statStyle = TextStyle(
-      color: Color(0xAA00FFFF),
-      fontSize: 13,
-      fontFamily: 'JetBrainsMono',
-    );
-    final statPaint = TextPaint(style: statStyle);
-
-    _statsLeftText = TextComponent(
-      text:
-          'ASTEROIDS  ${stats.asteroidsDestroyed}\n'
-          'UFOS       ${stats.ufosDestroyed}\n'
-          'ACCURACY   ${stats.accuracy.toStringAsFixed(0)}%\n'
-          'BEST COMBO x${stats.bestCombo}',
-      textRenderer: statPaint,
-      anchor: Anchor.topRight,
-      position: Vector2(cx - 10, cy - 40),
+    // Session stats — dual color (label white, value cyan)
+    _statsLeftText = _DualColorStats(
+      entries: [
+        ('ASTEROIDS', '${stats.asteroidsDestroyed}'),
+        ('UFOS', '${stats.ufosDestroyed}'),
+        ('ACCURACY', '${stats.accuracy.toStringAsFixed(0)}%'),
+        ('BEST COMBO', 'x${stats.bestCombo}'),
+      ],
+      rightAlign: true,
+      gameSize: gameSize,
+      topY: statsY,
+      xAnchor: cx - 16,
     );
     add(_statsLeftText!);
 
-    _statsRightText = TextComponent(
-      text:
-          'WAVE       ${stats.waveReached}\n'
-          'DURATION   ${stats.durationFormatted}\n'
-          'PERFECT    ${stats.perfectKills}\n'
-          'DASH KILLS ${stats.dashKills}',
-      textRenderer: statPaint,
-      anchor: Anchor.topLeft,
-      position: Vector2(cx + 10, cy - 40),
+    _statsRightText = _DualColorStats(
+      entries: [
+        ('WAVE', '${stats.waveReached}'),
+        ('DURATION', stats.durationFormatted),
+        ('PERFECT', '${stats.perfectKills}'),
+        ('DASH KILLS', '${stats.dashKills}'),
+      ],
+      rightAlign: false,
+      gameSize: gameSize,
+      topY: statsY,
+      xAnchor: cx + 16,
     );
     add(_statsRightText!);
 
@@ -308,21 +317,17 @@ class HudLayer extends PositionComponent
       accuracy: stats.accuracy,
       bestCombo: stats.bestCombo,
       gameSize: gameSize,
+      baseY: visualsY,
     );
     add(_statsVisualBars!);
 
-    _restartText = TextComponent(
+    // "TAP TO RESTART" — Tron outline style, violet like INSERT COIN
+    _restartText = _TronPulsingText(
       text: 'TAP TO RESTART',
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: GameConfig.shipColor,
-          fontSize: 18,
-          fontFamily: 'JetBrainsMono',
-          letterSpacing: 1.5,
-        ),
-      ),
-      anchor: Anchor.center,
-      position: Vector2(cx, cy + 130),
+      fontSize: 30,
+      position: Vector2(cx, restartY),
+      gameWidth: gameSize.x,
+      color: GameConfig.comboColor,
     );
     add(_restartText!);
   }
@@ -439,7 +444,7 @@ class _TronTextComponent extends PositionComponent {
         style: TextStyle(
           foreground: paint,
           fontSize: fontSize,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
           fontWeight: FontWeight.bold,
           letterSpacing: 4.0,
         ),
@@ -538,6 +543,7 @@ class _StatsVisualBars extends PositionComponent {
   final int bestCombo;
   final int maxCombo;
   final Vector2 gameSize;
+  final double baseY;
 
   _StatsVisualBars({
     required this.accuracy,
@@ -545,6 +551,7 @@ class _StatsVisualBars extends PositionComponent {
     // ignore: unused_element_parameter
     this.maxCombo = 8,
     required this.gameSize,
+    required this.baseY,
   });
 
   @override
@@ -555,7 +562,6 @@ class _StatsVisualBars extends PositionComponent {
   @override
   void render(Canvas canvas) {
     final cx = gameSize.x / 2;
-    final baseY = gameSize.y / 2 + 55;
 
     // Accuracy arc
     final arcCenter = Offset(cx - 80, baseY);
@@ -619,7 +625,7 @@ class _StatsVisualBars extends PositionComponent {
       canvas.drawRect(
         Rect.fromLTWH(x, barY - segH / 2, segW, segH),
         Paint()
-          ..color = filled ? const Color(0xFFCC00FF) : const Color(0x22CC00FF),
+          ..color = filled ? D4DsColors.cyan : const Color(0x2200FFFF),
       );
     }
     // Label below
@@ -629,7 +635,7 @@ class _StatsVisualBars extends PositionComponent {
       barLeft + maxCombo * (segW + segGap) / 2,
       barY + segH / 2 + 14,
       11,
-      const Color(0x88CC00FF),
+      const Color(0x8800FFFF),
     );
   }
 
@@ -647,11 +653,158 @@ class _StatsVisualBars extends PositionComponent {
         style: TextStyle(
           color: color,
           fontSize: fontSize,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
         ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
     tp.paint(canvas, Offset(x - tp.width / 2, y - tp.height / 2));
+  }
+}
+
+/// Pulsing text with Tron multi-layer outline glow (same style as INSERT COIN).
+class _TronPulsingText extends PositionComponent {
+  final String text;
+  final double fontSize;
+  final double gameWidth;
+  final Color color;
+  double _time = 0;
+
+  _TronPulsingText({
+    required this.text,
+    required this.fontSize,
+    required Vector2 position,
+    required this.gameWidth,
+    this.color = D4DsColors.cyan,
+  }) {
+    this.position = position;
+    anchor = Anchor.center;
+    size = Vector2(gameWidth, fontSize * 2);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    _time += dt;
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final opacity = 0.5 + sin(_time * 3) * 0.5;
+    final cx = size.x / 2;
+    final cy = size.y / 2;
+    final r = (color.r * 255).round().clamp(0, 255);
+    final g = (color.g * 255).round().clamp(0, 255);
+    final b = (color.b * 255).round().clamp(0, 255);
+
+    // Layer 1: Wide glow
+    _draw(canvas, cx, cy,
+      Paint()
+        ..color = Color.fromARGB((opacity * 40).toInt(), r, g, b)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 4.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16));
+    // Layer 2: Medium glow
+    _draw(canvas, cx, cy,
+      Paint()
+        ..color = Color.fromARGB((opacity * 90).toInt(), r, g, b)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6));
+    // Layer 3: Dark fill
+    _draw(canvas, cx, cy,
+      Paint()..color = Color.fromARGB(
+        (opacity * 70).toInt(), r ~/ 6, g ~/ 6, b ~/ 6));
+    // Layer 4: Bright outline
+    _draw(canvas, cx, cy,
+      Paint()
+        ..color = Color.fromARGB((opacity * 220).toInt(), r, g, b)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0);
+  }
+
+  void _draw(Canvas canvas, double cx, double cy, Paint paint) {
+    final tp = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          foreground: paint,
+          fontSize: fontSize,
+          fontFamily: D4DsTypography.monoFont,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 3.0,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, Offset(cx - tp.width / 2, cy - tp.height / 2));
+  }
+}
+
+/// Stats rows with label in white and value in cyan.
+class _DualColorStats extends PositionComponent {
+  final List<(String, String)> entries;
+  final bool rightAlign;
+  final Vector2 gameSize;
+  final double topY;
+  final double xAnchor;
+
+  static const _lineHeight = 20.0;
+  static const _labelColor = D4DsColors.textPrimary;
+  static const _valueColor = D4DsColors.cyan;
+
+  _DualColorStats({
+    required this.entries,
+    required this.rightAlign,
+    required this.gameSize,
+    required this.topY,
+    required this.xAnchor,
+  });
+
+  @override
+  Future<void> onLoad() async {
+    size = gameSize;
+  }
+
+  @override
+  void render(Canvas canvas) {
+    double y = topY;
+    for (final (label, value) in entries) {
+      final labelTp = TextPainter(
+        text: TextSpan(
+          text: '$label  ',
+          style: const TextStyle(
+            color: _labelColor,
+            fontSize: 13,
+            fontFamily: D4DsTypography.monoFont,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      final valueTp = TextPainter(
+        text: TextSpan(
+          text: value,
+          style: const TextStyle(
+            color: _valueColor,
+            fontSize: 13,
+            fontFamily: D4DsTypography.monoFont,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      if (rightAlign) {
+        final totalW = labelTp.width + valueTp.width;
+        labelTp.paint(canvas, Offset(xAnchor - totalW, y));
+        valueTp.paint(canvas, Offset(xAnchor - valueTp.width, y));
+      } else {
+        labelTp.paint(canvas, Offset(xAnchor, y));
+        valueTp.paint(canvas, Offset(xAnchor + labelTp.width, y));
+      }
+
+      y += _lineHeight;
+    }
   }
 }

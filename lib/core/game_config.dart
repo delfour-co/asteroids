@@ -1,8 +1,11 @@
 import 'dart:ui';
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
+
 /// Static game configuration constants.
 ///
 /// All balancing values live here — single source of truth.
+/// Design system tokens are delegated to [D4DsColors], [D4DsRadius], [D4DsGlow].
 abstract class GameConfig {
   // Ship
   static const double shipMaxSpeed = 300.0;
@@ -24,41 +27,11 @@ abstract class GameConfig {
   static const double upgradeDuration = 12.0;
   static const double wreckageLifetime = 8.0;
 
-  // Visuals
-  static const Color shipColor = Color(0xFF00FFFF);
-  static const Color backgroundColor = Color(0xFF000000);
+  // Visuals — DS aliases
+  static const Color shipColor = D4DsColors.cyan;
+  static const Color backgroundColor = D4DsColors.background;
   static const double glowRadius = 4.0;
   static const double glowOpacity = 0.8;
-
-  // Design system — surfaces
-  static const Color surfaceColor = Color(0xFF0A0A0A);
-  static const Color surfaceElevatedColor = Color(0xFF111111);
-  static const Color overlayColor = Color(0xCC000000);
-
-  // Design system — borders & glows
-  static const Color borderCyanColor = Color(0x3300FFFF);
-  static const Color glowCyanColor = Color(0x6600FFFF);
-
-  // Design system — text
-  static const Color textSecondaryColor = Color(0xFFB0B0B0);
-  static const Color textDimmedColor = Color(0xFF666666);
-
-  // Design system — accents
-  static const Color secondaryColor = Color(0xFF1E90FF);
-  static const Color errorColor = Color(0xFFFF3333);
-
-  // Design system — radii
-  static const double buttonRadius = 8.0;
-  static const double cardRadius = 12.0;
-  static const double dialogRadius = 16.0;
-
-  // Design system — glow values
-  static const double buttonGlowBlur = 16.0;
-  static const double buttonGlowSpread = 2.0;
-  static const double buttonGlowAlpha = 0.4;
-  static const double cardGlowBlur = 12.0;
-  static const double cardGlowSpread = 1.0;
-  static const double cardGlowAlpha = 0.4;
 
   // Starfield
   static const int starCount = 30;

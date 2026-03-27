@@ -5,7 +5,8 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 
 import '../core/event_bus.dart';
-import '../core/game_config.dart';
+import 'package:d4_dark_ds/d4_dark_ds.dart';
+
 import '../hud/title_screen.dart';
 import '../core/arcade_events.dart';
 
@@ -84,16 +85,16 @@ class TronGrid extends PositionComponent with HasGameReference<FlameGame> {
 
     _horizonY = h * 0.42;
 
-    _bgPaint = Paint()..color = GameConfig.backgroundColor;
-    _linePaint = Paint()..strokeWidth = 0.5;
+    _bgPaint = Paint()..color = D4DsColors.background;
+    _linePaint = Paint()..strokeWidth = 0.8;
 
     _horizonGlowPaint = Paint()
-      ..color = const Color.fromRGBO(0, 255, 255, 0.10)
+      ..color = const Color.fromRGBO(0, 255, 255, 0.25)
       ..strokeWidth = 4.0
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
 
     _horizonLinePaint = Paint()
-      ..color = const Color.fromRGBO(0, 255, 255, 0.25)
+      ..color = const Color.fromRGBO(0, 255, 255, 0.50)
       ..strokeWidth = 1.0;
 
     _buildHLines(w, h);
@@ -124,11 +125,11 @@ class TronGrid extends PositionComponent with HasGameReference<FlameGame> {
       // Perspective: quadratic spacing from horizon downward
       final t = (i + 1) / count;
       final perspY = _horizonY + (t * t) * groundHeight;
-      final perspOpacity = 0.03 + t * 0.07;
+      final perspOpacity = 0.08 + t * 0.14;
 
       // Flat: evenly spaced across entire screen
       final flatY = (i + 1) * flatSpacing;
-      const flatOpacity = 0.10;
+      const flatOpacity = 0.18;
 
       _hLines.add(
         _AnimLine(
@@ -160,11 +161,11 @@ class TronGrid extends PositionComponent with HasGameReference<FlameGame> {
       const horizonSpread = 0.3;
       final horizonX = cx + i * bottomSpacing * horizonSpread;
       final centerDist = i.abs() / halfCount;
-      final perspOpacity = (0.08 - centerDist * 0.05).clamp(0.02, 0.10);
+      final perspOpacity = (0.16 - centerDist * 0.08).clamp(0.06, 0.18);
 
       // Flat: evenly spaced parallel vertical lines
       final flatX = cx + i * flatSpacing;
-      const flatOpacity = 0.10;
+      const flatOpacity = 0.18;
 
       _vLines.add(
         _AnimLine(
@@ -254,7 +255,7 @@ class TronGrid extends PositionComponent with HasGameReference<FlameGame> {
         0,
         255,
         255,
-        0.10 * horizonAlpha,
+        0.25 * horizonAlpha,
       );
       canvas.drawLine(
         Offset(0, _horizonY),
@@ -265,7 +266,7 @@ class TronGrid extends PositionComponent with HasGameReference<FlameGame> {
         0,
         255,
         255,
-        0.25 * horizonAlpha,
+        0.50 * horizonAlpha,
       );
       canvas.drawLine(
         Offset(0, _horizonY),

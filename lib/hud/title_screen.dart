@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/painting.dart'
@@ -74,10 +75,12 @@ class TitleScreen extends PositionComponent
   late _MenuButton _changelogBtn;
 
   // Cached painters
-  late TextPainter _titlePainter;
+  late TextPainter _neonPainter;
+  late TextPainter _asteroidsPainter;
   late TextPainter _subtitlePainter;
   late TextPainter _controlsPainter;
-  late Offset _titleOffset;
+  late Offset _neonOffset;
+  late Offset _asteroidsOffset;
   late Offset _subtitleOffset;
   late Offset _controlsOffset;
   late double _insertCoinY;
@@ -89,32 +92,53 @@ class TitleScreen extends PositionComponent
     size = gameSize;
     _gameWidth = gameSize.x;
 
-    // ── Title: "NEON ASTEROIDS" with Tron font ──
-    _titlePainter = TextPainter(
+    // ── Title: "NEON" (big) + "ASTEROIDS" (smaller), two lines ──
+    _neonPainter = TextPainter(
       text: const TextSpan(
-        text: 'NEON ASTEROIDS',
+        text: 'NEON',
         style: TextStyle(
-          color: Color(0xFF003844), // dark teal interior
-          fontSize: 52,
+          color: Color(0xFF003844),
+          fontSize: 72,
           fontFamily: 'Tron',
-          letterSpacing: 8.0,
+          letterSpacing: 12.0,
         ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
-    _titleOffset = Offset(
-      gameSize.x / 2 - _titlePainter.width / 2,
-      gameSize.y * 0.26 - _titlePainter.height / 2,
+
+    _asteroidsPainter = TextPainter(
+      text: const TextSpan(
+        text: 'ASTEROIDS',
+        style: TextStyle(
+          color: Color(0xFF003844),
+          fontSize: 36,
+          fontFamily: 'Tron',
+          letterSpacing: 6.0,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    final titleCenterY = gameSize.y * 0.22;
+    const gap = 4.0;
+    final totalH = _neonPainter.height + gap + _asteroidsPainter.height;
+    _neonOffset = Offset(
+      gameSize.x / 2 - _neonPainter.width / 2,
+      titleCenterY - totalH / 2,
+    );
+    _asteroidsOffset = Offset(
+      gameSize.x / 2 - _asteroidsPainter.width / 2,
+      _neonOffset.dy + _neonPainter.height + gap,
     );
 
-    // ── "D4 Games" subtitle ──
+    // ── "by D4 Games" subtitle ──
     _subtitlePainter = TextPainter(
       text: const TextSpan(
-        text: 'D4 Games',
+        text: 'by D4 Games',
         style: TextStyle(
-          color: Color(0x6600FFFF), // 40% cyan
-          fontSize: 16,
-          fontFamily: 'JetBrainsMono',
+          color: Color(0x6600FFFF),
+          fontSize: 14,
+          fontFamily: D4DsTypography.monoFont,
           letterSpacing: 1.5,
         ),
       ),
@@ -122,7 +146,7 @@ class TitleScreen extends PositionComponent
     )..layout();
     _subtitleOffset = Offset(
       gameSize.x / 2 - _subtitlePainter.width / 2,
-      _titleOffset.dy + _titlePainter.height + 8,
+      _asteroidsOffset.dy + _asteroidsPainter.height + 10,
     );
 
     // ── INSERT COIN position — centered vertically ──
@@ -196,7 +220,7 @@ class TitleScreen extends PositionComponent
         style: TextStyle(
           color: Color(0x88FFFFFF),
           fontSize: 11,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
         ),
       ),
       textDirection: TextDirection.ltr,
@@ -211,38 +235,42 @@ class TitleScreen extends PositionComponent
   void render(Canvas canvas) {
     super.render(canvas);
 
-    // ── Title: Tron Legacy style (outline + multi-layer glow) ──
-    // Layer 1: Wide glow halo
-    _drawTitle(
-      canvas,
-      _titleOffset,
-      Paint()
-        ..color = const Color(0x3000FFFF)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 6.0
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
-    );
-    // Layer 2: Medium glow
-    _drawTitle(
-      canvas,
-      _titleOffset,
-      Paint()
-        ..color = const Color(0x6000FFFF)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 3.0
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
-    );
-    // Layer 3: Solid filled text (slightly dimmed interior)
-    _titlePainter.paint(canvas, _titleOffset);
+    // ── Title: "NEON" (big) + "ASTEROIDS" (smaller) — Tron glow style ──
+    for (final entry in [
+      (_neonOffset, 'NEON', 72.0, 12.0),
+      (_asteroidsOffset, 'ASTEROIDS', 36.0, 6.0),
+    ]) {
+      final (offset, text, fontSize, letterSpacing) = entry;
+      // Layer 1: Wide glow halo
+      _drawTitleLine(canvas, text, fontSize, letterSpacing, offset,
+        Paint()
+          ..color = const Color(0x3000FFFF)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 6.0
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20));
+      // Layer 2: Medium glow
+      _drawTitleLine(canvas, text, fontSize, letterSpacing, offset,
+        Paint()
+          ..color = const Color(0x6000FFFF)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3.0
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+    }
+    // Layer 3: Solid filled text
+    _neonPainter.paint(canvas, _neonOffset);
+    _asteroidsPainter.paint(canvas, _asteroidsOffset);
     // Layer 4: Bright outline on top
-    _drawTitle(
-      canvas,
-      _titleOffset,
-      Paint()
-        ..color = const Color(0xDD00FFFF)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2,
-    );
+    for (final entry in [
+      (_neonOffset, 'NEON', 72.0, 12.0),
+      (_asteroidsOffset, 'ASTEROIDS', 36.0, 6.0),
+    ]) {
+      final (offset, text, fontSize, letterSpacing) = entry;
+      _drawTitleLine(canvas, text, fontSize, letterSpacing, offset,
+        Paint()
+          ..color = const Color(0xDD00FFFF)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.2);
+    }
 
     // ── "D4 Games" ──
     _subtitlePainter.paint(canvas, _subtitleOffset);
@@ -250,8 +278,8 @@ class TitleScreen extends PositionComponent
     // ── INSERT COIN (pulsing, Tron outline style, Tron font) ──
     final opacity = 0.5 + sin(_pulseTime * 3) * 0.5;
     const icText = 'INSERT COIN';
-    const icFontSize = 30.0;
-    const icFont = 'JetBrainsMono';
+    const icFontSize = 38.0;
+    const icFont = D4DsTypography.monoFont;
     const icLetterSpacing = 3.0;
 
     // Layer 1: Wide violet glow halo
@@ -389,16 +417,23 @@ class TitleScreen extends PositionComponent
     );
   }
 
-  /// Draw title text with a custom foreground paint (for stroke/glow layers).
-  void _drawTitle(Canvas canvas, Offset offset, Paint paint) {
+  /// Draw a title line with a custom foreground paint (for stroke/glow layers).
+  void _drawTitleLine(
+    Canvas canvas,
+    String text,
+    double fontSize,
+    double letterSpacing,
+    Offset offset,
+    Paint paint,
+  ) {
     final tp = TextPainter(
       text: TextSpan(
-        text: 'NEON ASTEROIDS',
+        text: text,
         style: TextStyle(
           foreground: paint,
-          fontSize: 52,
+          fontSize: fontSize,
           fontFamily: 'Tron',
-          letterSpacing: 8.0,
+          letterSpacing: letterSpacing,
         ),
       ),
       textDirection: TextDirection.ltr,

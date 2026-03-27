@@ -1,9 +1,8 @@
 import 'dart:ui' as ui;
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flutter/painting.dart'
     show TextPainter, TextDirection, TextStyle, TextSpan, FontWeight, Shadow;
-
-import '../core/game_config.dart';
 
 /// Shared rendering utilities for overlay panels, buttons, and text.
 ///
@@ -14,7 +13,7 @@ abstract class PanelRenderer {
   static void drawOverlayBackground(ui.Canvas canvas, double w, double h) {
     canvas.drawRect(
       ui.Rect.fromLTWH(0, 0, w, h),
-      ui.Paint()..color = GameConfig.overlayColor,
+      ui.Paint()..color = D4DsColors.overlay,
     );
   }
 
@@ -27,30 +26,30 @@ abstract class PanelRenderer {
   }) {
     final rrect = ui.RRect.fromRectAndRadius(
       rect,
-      ui.Radius.circular(GameConfig.dialogRadius),
+      ui.Radius.circular(D4DsRadius.dialog),
     );
 
     // Cyan glow (design system: blur 12, alpha 0.4)
     canvas.drawRRect(
       rrect,
       ui.Paint()
-        ..color = GameConfig.glowCyanColor
+        ..color = D4DsColors.glowCyan
         ..style = ui.PaintingStyle.stroke
         ..strokeWidth = 3.0
-        ..maskFilter = const ui.MaskFilter.blur(
+        ..maskFilter = ui.MaskFilter.blur(
           ui.BlurStyle.normal,
-          GameConfig.cardGlowBlur,
+          D4DsGlow.card.blurRadius,
         ),
     );
 
     // Body fill — surface color
-    canvas.drawRRect(rrect, ui.Paint()..color = GameConfig.surfaceColor);
+    canvas.drawRRect(rrect, ui.Paint()..color = D4DsColors.surface);
 
     // Border — cyan 20%
     canvas.drawRRect(
       rrect,
       ui.Paint()
-        ..color = GameConfig.borderCyanColor
+        ..color = D4DsColors.borderCyan
         ..style = ui.PaintingStyle.stroke
         ..strokeWidth = 1.0,
     );
@@ -110,7 +109,7 @@ abstract class PanelRenderer {
         style: const TextStyle(
           color: ui.Color.fromARGB(70, 0, 255, 255),
           fontSize: 10,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
           letterSpacing: 2.0,
         ),
       ),
@@ -121,7 +120,7 @@ abstract class PanelRenderer {
       width: tp.width + 16,
       height: 14,
     );
-    canvas.drawRect(titleBgRect, ui.Paint()..color = GameConfig.surfaceColor);
+    canvas.drawRect(titleBgRect, ui.Paint()..color = D4DsColors.surface);
     tp.paint(
       canvas,
       ui.Offset(rect.center.dx - tp.width / 2, rect.top - tp.height / 2),
@@ -149,24 +148,19 @@ abstract class PanelRenderer {
   }) {
     final rrect = ui.RRect.fromRectAndRadius(
       rect,
-      ui.Radius.circular(GameConfig.buttonRadius),
+      ui.Radius.circular(D4DsRadius.button),
     );
 
     // Glow (design system: blur 16, alpha 0.4)
     canvas.drawRRect(
       rrect,
       ui.Paint()
-        ..color = ui.Color.fromARGB(
-          (GameConfig.buttonGlowAlpha * 255).toInt(),
-          0,
-          255,
-          255,
-        )
+        ..color = D4DsColors.glowCyan
         ..style = ui.PaintingStyle.stroke
         ..strokeWidth = 4.0
-        ..maskFilter = const ui.MaskFilter.blur(
+        ..maskFilter = ui.MaskFilter.blur(
           ui.BlurStyle.normal,
-          GameConfig.buttonGlowBlur,
+          D4DsGlow.button.blurRadius,
         ),
     );
 
@@ -189,7 +183,7 @@ abstract class PanelRenderer {
         style: TextStyle(
           color: textColor,
           fontSize: fontSize,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
           fontWeight: FontWeight.bold,
           letterSpacing: letterSpacing,
           shadows: [
@@ -218,13 +212,13 @@ abstract class PanelRenderer {
   }) {
     final rrect = ui.RRect.fromRectAndRadius(
       rect,
-      ui.Radius.circular(GameConfig.buttonRadius),
+      ui.Radius.circular(D4DsRadius.button),
     );
 
     canvas.drawRRect(
       rrect,
       ui.Paint()
-        ..color = GameConfig.borderCyanColor
+        ..color = D4DsColors.borderCyan
         ..style = ui.PaintingStyle.stroke
         ..strokeWidth = 1.0,
     );
@@ -235,7 +229,7 @@ abstract class PanelRenderer {
         style: TextStyle(
           color: textColor,
           fontSize: fontSize,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
           fontWeight: FontWeight.bold,
           letterSpacing: letterSpacing,
           shadows: [
@@ -330,7 +324,7 @@ abstract class PanelRenderer {
         style: TextStyle(
           foreground: paint,
           fontSize: fontSize,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
           fontWeight: FontWeight.bold,
           letterSpacing: letterSpacing,
         ),
@@ -412,7 +406,7 @@ abstract class PanelRenderer {
           color: color,
           fontSize: fontSize,
           fontWeight: weight,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
           letterSpacing: letterSpacing,
           shadows: effectiveShadows,
         ),

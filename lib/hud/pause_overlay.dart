@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -142,7 +143,7 @@ class PauseOverlay extends PositionComponent
         style: TextStyle(
           color: ui.Color(0x6600FFFF),
           fontSize: 11,
-          fontFamily: 'JetBrainsMono',
+          fontFamily: D4DsTypography.monoFont,
           letterSpacing: 1.0,
         ),
       ),

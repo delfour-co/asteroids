@@ -40,6 +40,10 @@ dependencies:
   firebase_core: ^3.12.1
   firebase_crashlytics: ^4.3.2
   games_services: ^5.0.0
+  d4_dark_ds:
+    git:
+      url: git@github.com:delfour-co/d4-dark-ds.git
+      ref: v0.1.1
 
 dev_dependencies:
   flutter_test:
@@ -96,8 +100,3 @@ flutter:
     - family: Tron
       fonts:
         - asset: assets/fonts/tron.ttf
-    - family: JetBrainsMono
-      fonts:
-        - asset: assets/fonts/JetBrainsMono-Regular.ttf
-        - asset: assets/fonts/JetBrainsMono-Bold.ttf
-          weight: 700

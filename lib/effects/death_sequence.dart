@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -192,14 +193,14 @@ class DeathSequence extends PositionComponent
             ParagraphStyle(
               textAlign: TextAlign.center,
               fontSize: _fontSize,
-              fontFamily: 'JetBrainsMono',
+              fontFamily: D4DsTypography.monoFont,
             ),
           )
           ..pushStyle(
             TextStyle(
               color: Color.fromRGBO(0, 255, 255, opacity),
               fontSize: _fontSize,
-              fontFamily: 'JetBrainsMono',
+              fontFamily: D4DsTypography.monoFont,
               letterSpacing: 3.0,
             ),
           )

@@ -177,6 +177,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  d4_dark_ds:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: "v0.1.1"
+      resolved-ref: "144499185a2f809b8317f30f3e4d7b84fcc8911e"
+      url: "git@github.com:delfour-co/d4-dark-ds.git"
+    source: git
+    version: "0.1.0"
   fake_async:
     dependency: transitive
     description:

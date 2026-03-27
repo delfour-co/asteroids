@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart' show FontWeight, Shadow, TextStyle;
 
@@ -67,7 +68,7 @@ class CountdownOverlay extends PositionComponent with HasGameReference {
       style: TextStyle(
         color: color.withValues(alpha: opacity),
         fontSize: 64,
-        fontFamily: 'JetBrainsMono',
+        fontFamily: D4DsTypography.monoFont,
         fontWeight: FontWeight.bold,
         letterSpacing: 2.0,
         shadows: [

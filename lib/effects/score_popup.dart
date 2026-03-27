@@ -1,5 +1,6 @@
 import 'dart:ui' show Color;
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart' show FontWeight, Shadow, TextStyle;
 
@@ -34,7 +35,7 @@ class ScorePopup extends TextComponent {
                      ? GameConfig.comboColor
                      : GameConfig.arcadeWhite),
              fontSize: GameConfig.scorePopupFontSize,
-             fontFamily: 'JetBrainsMono',
+             fontFamily: D4DsTypography.monoFont,
              fontWeight: FontWeight.bold,
              letterSpacing: 1.5,
              shadows: [
@@ -68,7 +69,7 @@ class ScorePopup extends TextComponent {
       style: TextStyle(
         color: _baseColor.withValues(alpha: opacity),
         fontSize: GameConfig.scorePopupFontSize,
-        fontFamily: 'JetBrainsMono',
+        fontFamily: D4DsTypography.monoFont,
         fontWeight: FontWeight.bold,
         letterSpacing: 2.0,
         shadows: [

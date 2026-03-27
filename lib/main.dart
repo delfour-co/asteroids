@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:d4_dark_ds/d4_dark_ds.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flame/game.dart';
@@ -50,6 +51,8 @@ class _NeonAsteroidsAppState extends State<NeonAsteroidsApp> {
     if (!_splashDone) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
+        theme: D4DsTheme.dark,
+        themeMode: ThemeMode.dark,
         home: SplashScreen(
           onComplete: () => setState(() => _splashDone = true),
         ),
