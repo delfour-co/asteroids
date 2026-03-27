@@ -91,7 +91,7 @@ class HudLayer extends PositionComponent
     // Version — top right, dimmer
     await add(
       TextComponent(
-        text: 'v1.8.0',
+        text: 'v1.9.0',
         textRenderer: TextPaint(
           style: const TextStyle(
             color: Color(0x6600FFFF),

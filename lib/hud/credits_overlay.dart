@@ -190,7 +190,7 @@ class CreditsOverlay extends PositionComponent
     // ── Version ──
     PanelRenderer.drawTextLeft(
       canvas,
-      'v1.8.0 (build 23)',
+      'v1.9.0 (build 24)',
       contentLeft,
       panelBottom - 58,
       11,

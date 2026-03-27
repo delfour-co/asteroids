@@ -30,6 +30,16 @@ class ChangelogOverlay extends PositionComponent
   late double _footerHeight;
 
   static const List<_ChangelogVersion> _versions = [
+    _ChangelogVersion('v1.9.0', 'D4 Dark Design System', [
+      '+ Integrated d4_dark_ds shared design system',
+      '* Redesigned all overlays with proper typography',
+      '* Credits: two-column layout with tech stack & assets',
+      '* Game over: violet TAP TO RESTART, dual-color stats',
+      '* Title screen: two-line NEON / ASTEROIDS, bigger INSERT COIN',
+      '* Cosmetics: neon glow selection with lock icons',
+      '* Brighter Tron grid on menu & gameplay',
+      '* Flattened project structure (removed game/ wrapper)',
+    ]),
     _ChangelogVersion('v1.8.0', 'Design System Alignment', [
       '* Aligned UI with Delfour.co design system',
       '* Pure black background (#000000)',

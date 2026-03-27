@@ -139,7 +139,7 @@ class PauseOverlay extends PositionComponent
     // version label stays as-is (it's custom positioning)
     final vtp = TextPainter(
       text: const TextSpan(
-        text: 'v1.8.0',
+        text: 'v1.9.0',
         style: TextStyle(
           color: ui.Color(0x6600FFFF),
           fontSize: 11,
