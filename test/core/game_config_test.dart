@@ -7,7 +7,7 @@ import 'package:asteroids_neon/core/game_config.dart';
 void main() {
   group('GameConfig', () {
     test('ship constants are accessible', () {
-      expect(GameConfig.shipMaxSpeed, 300.0);
+      expect(GameConfig.shipMaxSpeed, 600.0);
       expect(GameConfig.startingLives, 3);
       expect(GameConfig.extraLifeScore, 15000);
     });
