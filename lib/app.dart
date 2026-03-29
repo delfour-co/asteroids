@@ -257,8 +257,9 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     await cosmeticsManager.init();
 
     playGamesService = PlayGamesService(gameState);
-    await playGamesService.init();
     cosmeticsManager.onColorUnlocked = playGamesService.onColorUnlocked;
+    // Non-blocking: sign-in can be slow or hang without network
+    playGamesService.init();
 
     sessionStats = SessionStats();
     sessionStats.init();
