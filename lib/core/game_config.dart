@@ -8,7 +8,7 @@ import 'package:d4_dark_ds/d4_dark_ds.dart';
 /// Design system tokens are delegated to [D4DsColors], [D4DsRadius], [D4DsGlow].
 abstract class GameConfig {
   // Ship
-  static const double shipMaxSpeed = 300.0;
+  static const double shipMaxSpeed = 600.0;
   static const int startingLives = 3;
   static const int extraLifeScore = 15000;
 

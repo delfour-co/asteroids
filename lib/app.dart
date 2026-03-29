@@ -300,9 +300,6 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
   Future<void> _startGame() async {
     eventBus.off<StartGameEvent>(_startListener);
 
-    // Check wave unlocks for cosmetics
-    cosmeticsManager.checkWaveUnlocks(0);
-
     // Add gameplay components
     _restartOverlay = RestartOverlay();
     _gameLayer = GameLayer();
@@ -422,6 +419,7 @@ class AsteroidsNeonGame extends FlameGame with HasCollisionDetection {
     eventBus.off<ResumeEvent>(_gameResumeListener);
     eventBus.off<FragmentUnlockedEvent>(_fragmentListener);
     sessionStats.dispose();
+    cosmeticsManager.dispose();
     playGamesService.dispose();
     gameState.dispose();
     super.onRemove();

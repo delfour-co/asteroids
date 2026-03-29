@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../enemies/ufo_events.dart';
+import 'event_bus.dart';
 import 'game_config.dart';
 
 /// Manages unlocked ship colors and the currently selected color.
@@ -13,6 +15,8 @@ class CosmeticsManager {
 
   /// Called when a new color is unlocked (for achievement tracking).
   void Function()? onColorUnlocked;
+
+  late final void Function(WaveStartedEvent) _waveListener;
 
   List<int> get unlockedIndices => List.unmodifiable(_unlockedIndices);
   int get selectedIndex => _selectedIndex;
@@ -38,6 +42,14 @@ class CosmeticsManager {
     if (!_unlockedIndices.contains(_selectedIndex)) {
       _selectedIndex = 0;
     }
+
+    // Listen for wave progression to unlock colors
+    _waveListener = (event) => checkWaveUnlocks(event.wave);
+    eventBus.on<WaveStartedEvent>(_waveListener);
+  }
+
+  void dispose() {
+    eventBus.off<WaveStartedEvent>(_waveListener);
   }
 
   /// Whether the color at [index] is unlocked.
