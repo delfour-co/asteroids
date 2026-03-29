@@ -69,15 +69,6 @@ class PlayGamesService {
   PlayGamesService(this._gameState);
 
   Future<void> init() async {
-    try {
-      await GamesServices.signIn();
-      _signedIn = true;
-      _logPgs('[PGS] Sign-in SUCCESS');
-    } catch (e, stack) {
-      _signedIn = false;
-      _recordPgsError(e, stack, 'PGS sign-in failed');
-    }
-
     _waveListener = _onWaveStarted;
     _asteroidListener = _onAsteroidDestroyed;
     _ufoListener = _onUfoDestroyed;
@@ -93,6 +84,16 @@ class PlayGamesService {
     eventBus.on<FragmentUnlockedEvent>(_fragmentListener);
     eventBus.on<KnockbackEvent>(_knockbackListener);
     eventBus.on<GameOverEvent>(_gameOverListener);
+
+    try {
+      await GamesServices.signIn();
+      _signedIn = true;
+      dev.log('[PGS] Sign-in SUCCESS');
+    } catch (e, stack) {
+      _signedIn = false;
+      dev.log('[PGS] Sign-in FAILED: $e');
+      _recordPgsError(e, stack, 'PGS sign-in failed');
+    }
   }
 
   void dispose() {

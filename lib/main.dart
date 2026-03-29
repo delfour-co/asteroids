@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'dart:ui';
 
 import 'package:d4_dark_ds/d4_dark_ds.dart';
@@ -13,7 +14,12 @@ import 'splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
+    dev.log('[Firebase] Init SUCCESS');
+  } catch (e) {
+    dev.log('[Firebase] Init FAILED: $e');
+  }
 
   // Capture Flutter errors (widget/rendering)
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
