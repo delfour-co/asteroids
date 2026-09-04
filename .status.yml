@@ -1,0 +1,16 @@
+# Avancement du projet — agrégé par `ws projects` à la racine du workspace.
+# phase   : idée | prototype | bêta | publié | maintenance | pause | archivé
+# canal   : où le public obtient le projet (obligatoire si phase = publié).
+#           Indépendant de la visibilité du dépôt sur GitHub.
+# jalon   : prochaine étape. Un jalon GitHub du même nom prime sur les tâches.
+phase: publié
+canal: "https://github.com/arcade-d/asteroids/releases"
+jalon: ""
+maj: 2026-09-04
+taches:
+  faites: []
+  restantes: []
+notes: |
+  Phase devinée à l'amorçage d'après le tag v1.10.1 — à relire.
+  Canal renseigné : dépôt public avec release GitHub. À remplacer si la
+  distribution passe en réalité par npm, crates.io, pub.dev ou un store.
